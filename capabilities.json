@@ -1353,26 +1353,6 @@
                         "bool": true
                     }
                 },
-                "source": {
-                    "displayName": "Source",
-                    "description": "Data source",
-                    "type": {
-                        "enumeration": [
-                            {
-                                "displayName": "Data-bound",
-                                "value": "databound"
-                            },
-                            {
-                                "displayName": "Fixed",
-                                "value": "fixed"
-                            },
-                            {
-                                "displayName": "Measures",
-                                "value": "measures"
-                            }
-                        ]
-                    }
-                },
                 "n": {
                     "displayName": "Number of tiles",
                     "description": "Number of tiles.",

@@ -163,6 +163,7 @@ export class Tile {
         return this.formatSettings.layout.padding
     }
     get tileHPadding(): number {
+        console.log("alterpadding is", this.alterHorizontalPadding)
         return this.tilePadding + this.alterHorizontalPadding
     }
     get totalTileHPadding(): number {
@@ -268,7 +269,7 @@ export class Tile {
         switch (this.tileShape) {
             case TileShape.parallelogram:
                 if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical)
-                    return Parallelogram.getAlterHPadding(this.tileHeight, this.formatSettings.layout.parallelogramAngle) //FIX why -1??
+                    return Parallelogram.getAlterHPadding(this.tileHeight, this.formatSettings.layout.parallelogramAngle)
             case TileShape.chevron:
                 if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical)
                     return Chevron.getAlterHPadding(this.tileHeight, this.formatSettings.layout.chevronAngle)

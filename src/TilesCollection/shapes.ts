@@ -137,7 +137,7 @@ export class Parallelogram extends Shape implements Shape{
     static getAlterHPadding(height: number, angle: number): number{
         if(this.handleFocused)
             return -1 * Parallelogram._z
-        return height / Math.tan(height * (Math.PI / 180))
+        return -1* height / Math.tan(angle * (Math.PI / 180))
     }
 }
 

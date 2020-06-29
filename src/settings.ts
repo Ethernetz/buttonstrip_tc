@@ -49,7 +49,6 @@ export class EffectSettings extends TileCollectionFormatSettings.EffectSettings{
 
 export class ContentSettings{
   public multiselect: boolean = false
-  public source: ContentSource = ContentSource.databound
 
   public n: number = 5
   public icons: boolean = false
