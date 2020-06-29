@@ -2,7 +2,7 @@
     "visual": {
         "name": "button_strip",
         "displayName": "Button Strip",
-        "guid": "rocketsE9D7B5E2197F4868970D16E2455AB0AD",
+        "guid": "rocketsE9D7B5E0277F4868970D16E2455AB0AD",
         "visualClassName": "Visual",
         "version": "1.0.0",
         "description": "Create a heavily customizable button strip",
@@ -15,7 +15,7 @@
         "email": "ethanjnetz@gmail.com"
     },
     "assets": {
-        "icon": "assets/baseline_double_arrow_black_18dp.png"
+        "icon": "assets/icon-20px.png"
     },
     "externalJS": [
       ],
