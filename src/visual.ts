@@ -261,12 +261,16 @@ export class Visual implements IVisual {
             for (let i = 0; i < categories[0].values.length; i++) {
                 let pageValue: string = categories[0].values[i].toString();
                 let iconURL: string = categories[1] ? categories[1].values[i].toString() : "";
+               
+                let bgImgURL: string = categories[2] ? categories[2].values[i].toString() : "";
+                console.log(dataView.categorical)
                 let tileSelectionId = this.host.createSelectionIdBuilder()
                     .withCategory(categories[0], i)
                     .createSelectionId();
                 genericsCollection.tilesData.push({
                     text: pageValue,
                     iconURL: this.visualSettings.icon.icons ? iconURL : "",
+                    bgimgURL: this.visualSettings.bgimg.bgimgs ? bgImgURL : "",
                     contentFormatType: this.visualSettings.icon.icons ? ContentFormatType.text_icon : ContentFormatType.text,
                     selectionId: tileSelectionId,
                     isHovered: this.hoveredIndex == i,

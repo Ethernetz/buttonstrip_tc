@@ -1,13 +1,13 @@
 {
     "visual": {
-        "name": "button_strip",
+        "name": "buttonstrip_tc",
         "displayName": "Button Strip",
         "guid": "rocketsE9D7B5E0277F4868970D16E2455AB0AD",
         "visualClassName": "Visual",
         "version": "1.0.0",
         "description": "Create a heavily customizable button strip",
         "supportUrl": "https://www.google.com/",
-        "gitHubUrl": "https://github.com/Ethernetz/pbiviz_button_strip"
+        "gitHubUrl": "https://github.com/Ethernetz/buttonstrip_tc"
     },
     "apiVersion": "2.6.0",
     "author": {

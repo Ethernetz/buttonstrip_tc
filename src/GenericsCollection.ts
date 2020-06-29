@@ -11,6 +11,7 @@ import * as d3 from "d3";
 import { Shape } from "./TilesCollection/shapes";
 import { Handle } from "./interfaces";
 import { select } from "d3";
+import { ContentSource } from "./enums";
 
 // import { sizeTextContainer, styleText, makeTextTransparent } from './d3calls'
 
@@ -33,7 +34,10 @@ export class Generic extends Tile {
 
 
     onTileClick() {
-        this.visual.selectionManagerUnbound.select(this.i, this.visual.visualSettings.content.multiselect) //FIXED
+        if(this.visual.visualSettings.content.source == ContentSource.databound)
+            this.visual.selectionManager.select((<GenericData>this.tileData).selectionId, this.visual.visualSettings.content.multiselect) 
+        else
+            this.visual.selectionManagerUnbound.select(this.i, this.visual.visualSettings.content.multiselect) //FIXED
         this.visual.update(this.collection.options)
     }
 

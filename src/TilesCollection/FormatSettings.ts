@@ -4,6 +4,8 @@ import {AlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, Ico
 export class FormatSettings{
   public tile: TileSettings = new TileSettings();
   public text: TextSettings = new TextSettings();
+  public textPrimary: TextPrimarySettings = new TextPrimarySettings();
+  public textSecondary: TextSecondarySettings = new TextSecondarySettings();
   public layout: LayoutSettings = new LayoutSettings();
   public effect: EffectSettings = new EffectSettings();
   public icon: IconSettings = new IconSettings();
@@ -15,9 +17,9 @@ export class TileSettings {
     public hoverStyling: boolean = false
 
     public colorA: string = "";
-    public colorS: string = "#262222";
-    public colorU: string = "#262222";
-    public colorH: string = "#262222";
+    public colorS: string = "#fff";
+    public colorU: string = "#fff";
+    public colorH: string = "#fff";
   
     public strokeA: string = "";
     public strokeS: string = "#000";
@@ -40,9 +42,9 @@ export class TileSettings {
     public hoverStyling: boolean = false
 
     public colorA: string = "";
-    public colorS: string = "#fff";
-    public colorU: string = "#fff";
-    public colorH: string = "#fff";
+    public colorS: string = "#252423";
+    public colorU: string = "#252423";
+    public colorH: string = "#252423";
   
     public alignmentA: AlignmentType = AlignmentType.center;
     public alignmentS: AlignmentType = AlignmentType.center;
@@ -58,6 +60,88 @@ export class TileSettings {
     public fontFamilyS: string = "wf_standard-font, helvetica, arial, sans-serif";
     public fontFamilyU: string = "wf_standard-font, helvetica, arial, sans-serif";
     public fontFamilyH: string = "wf_standard-font, helvetica, arial, sans-serif";
+  
+    public hmarginA: number = null;
+    public hmarginS: number = 0;
+    public hmarginU: number = 0;
+    public hmarginH: number = 0;
+  
+    public bmarginA: number = null;
+    public bmarginS: number = 0;
+    public bmarginU: number = 0;
+    public bmarginH: number = 0;
+    
+    public transparencyA: number = null;
+    public transparencyS: number = 0;
+    public transparencyU: number = 0;
+    public transparencyH: number = 0;
+   
+  }
+
+  export class TextPrimarySettings{
+    public state: State = State.all
+    public hoverStyling: boolean = false
+
+    public colorA: string = "";
+    public colorS: string = "#666666";
+    public colorU: string = "#666666";
+    public colorH: string = "#666666";
+  
+    public alignmentA: AlignmentType = AlignmentType.center;
+    public alignmentS: AlignmentType = AlignmentType.center;
+    public alignmentU: AlignmentType = AlignmentType.center;
+    public alignmentH: AlignmentType = AlignmentType.center;
+  
+    public fontSizeA: number = null;
+    public fontSizeS: number = 12;
+    public fontSizeU: number = 12;
+    public fontSizeH: number = 12;
+  
+    public fontFamilyA: string = "";
+    public fontFamilyS: string = "Segoe UI";
+    public fontFamilyU: string = "Segoe UI";
+    public fontFamilyH: string = "Segoe UI";
+  
+    public hmarginA: number = null;
+    public hmarginS: number = 0;
+    public hmarginU: number = 0;
+    public hmarginH: number = 0;
+  
+    public bmarginA: number = null;
+    public bmarginS: number = 0;
+    public bmarginU: number = 0;
+    public bmarginH: number = 0;
+    
+    public transparencyA: number = null;
+    public transparencyS: number = 0;
+    public transparencyU: number = 0;
+    public transparencyH: number = 0;
+   
+  }
+
+  export class TextSecondarySettings{
+    public state: State = State.all
+    public hoverStyling: boolean = false
+
+    public colorA: string = "";
+    public colorS: string = "#252423";
+    public colorU: string = "#252423";
+    public colorH: string = "#252423";
+  
+    public alignmentA: AlignmentType = AlignmentType.center;
+    public alignmentS: AlignmentType = AlignmentType.center;
+    public alignmentU: AlignmentType = AlignmentType.center;
+    public alignmentH: AlignmentType = AlignmentType.center;
+  
+    public fontSizeA: number = null;
+    public fontSizeS: number = 45;
+    public fontSizeU: number = 45;
+    public fontSizeH: number = 45;
+  
+    public fontFamilyA: string = "";
+    public fontFamilyS: string = "Segoe UI";
+    public fontFamilyU: string = "Segoe UI";
+    public fontFamilyH: string = "Segoe UI";
   
     public hmarginA: number = null;
     public hmarginS: number = 0;

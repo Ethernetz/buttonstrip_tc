@@ -9,6 +9,11 @@
             "displayName": "Icons",
             "name": "icons",
             "kind": "Grouping"
+        },
+        {
+            "displayName": "Background images",
+            "name": "bgimgs",
+            "kind": "Grouping"
         }
     ],
     "objects": {
@@ -1848,6 +1853,11 @@
                         {
                             "for": {
                                 "in": "icons"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "bgimgs"
                             }
                         }
                     ]

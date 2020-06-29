@@ -150,11 +150,25 @@ export class TilesCollection {
             .html("")
             .style("text-align", function (d) { return d.textAlign })
             .append(function (d) { return d.content })
-            .select('.textContainer')
+        
+
+        contentFO.select('.textContainer')
             .style("opacity", function (d) { return d.textFillOpacity })
             .style("font-size", function (d) { return d.fontSize + "pt" })
             .style("font-family", function (d) { return d.fontFamily })
             .style("color", function (d) { return d.textFill })
+        
+        contentFO.select('.textPrimaryContainer')
+            .style("opacity", function (d) { return d.textPrimaryFillOpacity })
+            .style("font-size", function (d) { return d.fontPrimarySize + "pt" })
+            .style("font-family", function (d) { return d.fontPrimaryFamily })
+            .style("color", function (d) { return d.textPrimaryFill })
+        
+        contentFO.select('.textSecondaryContainer')
+            .style("opacity", function (d) { return d.textSecondaryFillOpacity })
+            .style("font-size", function (d) { return d.fontSecondarySize + "pt" })
+            .style("font-family", function (d) { return d.fontSecondaryFamily })
+            .style("color", function (d) { return d.textSecondaryFill })
 
 
 

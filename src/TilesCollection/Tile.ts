@@ -94,6 +94,32 @@ export class Tile {
     get textBmargin(): number {
         return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'bmargin')
     }
+
+    get textPrimaryFill(): string {
+        return getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'color')
+    }
+    get textPrimaryFillOpacity(): number {
+        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'transparency') / 100
+    }
+    get fontPrimarySize(): number {
+        return getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'fontSize')
+    }
+    get fontPrimaryFamily(): string {
+        return getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'fontFamily')
+    }
+
+    get textSecondaryFill(): string {
+        return getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'color')
+    }
+    get textSecondaryFillOpacity(): number {
+        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'transparency') / 100
+    }
+    get fontSecondarySize(): number {
+        return getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'fontSize')
+    }
+    get fontSecondaryFamily(): string {
+        return getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'fontFamily')
+    }
     
     // get widthSpaceForAllText(): number {
     //     let totalPadding = (this.tilesInRow - 1) * this.formatSettings.layout.padding;
@@ -147,6 +173,10 @@ export class Tile {
         return this.widthSpaceForText - this.widthTakenByIcon
     }
 
+    get textSecondary(): string{
+        return this.tileData.textSecondary
+    }
+
     get tileFill(): string {
         return getMatchingStateProperty(this.currentState,this.formatSettings.tile, 'color')
     }
@@ -163,7 +193,6 @@ export class Tile {
         return this.formatSettings.layout.padding
     }
     get tileHPadding(): number {
-        console.log("alterpadding is", this.alterHorizontalPadding)
         return this.tilePadding + this.alterHorizontalPadding
     }
     get totalTileHPadding(): number {
@@ -523,6 +552,42 @@ export class Tile {
         return img
     }
 
+
+    // get textSecondaryContainer(): HTMLDivElement{
+    //     let container = document.createElement("div")
+    //     container.className = 'textSecondary'
+
+
+    //     let text = document.createElement('span')
+    //     text.className = 'measureText'
+    //     text.textContent = this.isMeasures(this.datapoint) ? this.datapoint.measureValue as string : null
+    //     container.append(text)
+    //     return container
+    // }
+
+    get contentTextTextSecondary(): HTMLDivElement{
+        let contentContainer = document.createElement('div')
+        contentContainer.className = "contentContainer"
+
+        let text = this.textElement
+        text.textContent = this.text
+
+        let textPrimaryContainer = this.textContainer
+        textPrimaryContainer.append(text)
+        textPrimaryContainer.className = "textPrimaryContainer"
+
+        let textSecondary = this.textElement
+        textSecondary.textContent = this.textSecondary
+
+        let textSecondaryContainer = document.createElement("div")
+        textSecondaryContainer.append(textSecondary)
+        textSecondaryContainer.className = "textSecondaryContainer"
+
+        contentContainer.append(textSecondaryContainer, textPrimaryContainer)
+
+        return contentContainer
+    }
+
     get contentTextIconFormat(): HTMLDivElement{
         let contentContainer = document.createElement('div')
         contentContainer.className = "contentContainer"
@@ -572,6 +637,8 @@ export class Tile {
         switch(this.tileData.contentFormatType){
             case ContentFormatType.text_icon:
                 return this.contentTextIconFormat
+            case ContentFormatType.text_textSecondary:
+                return this.contentTextTextSecondary
             default:
                 return this.contentTextFormat
         }
