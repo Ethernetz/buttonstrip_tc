@@ -1,0 +1,1872 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Pages",
+            "name": "pages",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Icons",
+            "name": "icons",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measures",
+            "name": "measures",
+            "kind": "Measure"
+        }
+    ],
+    "objects": {
+        "tile": {
+            "displayName": "Tiles",
+            "properties": {
+                "state": {
+                    "displayName": "State",
+                    "description": "What state to apply the styles to",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "All",
+                                "value": "all"
+                            },
+                            {
+                                "displayName": "Selected",
+                                "value": "selected"
+                            },
+                            {
+                                "displayName": "Unselected",
+                                "value": "unselected"
+                            },
+                            {
+                                "displayName": "Hover",
+                                "value": "hovered"
+                            }
+                        ]
+                    }
+                },
+                "hoverStyling": {
+                    "displayName": "Hover styling",
+                    "description": "Allow seperate hover styling",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "colorA": {
+                    "displayName": "Background color",
+                    "description": "Background color for the tiles.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorS": {
+                    "displayName": "Background color",
+                    "description": "Background color for the selected tile.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorU": {
+                    "displayName": "Background color",
+                    "description": "Background color for the unselected tiles.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorH": {
+                    "displayName": "Background color (hover)",
+                    "description": "Background color for the hovered tile.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeA": {
+                    "displayName": "Border color",
+                    "description": "Border color for the tiles.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeS": {
+                    "displayName": "Border color",
+                    "description": "Border color for the tiles.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeU": {
+                    "displayName": "Border color",
+                    "description": "Border color for the tiles.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeH": {
+                    "displayName": "Border color (hover)",
+                    "description": "Border color for the tiles.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "strokeWidthA": {
+                    "displayName": "Stroke width",
+                    "description": "The width of the stroke in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "strokeWidthS": {
+                    "displayName": "Stroke width",
+                    "description": "The width of the stroke in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "strokeWidthU": {
+                    "displayName": "Stroke width",
+                    "description": "The width of the stroke in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "strokeWidthH": {
+                    "displayName": "Stroke width",
+                    "description": "The width of the stroke in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyA": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyS": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyU": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyH": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "text": {
+            "displayName": "Text",
+            "properties": {
+                "state": {
+                    "displayName": "State",
+                    "description": "What state to apply the styles to",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "All",
+                                "value": "all"
+                            },
+                            {
+                                "displayName": "Selected",
+                                "value": "selected"
+                            },
+                            {
+                                "displayName": "Unselected",
+                                "value": "unselected"
+                            },
+                            {
+                                "displayName": "Hover",
+                                "value": "hovered"
+                            }
+                        ]
+                    }
+                },
+                "hoverStyling": {
+                    "displayName": "Hover styling",
+                    "description": "Allow seperate hover styling",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "colorA": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorS": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorU": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorH": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "alignmentA": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "alignmentS": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "alignmentU": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "alignmentH": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "fontSizeA": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSizeS": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSizeU": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSizeH": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontFamilyA": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "fontFamilyS": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "fontFamilyU": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "fontFamilyH": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "hmarginA": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginS": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginU": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginH": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "bmarginA": {
+                    "displayName": "Bottom margin",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "bmarginS": {
+                    "displayName": "Bottom margin",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "bmarginU": {
+                    "displayName": "Bottom margin",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "bmarginH": {
+                    "displayName": "Bottom margin",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyA": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyS": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyU": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyH": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "icon": {
+            "displayName": "Icons",
+            "properties": {
+                "icons": {
+                    "displayName": "Icons",
+                    "description": "Add an icon to each tile",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "state": {
+                    "displayName": "State",
+                    "description": "What state to apply the styles to",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "All",
+                                "value": "all"
+                            },
+                            {
+                                "displayName": "Selected",
+                                "value": "selected"
+                            },
+                            {
+                                "displayName": "Unselected",
+                                "value": "unselected"
+                            },
+                            {
+                                "displayName": "Hover",
+                                "value": "hovered"
+                            }
+                        ]
+                    }
+                },
+                "hoverStyling": {
+                    "displayName": "Hover styling",
+                    "description": "Allow seperate hover styling",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "placementA": {
+                    "displayName": "Placement All",
+                    "description": "How tiles will be laid out.",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Above",
+                                "value": "above"
+                            },
+                            {
+                                "displayName": "Below",
+                                "value": "below"
+                            }
+                        ]
+                    }
+                },
+                "placementS": {
+                    "displayName": "Placement",
+                    "description": "How tiles will be laid out.",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Above",
+                                "value": "above"
+                            },
+                            {
+                                "displayName": "Below",
+                                "value": "below"
+                            }
+                        ]
+                    }
+                },
+                "placementU": {
+                    "displayName": "Placement",
+                    "description": "How tiles will be laid out.",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Above",
+                                "value": "above"
+                            },
+                            {
+                                "displayName": "Below",
+                                "value": "below"
+                            }
+                        ]
+                    }
+                },
+                "placementH": {
+                    "displayName": "Placement",
+                    "description": "How tiles will be laid out.",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Above",
+                                "value": "above"
+                            },
+                            {
+                                "displayName": "Below",
+                                "value": "below"
+                            }
+                        ]
+                    }
+                },
+                "widthA": {
+                    "displayName": "Width",
+                    "description": "Width of icon in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "widthS": {
+                    "displayName": "Width",
+                    "description": "Width of icon in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "widthU": {
+                    "displayName": "Width",
+                    "description": "Width of icon in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "widthH": {
+                    "displayName": "Width",
+                    "description": "Width of icon in pixels",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginA": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between icon and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginS": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between icon and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginU": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between icon and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hmarginH": {
+                    "displayName": "Horizontal margin",
+                    "description": "Margin between icon and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "topMarginA": {
+                    "displayName": "Top margin",
+                    "description": "Top margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "topMarginS": {
+                    "displayName": "Top margin",
+                    "description": "Top margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "topMarginU": {
+                    "displayName": "Top margin",
+                    "description": "Top margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "topMarginH": {
+                    "displayName": "Top margin",
+                    "description": "Top margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "bottomMarginA": {
+                    "displayName": "Bottom margin",
+                    "description": "Bottom margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "bottomMarginS": {
+                    "displayName": "Bottom margin",
+                    "description": "Bottom margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "bottomMarginU": {
+                    "displayName": "Bottom margin",
+                    "description": "Bottom margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "bottomMarginH": {
+                    "displayName": "Bottom margin",
+                    "description": "Bottom margin for the icon",
+                    "type": {
+                        "numeric": true
+                    }  
+                },
+                "transparencyA": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of icon",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyS": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of icon",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyU": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of icon",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyH": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of icon",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "layout": {
+            "displayName": "Layout",
+            "properties": {
+                "tileShape": {
+                    "displayName": "Shape",
+                    "description": "The shape of the tiles",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Rectangle",
+                                "value": "rectangle"
+                            },
+                            {
+                                "displayName": "Parallelogram",
+                                "value": "parallelogram"
+                            },
+                            {
+                                "displayName": "Chevron",
+                                "value": "chevron"
+                            },
+                            {
+                                "displayName": "Ellipse",
+                                "value": "ellipse"
+                            },
+                            {
+                                "displayName": "Pentagon",
+                                "value": "pentagon"
+                            },
+                            {
+                                "displayName": "Hexagon",
+                                "value": "hexagon"
+                            },
+                            {
+                                "displayName": "Tab: Rounded Corners",
+                                "value": "tab_roundedCorners"
+                            },
+                            {
+                                "displayName": "Tab: Cut Corners",
+                                "value": "tab_cutCorners"
+                            },
+                            {
+                                "displayName": "Tab: Cut Corner",
+                                "value": "tab_cutCorner"
+                            }
+                        ]
+                    }
+                },
+                "parallelogramAngle": {
+                    "displayName": "Angle",
+                    "description": "The parallelogram's angle",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "chevronAngle": {
+                    "displayName": "Angle",
+                    "description": "The chevron's angle",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "pentagonAngle": {
+                    "displayName": "Angle",
+                    "description": "The pentagon's angle",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "hexagonAngle": {
+                    "displayName": "Angle",
+                    "description": "The pentagon's angle",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "tab_cutCornersLength": {
+                    "displayName": "Length",
+                    "description": "How much to cut out of the tab",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "tab_cutCornerLength": {
+                    "displayName": "Length",
+                    "description": "How much to cut out of the tab",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "sizingMethod": {
+                    "displayName": "Sizing method",
+                    "description": "How tiles will be sized based on their text.",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Uniform",
+                                "value": "uniform"
+                            },
+                            {
+                                "displayName": "Fixed",
+                                "value": "fixed"
+                            },
+                            {
+                                "displayName": "Dynamic",
+                                "value": "dynamic"
+                            }
+                        ]
+                    }
+                },
+                "tileLayout": {
+                    "displayName": "Layout",
+                    "description": "How tiles will be laid out.",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Horizontal",
+                                "value": "horizontal"
+                            },
+                            {
+                                "displayName": "Vertical",
+                                "value": "vertical"
+                            },
+                            {
+                                "displayName": "Grid",
+                                "value": "grid"
+                            }
+                        ]
+                    }
+                },
+                "tileWidth": {
+                    "displayName": "Tile width",
+                    "description": "The width of each tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "tileHeight": {
+                    "displayName": "Tile height",
+                    "description": "The height of each tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "tileAlignment": {
+                    "displayName": "Tile alignment",
+                    "description": "Alignment for tiles in the visual",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "rowLength": {
+                    "displayName": "Tiles per row",
+                    "description": "Number of tiles in each row of the grid",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "padding": {
+                    "displayName": "Padding between tiles",
+                    "description": "The padding between tiles.",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "effects": {
+            "displayName": "Effects",
+            "properties": {
+                "state": {
+                    "displayName": "State",
+                    "description": "What state to apply the styles to",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "All",
+                                "value": "all"
+                            },
+                            {
+                                "displayName": "Selected",
+                                "value": "selected"
+                            },
+                            {
+                                "displayName": "Unselected",
+                                "value": "unselected"
+                            },
+                            {
+                                "displayName": "Hover",
+                                "value": "hovered"
+                            }
+                        ]
+                    }
+                },
+                "hoverStyling": {
+                    "displayName": "Hover styling",
+                    "description": "Allow seperate hover styling",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "shapeRoundedCornerRadius": {
+                    "displayName": "Rounded corner radius",
+                    "description": "Radius for shape's rounded corner",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadow": {
+                    "displayName": "Shadow",
+                    "description": "Add a shadow to each tile",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "shadowColorA": {
+                    "displayName": "Color",
+                    "description": "Color of shadow",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "shadowColorS": {
+                    "displayName": "Color",
+                    "description": "Color of shadow",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "shadowColorU": {
+                    "displayName": "Color",
+                    "description": "Color of shadow",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "shadowTransparencyA": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowTransparencyS": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowTransparencyU": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowTransparencyH": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowDirectionA": {
+                    "displayName": "Direction",
+                    "description": "Direction of the shadow",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Bottom Right",
+                                "value": "bottom_right"
+                            },
+                            {
+                                "displayName": "Bottom",
+                                "value": "bottom"
+                            },
+                            {
+                                "displayName": "Bottom Left",
+                                "value": "bottom_left"
+                            },
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Center",
+                                "value": "center"
+                            },
+                            {
+                                "displayName": "Top Left",
+                                "value": "top_left"
+                            },
+                            {
+                                "displayName": "Top",
+                                "value": "top"
+                            },
+                            {
+                                "displayName": "Top Right",
+                                "value": "top_right"
+                            },
+                            {
+                                "displayName": "Right",
+                                "value": "right"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "shadowDirectionS": {
+                    "displayName": "Direction",
+                    "description": "Direction of the shadow",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Bottom Right",
+                                "value": "bottom_right"
+                            },
+                            {
+                                "displayName": "Bottom",
+                                "value": "bottom"
+                            },
+                            {
+                                "displayName": "Bottom Left",
+                                "value": "bottom_left"
+                            },
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Center",
+                                "value": "center"
+                            },
+                            {
+                                "displayName": "Top Left",
+                                "value": "top_left"
+                            },
+                            {
+                                "displayName": "Top",
+                                "value": "top"
+                            },
+                            {
+                                "displayName": "Top Right",
+                                "value": "top_right"
+                            },
+                            {
+                                "displayName": "Right",
+                                "value": "right"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "shadowDirectionU": {
+                    "displayName": "Direction",
+                    "description": "Direction of the shadow",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Bottom Right",
+                                "value": "bottom_right"
+                            },
+                            {
+                                "displayName": "Bottom",
+                                "value": "bottom"
+                            },
+                            {
+                                "displayName": "Bottom Left",
+                                "value": "bottom_left"
+                            },
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Center",
+                                "value": "center"
+                            },
+                            {
+                                "displayName": "Top Left",
+                                "value": "top_left"
+                            },
+                            {
+                                "displayName": "Top",
+                                "value": "top"
+                            },
+                            {
+                                "displayName": "Top Right",
+                                "value": "top_right"
+                            },
+                            {
+                                "displayName": "Right",
+                                "value": "right"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "shadowDirectionH": {
+                    "displayName": "Direction",
+                    "description": "Direction of the shadow",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Bottom Right",
+                                "value": "bottom_right"
+                            },
+                            {
+                                "displayName": "Bottom",
+                                "value": "bottom"
+                            },
+                            {
+                                "displayName": "Bottom Left",
+                                "value": "bottom_left"
+                            },
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Center",
+                                "value": "center"
+                            },
+                            {
+                                "displayName": "Top Left",
+                                "value": "top_left"
+                            },
+                            {
+                                "displayName": "Top",
+                                "value": "top"
+                            },
+                            {
+                                "displayName": "Top Right",
+                                "value": "top_right"
+                            },
+                            {
+                                "displayName": "Right",
+                                "value": "right"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "shadowDistanceA": {
+                    "displayName": "Distance",
+                    "description": "Distance of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowDistanceS": {
+                    "displayName": "Distance",
+                    "description": "Distance of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowDistanceU": {
+                    "displayName": "Distance",
+                    "description": "Distance of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowDistanceH": {
+                    "displayName": "Distance",
+                    "description": "Distance of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowStrengthA": {
+                    "displayName": "Strength",
+                    "description": "Strength of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowStrengthS": {
+                    "displayName": "Strength",
+                    "description": "Strength of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowStrengthU": {
+                    "displayName": "Strength",
+                    "description": "Strength of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "shadowStrengthH": {
+                    "displayName": "Strength",
+                    "description": "Strength of the shadow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glow": {
+                    "displayName": "Glow",
+                    "description": "Add a glow to each tile",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "glowColorA": {
+                    "displayName": "Color",
+                    "description": "Color of glow",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "glowColorS": {
+                    "displayName": "Color",
+                    "description": "Color of glow",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "glowColorU": {
+                    "displayName": "Color",
+                    "description": "Color of glow",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "glowTransparencyA": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowTransparencyS": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowTransparencyU": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowTransparencyH": {
+                    "displayName": "Transparency",
+                    "description": "Transparency of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowStrengthA": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowStrengthS": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowStrengthU": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "glowStrengthH": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        },
+        "content": {
+            "displayName": "Content",
+            "properties": {
+                "multiselect": {
+                    "displayName": "Multiselect",
+                    "description": "Ability to select multiple tiles",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "source": {
+                    "displayName": "Source",
+                    "description": "Data source",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Data-bound",
+                                "value": "databound"
+                            },
+                            {
+                                "displayName": "Fixed",
+                                "value": "fixed"
+                            },
+                            {
+                                "displayName": "Measures",
+                                "value": "measures"
+                            }
+                        ]
+                    }
+                },
+                "n": {
+                    "displayName": "Number of tiles",
+                    "description": "Number of tiles.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "icons": {
+                    "displayName": "Icons",
+                    "description": "Option to give URL for tile icons",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "text1": {
+                    "displayName": "Tile 1 Text",
+                    "description": "Text for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text2": {
+                    "displayName": "Tile 2 Text",
+                    "description": "Text for the second tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text3": {
+                    "displayName": "Tile 3 Text",
+                    "description": "Text for the third tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text4": {
+                    "displayName": "Tile 4 Text",
+                    "description": "Text for the fourth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text5": {
+                    "displayName": "Tile 5 Text",
+                    "description": "Text for the fifth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text6": {
+                    "displayName": "Tile 6 Text",
+                    "description": "Text for the sixth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text7": {
+                    "displayName": "Tile 7 Text",
+                    "description": "Text for the seventh tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text8": {
+                    "displayName": "Tile 8 Text",
+                    "description": "Text for the eighth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text9": {
+                    "displayName": "Tile 9 Text",
+                    "description": "Text for the ninth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "text10": {
+                    "displayName": "Tile 10 Text",
+                    "description": "Text for the tenth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon1": {
+                    "displayName": "Tile 1 Icon URL",
+                    "description": "Icon URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon2": {
+                    "displayName": "Tile 2 Icon URL",
+                    "description": "Icon URL for the second tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon3": {
+                    "displayName": "Tile 3 Icon URL",
+                    "description": "Icon URL for the third tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon4": {
+                    "displayName": "Tile 4 Icon URL",
+                    "description": "Icon URL for the fourth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon5": {
+                    "displayName": "Tile 5 Icon URL",
+                    "description": "Icon URL for the fifth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon6": {
+                    "displayName": "Tile 6 Icon URL",
+                    "description": "Icon URL for the sixth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon7": {
+                    "displayName": "Tile 7 Icon URL",
+                    "description": "Icon URL for the seventh tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon8": {
+                    "displayName": "Tile 8 Icon URL",
+                    "description": "Icon URL for the eighth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon9": {
+                    "displayName": "Tile 9 Icon URL",
+                    "description": "Icon URL for the ninth tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "icon10": {
+                    "displayName": "Tile 10 Icon URL",
+                    "description": "Icon URL for the tenth tile",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "bgimg": {
+            "displayName": "Background image",
+            "properties": {
+                "bgimgs": {
+                    "displayName": "Background images",
+                    "description": "Option to give URL for tile icons",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "img1": {
+                    "displayName": "Tile 1 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img2": {
+                    "displayName": "Tile 2 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img3": {
+                    "displayName": "Tile 3 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img4": {
+                    "displayName": "Tile 4 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img5": {
+                    "displayName": "Tile 5 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img6": {
+                    "displayName": "Tile 6 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img7": {
+                    "displayName": "Tile 7 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img8": {
+                    "displayName": "Tile 8 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img9": {
+                    "displayName": "Tile 9 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "img10": {
+                    "displayName": "Tile 10 Image URL",
+                    "description": "Image URL for the first tile",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "measures":{
+            "displayName": "Measures",
+            "properties": {
+                "state": {
+                    "displayName": "State",
+                    "description": "What state to apply the styles to",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "All",
+                                "value": "all"
+                            },
+                            {
+                                "displayName": "Selected",
+                                "value": "selected"
+                            },
+                            {
+                                "displayName": "Unselected",
+                                "value": "unselected"
+                            },
+                            {
+                                "displayName": "Hover",
+                                "value": "hovered"
+                            }
+                        ]
+                    }
+                },
+                "hoverStyling": {
+                    "displayName": "Hover styling",
+                    "description": "Allow seperate hover styling",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "colorA": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorS": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorU": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "colorH": {
+                    "displayName": "Font color",
+                    "description": "Font color for the text.",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "alignmentA": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "alignmentS": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "alignmentU": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "alignmentH": {
+                    "displayName": "Alignment",
+                    "description": "Alignment position for the text",
+                    "type": {
+                        "formatting": {
+                            "alignment": true
+                        }
+                    }
+                },
+                "fontSizeA": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSizeS": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSizeU": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontSizeH": {
+                    "displayName": "Font size",
+                    "description": "The size of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "fontFamilyA": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "fontFamilyS": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "fontFamilyU": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "fontFamilyH": {
+                    "displayName": "Font family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "vmarginA": {
+                    "displayName": "Vertical margin",
+                    "description": "",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "vmarginS": {
+                    "displayName": "Vertical margin",
+                    "description": "",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "vmarginU": {
+                    "displayName": "Vertical margin",
+                    "description": "",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "vmarginH": {
+                    "displayName": "Vertical margin",
+                    "description": "",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyA": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyS": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyU": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "transparencyH": {
+                    "displayName": "Transparency",
+                    "description": "The transparency of the font.",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        }
+    },
+    "dataViewMappings": [
+        {
+            "categorical": {
+                "categories": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "pages"
+                            }
+                        },
+                        {
+                            "for": {
+                                "in": "icons"
+                            }
+                        }
+                    ]
+                },
+                "values": {
+                    "select": [
+                        {"bind": {"to": "measures" }}
+                    ]
+                }
+            }
+        }
+    ]
+}
