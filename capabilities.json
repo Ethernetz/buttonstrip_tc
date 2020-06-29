@@ -1,19 +1,14 @@
 {
     "dataRoles": [
         {
-            "displayName": "Pages",
-            "name": "pages",
+            "displayName": "Category",
+            "name": "category",
             "kind": "Grouping"
         },
         {
             "displayName": "Icons",
             "name": "icons",
             "kind": "Grouping"
-        },
-        {
-            "displayName": "Measures",
-            "name": "measures",
-            "kind": "Measure"
         }
     ],
     "objects": {
@@ -1353,6 +1348,22 @@
                         "bool": true
                     }
                 },
+                "source": {
+                    "displayName": "Source",
+                    "description": "Data source",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Data-bound",
+                                "value": "databound"
+                            },
+                            {
+                                "displayName": "Fixed",
+                                "value": "fixed"
+                            }
+                        ]
+                    }
+                },
                 "n": {
                     "displayName": "Number of tiles",
                     "description": "Number of tiles.",
@@ -1831,7 +1842,7 @@
                     "select": [
                         {
                             "for": {
-                                "in": "pages"
+                                "in": "category"
                             }
                         },
                         {
@@ -1839,11 +1850,6 @@
                                 "in": "icons"
                             }
                         }
-                    ]
-                },
-                "values": {
-                    "select": [
-                        {"bind": {"to": "measures" }}
                     ]
                 }
             }

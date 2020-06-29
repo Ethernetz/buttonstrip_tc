@@ -39,11 +39,15 @@ export class Generic extends Tile {
 
     onTileMouseover() {
         this.visual.hoveredIndex = this.i
-        // this.visual.update(this.collection.options)
+        let vs = this.collection.visual.visualSettings
+        if(vs.tile.hoverStyling || vs.text.hoverStyling || vs.icon.hoverStyling || vs.effects.hoverStyling)
+            this.visual.update(this.collection.options)
     }
     onTileMouseout() {
         this.visual.hoveredIndex = null
-        // this.visual.update(this.collection.options)
+        let vs = this.collection.visual.visualSettings
+        if(vs.tile.hoverStyling || vs.text.hoverStyling || vs.icon.hoverStyling || vs.effects.hoverStyling)
+            this.visual.update(this.collection.options)
     }
 }
 

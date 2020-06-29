@@ -146,11 +146,32 @@ export class Visual implements IVisual {
                     delete settings.effects[effectSettingsKeys[i]]
 
 
-        for (let i = 10; i > settings.content.n; i--) {
-            delete settings.content['text' + i]
-            delete settings.content['icon' + i]
-            delete settings.bgimg['img' + i]
+        switch (settings.content.source) {
+            case ContentSource.databound:
+                delete settings.content.n
+                delete settings.content.icons
+                for (let i = 1; i < 11; i++) {
+                    delete settings.content['text' + i]
+                    delete settings.content['icon' + i]
+                    delete settings.bgimg['img' + i]
+                }
+                break
+
+            case ContentSource.fixed:
+                for (let i = 10; i > settings.content.n; i--) {
+                    delete settings.content['text' + i]
+                    delete settings.content['icon' + i]
+                    delete settings.bgimg['img' + i]
+                }
+                if (!this.visualSettings.content.icons)
+                    for (let i = 1; i < 11; i++)
+                        delete settings.content['icon' + i]
+                if (!this.visualSettings.bgimg.bgimgs)
+                    for (let i = 1; i < 11; i++)
+                        delete settings.bgimg['img' + i]
+                break
         }
+
         if (!this.visualSettings.content.icons)
             for (let i = 1; i < 11; i++)
                 delete settings.content['icon' + i]
@@ -164,7 +185,7 @@ export class Visual implements IVisual {
             delete settings.icon[getCorrectPropertyStateName(settings.icon.state, "topMargin")]
             delete settings.icon[getCorrectPropertyStateName(settings.icon.state, "bottomMargin")]
         }
-        if(!(settings.icon.icons && iconPlacement == IconPlacement.above))
+        if (!(settings.icon.icons && iconPlacement == IconPlacement.above))
             delete settings.text[getCorrectPropertyStateName(settings.text.state, "bmargin")]
 
         if (settings.layout.sizingMethod != TileSizingType.fixed) {
@@ -232,18 +253,43 @@ export class Visual implements IVisual {
         genericsCollection.options = options
 
 
-        //FIXED TEXT
-        for (let i = 0; i < this.visualSettings.content.n; i++) {
-            genericsCollection.tilesData.push({
-                text: this.visualSettings.content['text' + (i + 1)],
-                iconURL: this.visualSettings.content.icons ? this.visualSettings.content['icon' + (i + 1)] : "",
-                bgimgURL: this.visualSettings.bgimg.bgimgs ? this.visualSettings.bgimg['img' + (i + 1)] : "",
-                contentFormatType: this.visualSettings.icon.icons ? ContentFormatType.text_icon : ContentFormatType.text,
-                isSelected: this.selectionManagerUnbound.getSelectionIndexes().indexOf(i) > -1,
-                isHovered: this.hoveredIndex == i
-            });
+        if (this.visualSettings.content.source == ContentSource.databound) {
+            let dataView = options.dataViews[0]
+            let categories: powerbi.DataViewCategoryColumn[] = dataView.categorical.categories;
+            let selectionIdKeys: string[] = (this.selectionManager.getSelectionIds() as powerbi.visuals.ISelectionId[]).map(x => x.getKey()) as string[]
 
+            for (let i = 0; i < categories[0].values.length; i++) {
+                let pageValue: string = categories[0].values[i].toString();
+                let iconURL: string = categories[1] ? categories[1].values[i].toString() : "";
+                let tileSelectionId = this.host.createSelectionIdBuilder()
+                    .withCategory(categories[0], i)
+                    .createSelectionId();
+                genericsCollection.tilesData.push({
+                    text: pageValue,
+                    iconURL: this.visualSettings.icon.icons ? iconURL : "",
+                    contentFormatType: this.visualSettings.icon.icons ? ContentFormatType.text_icon : ContentFormatType.text,
+                    selectionId: tileSelectionId,
+                    isHovered: this.hoveredIndex == i,
+                    get isSelected(): boolean {
+                        return this.selectionId &&
+                            selectionIdKeys &&
+                            selectionIdKeys.indexOf(this.selectionId.getKey() as string) > -1
+                    }
+                });
+            }
+        } else {
+            for (let i = 0; i < this.visualSettings.content.n; i++) {
+                genericsCollection.tilesData.push({
+                    text: this.visualSettings.content['text' + (i + 1)],
+                    iconURL: this.visualSettings.content.icons ? this.visualSettings.content['icon' + (i + 1)] : "",
+                    bgimgURL: this.visualSettings.bgimg.bgimgs ? this.visualSettings.bgimg['img' + (i + 1)] : "",
+                    contentFormatType: this.visualSettings.icon.icons ? ContentFormatType.text_icon : ContentFormatType.text,
+                    isSelected: this.selectionManagerUnbound.getSelectionIndexes().indexOf(i) > -1,
+                    isHovered: this.hoveredIndex == i
+                });
+            }
         }
+
         genericsCollection.render()
     }
 

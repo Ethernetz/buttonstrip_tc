@@ -49,28 +49,29 @@ export class EffectSettings extends TileCollectionFormatSettings.EffectSettings{
 
 export class ContentSettings{
   public multiselect: boolean = false
+  public source: ContentSource = ContentSource.fixed
 
   public n: number = 5
   public icons: boolean = false
-  public text1: string = "Text"
+  public text1: string = "Button 1"
   public icon1: string = ""
-  public text2: string = "Text"
+  public text2: string = "Button 2"
   public icon2: string = ""
-  public text3: string = "Text"
+  public text3: string = "Button 3"
   public icon3: string = ""
-  public text4: string = "Text"
+  public text4: string = "Button 4"
   public icon4: string = ""
-  public text5: string = "Text"
+  public text5: string = "Button 5"
   public icon5: string = ""
-  public text6: string = "Text"
+  public text6: string = "Button 6"
   public icon6: string = ""
-  public text7: string = "Text"
+  public text7: string = "Button 7"
   public icon7: string = ""
-  public text8: string = "Text"
+  public text8: string = "Button 8"
   public icon8: string = ""
-  public text9: string = "Text"
+  public text9: string = "Button 9"
   public icon9: string = ""
-  public text10: string = "Text"
+  public text10: string = "Button 10"
   public icon10: string = ""
 }
 
