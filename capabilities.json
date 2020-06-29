@@ -1,17 +1,7 @@
 {
     "dataRoles": [
         {
-            "displayName": "Pages",
-            "name": "pages",
-            "kind": "Grouping"
-        },
-        {
-            "displayName": "Icons",
-            "name": "icons",
-            "kind": "Grouping"
-        },
-        {
-            "displayName": "Measures",
+            "displayName": "Dummy data",
             "name": "measures",
             "kind": "Measure"
         }
@@ -1827,20 +1817,6 @@
     "dataViewMappings": [
         {
             "categorical": {
-                "categories": {
-                    "select": [
-                        {
-                            "for": {
-                                "in": "pages"
-                            }
-                        },
-                        {
-                            "for": {
-                                "in": "icons"
-                            }
-                        }
-                    ]
-                },
                 "values": {
                     "select": [
                         {"bind": {"to": "measures" }}
