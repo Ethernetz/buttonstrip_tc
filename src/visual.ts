@@ -62,7 +62,7 @@ import { ContentSource } from './enums'
 import { select, merge } from "d3";
 
 
-import { GenericsCollection } from './GenericsCollection'
+import { ButtonsCollection } from './ButtonsCollection'
 import { ContentFormatType } from "./TilesCollection/enums";
 
 export class Visual implements IVisual {
@@ -235,22 +235,22 @@ export class Visual implements IVisual {
             .style('height', options.viewport.height)
 
 
-        let genericsCollection = new GenericsCollection()
+        let buttonsCollection = new ButtonsCollection()
 
-        genericsCollection.formatSettings.tile = this.visualSettings.tile
-        genericsCollection.formatSettings.text = this.visualSettings.text
-        genericsCollection.formatSettings.icon = this.visualSettings.icon
-        genericsCollection.formatSettings.layout = this.visualSettings.layout
-        genericsCollection.formatSettings.effect = this.visualSettings.effects
+        buttonsCollection.formatSettings.tile = this.visualSettings.tile
+        buttonsCollection.formatSettings.text = this.visualSettings.text
+        buttonsCollection.formatSettings.icon = this.visualSettings.icon
+        buttonsCollection.formatSettings.layout = this.visualSettings.layout
+        buttonsCollection.formatSettings.effect = this.visualSettings.effects
 
 
-        genericsCollection.container = this.container
-        genericsCollection.viewport = {
+        buttonsCollection.container = this.container
+        buttonsCollection.viewport = {
             height: options.viewport.height,
             width: options.viewport.width,
         }
-        genericsCollection.visual = this
-        genericsCollection.options = options
+        buttonsCollection.visual = this
+        buttonsCollection.options = options
 
 
         if (this.visualSettings.content.source == ContentSource.databound) {
@@ -261,13 +261,12 @@ export class Visual implements IVisual {
             for (let i = 0; i < categories[0].values.length; i++) {
                 let pageValue: string = categories[0].values[i].toString();
                 let iconURL: string = categories[1] ? categories[1].values[i].toString() : "";
-               
-                let bgImgURL: string = categories[2] ? categories[2].values[i].toString() : "";
+                let bgImgURL: string = categories[2] ? categories[2].values[i].toString() : ""; //TODO tell if no icon & bgimg is cat[1]
                 console.log(dataView.categorical)
                 let tileSelectionId = this.host.createSelectionIdBuilder()
                     .withCategory(categories[0], i)
                     .createSelectionId();
-                genericsCollection.tilesData.push({
+                buttonsCollection.tilesData.push({
                     text: pageValue,
                     iconURL: this.visualSettings.icon.icons ? iconURL : "",
                     bgimgURL: this.visualSettings.bgimg.bgimgs ? bgImgURL : "",
@@ -283,7 +282,7 @@ export class Visual implements IVisual {
             }
         } else {
             for (let i = 0; i < this.visualSettings.content.n; i++) {
-                genericsCollection.tilesData.push({
+                buttonsCollection.tilesData.push({
                     text: this.visualSettings.content['text' + (i + 1)],
                     iconURL: this.visualSettings.content.icons ? this.visualSettings.content['icon' + (i + 1)] : "",
                     bgimgURL: this.visualSettings.bgimg.bgimgs ? this.visualSettings.bgimg['img' + (i + 1)] : "",
@@ -294,7 +293,7 @@ export class Visual implements IVisual {
             }
         }
 
-        genericsCollection.render()
+        buttonsCollection.render()
     }
 
 

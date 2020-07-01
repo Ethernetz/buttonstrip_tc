@@ -1,19 +1,19 @@
-import {Viewport} from './interfaces'
-import {FormatSettings} from './FormatSettings'
-import {TileData} from './TileData'
-import {State, TileSizingType, TileLayoutType, AlignmentType, TileShape, Direction, ContentFormatType, IconPlacement} from './enums'
-import {getMatchingStateProperty, calculateWordDimensions} from './functions'
+import { Viewport } from './interfaces'
+import { FormatSettings } from './FormatSettings'
+import { TileData } from './TileData'
+import { State, TileSizingType, TileLayoutType, AlignmentType, TileShape, Direction, ContentFormatType, IconPlacement } from './enums'
+import { getMatchingStateProperty, calculateWordDimensions } from './functions'
 import { Shape, Rectangle, Parallelogram, Chevron, Ellipse, Pentagon, Hexagon, Tab_RoundedCorners, Tab_CutCorners, Tab_CutCorner, ChevronVertical, ParallelogramVertical } from "./shapes"
 import { BaseType } from 'd3'
 import { TilesCollection } from './TilesCollection'
-import { Handle } from '../interfaces'
+import { Handle } from './interfaces'
 import * as d3 from 'd3'
 export class Tile {
     collection: TilesCollection
     i: number;
     tilesData: TileData[]
     formatSettings: FormatSettings;
-    constructor(collection: TilesCollection,i:number, tilesData: TileData[], formatSettings: FormatSettings){
+    constructor(collection: TilesCollection, i: number, tilesData: TileData[], formatSettings: FormatSettings) {
         this.collection = collection
         this.i = i;
         this.tilesData = tilesData;
@@ -21,8 +21,8 @@ export class Tile {
     }
     //Format Settings
 
-    get viewport(): Viewport{
-        return this.formatSettings.viewport 
+    get viewport(): Viewport {
+        return this.formatSettings.viewport
     }
     get viewportWidth(): number {
         return this.viewport.width
@@ -36,7 +36,7 @@ export class Tile {
     get containerHeight(): number {
         return this.viewportHeight - this.effectSpace
     }
-    
+
     get n(): number {
         return this.tilesData.length
     }
@@ -66,7 +66,7 @@ export class Tile {
         return this.rowNumber * this.rowLength
     }
 
-    get text(): string{
+    get text(): string {
         return this.tileData.text
     }
     get rowText(): string[] {
@@ -74,53 +74,53 @@ export class Tile {
     }
 
     get textFill(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'color')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'color')
     }
     get textFillOpacity(): number {
-        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.text, 'transparency') / 100
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.text, 'transparency') / 100
     }
     get fontSize(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'fontSize')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'fontSize')
     }
     get fontFamily(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'fontFamily')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'fontFamily')
     }
     get textAlign(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'alignment')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'alignment')
     }
     get textHmargin(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'hmargin')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'hmargin')
     }
     get textBmargin(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.text, 'bmargin')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'bmargin')
     }
 
     get textPrimaryFill(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'color')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'color')
     }
     get textPrimaryFillOpacity(): number {
-        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'transparency') / 100
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'transparency') / 100
     }
     get fontPrimarySize(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'fontSize')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'fontSize')
     }
     get fontPrimaryFamily(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.textPrimary, 'fontFamily')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'fontFamily')
     }
 
     get textSecondaryFill(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'color')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'color')
     }
     get textSecondaryFillOpacity(): number {
-        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'transparency') / 100
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'transparency') / 100
     }
     get fontSecondarySize(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'fontSize')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'fontSize')
     }
     get fontSecondaryFamily(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.textSecondary, 'fontFamily')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'fontFamily')
     }
-    
+
     // get widthSpaceForAllText(): number {
     //     let totalPadding = (this.tilesInRow - 1) * this.formatSettings.layout.padding;
     //     return this.viewportWidth - totalPadding - ProcessedVisualSettings.totalTextHmargin;
@@ -132,7 +132,7 @@ export class Tile {
         return this.contentContainerWidth - 2 * this.textHmargin
     }
     get widthSpaceForAllText(): number {
-        return this.viewport.width - this.rowLength*(2*this.textHmargin) - this.totalTileHPadding - this.effectSpace
+        return this.viewport.width - this.rowLength * (2 * this.textHmargin) - this.totalTileHPadding - this.effectSpace
     }
     get inlineTextWidth(): number {
         return calculateWordDimensions(this.text, this.fontFamily, this.fontSize + "pt").width
@@ -144,50 +144,50 @@ export class Tile {
         return calculateWordDimensions(this.text as string, this.fontFamily, this.fontSize + "pt", this.textContainerWidthType, (this.maxInlineTextWidth) + 'px').height;
     }
 
-    get beforeInRowText(): string[]{
+    get beforeInRowText(): string[] {
         return this.rowText.slice(0, this.indexInRow)
     }
-    get beforeInRowTextWidth(): number{
-        if(this.beforeInRowText.length == 0)
+    get beforeInRowTextWidth(): number {
+        if (this.beforeInRowText.length == 0)
             return 0
         return calculateWordDimensions(this.beforeInRowText.join(""), this.fontFamily, this.fontSize + "pt").width
     }
 
     get textContainerWidthType(): string {
-        return this.inlineTextWidth + 2 * this.textHmargin >= Math.floor(this.maxInlineTextWidth) 
-                && this.tileData.contentFormatType == ContentFormatType.text_icon
-                && this.iconPlacement == IconPlacement.left
-                ? 'min-content' : 'auto'
+        return this.inlineTextWidth + 2 * this.textHmargin >= Math.floor(this.maxInlineTextWidth)
+            && this.tileData.contentFormatType == ContentFormatType.text_icon
+            && this.iconPlacement == IconPlacement.left
+            ? 'min-content' : 'auto'
     }
-    
+
     get textContainerHeight(): number {
         return this.boundedTextHeight + this.textBmargin
     }
-    get contentContainerWidth(): number{
+    get contentContainerWidth(): number {
         return this.shape.contentFODims.width
     }
-    get widthTakenByIcon(): number{
+    get widthTakenByIcon(): number {
         return this.iconWidth + this.iconHmargin
     }
     get maxInlineTextWidth(): number {
         return this.widthSpaceForText - this.widthTakenByIcon
     }
 
-    get textSecondary(): string{
+    get textSecondary(): string {
         return this.tileData.textSecondary
     }
 
     get tileFill(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.tile, 'color')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.tile, 'color')
     }
     get tileFillOpacity(): number {
         return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.tile, 'transparency') / 100
     }
     get tileStroke(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.tile, 'stroke')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.tile, 'stroke')
     }
     get tileStrokeWidth(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.tile, 'strokeWidth')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.tile, 'strokeWidth')
     }
     get tilePadding(): number {
         return this.formatSettings.layout.padding
@@ -199,8 +199,7 @@ export class Tile {
         return this.tileHPadding * (this.rowLength - 1)
     }
     get tileVPadding(): number {
-        return this.tilePadding 
-        // + this.alterVerticalPadding
+        return this.tilePadding + this.alterVerticalPadding
     }
     get totalTileVPadding(): number {
         return this.tileVPadding * (this.numRows - 1)
@@ -212,18 +211,18 @@ export class Tile {
             case TileSizingType.fixed:
                 return this.formatSettings.layout.tileWidth
             case TileSizingType.dynamic:
-                if(this.indexInRow == this.rowLength-1)
+                if (this.indexInRow == this.rowLength - 1)
                     return this.containerWidth - this.tileXpos
                 return this.inlineTextWidth + this.dynamicExtraWidthPerTile
         }
     }
-    get dynamicExtraWidthPerTile(): number{
-        let textSpaceRequired = this.allTextWidth + this.textHmargin*2*this.rowLength + this.totalTileHPadding
+    get dynamicExtraWidthPerTile(): number {
+        let textSpaceRequired = this.allTextWidth + this.textHmargin * 2 * this.rowLength + this.totalTileHPadding
         let spaceRemaining = Math.max(0, this.containerWidth - textSpaceRequired)
-        return spaceRemaining/this.rowLength
+        return spaceRemaining / this.rowLength
     }
     get tileHeight(): number {
-        if(this.formatSettings.layout.sizingMethod == TileSizingType.fixed)
+        if (this.formatSettings.layout.sizingMethod == TileSizingType.fixed)
             return this.formatSettings.layout.tileHeight
         return (this.containerHeight - this.totalTileVPadding) / this.numRows
 
@@ -246,7 +245,7 @@ export class Tile {
             case TileSizingType.uniform:
                 return this.indexInRow * (this.tileWidth + this.tileHPadding) + this.effectSpace / 2
             case TileSizingType.dynamic:
-                return this.beforeInRowTextWidth + this.dynamicExtraWidthPerTile*this.indexInRow + this.effectSpace/2 + this.indexInRow*(this.tileHPadding)
+                return this.beforeInRowTextWidth + this.dynamicExtraWidthPerTile * this.indexInRow + this.effectSpace / 2 + this.indexInRow * (this.tileHPadding)
         }
     }
     get tileYpos(): number {
@@ -292,23 +291,35 @@ export class Tile {
         return this.shape.strokePath
     }
     get handles(): Handle[] {
-            return this.shape.handles
-        }
+        return this.shape.handles
+    }
     get alterHorizontalPadding(): number {
-        switch (this.tileShape) {
-            case TileShape.parallelogram:
-                if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical)
+        if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical) {
+            switch (this.tileShape) {
+                case TileShape.parallelogram:
                     return Parallelogram.getAlterHPadding(this.tileHeight, this.formatSettings.layout.parallelogramAngle)
-            case TileShape.chevron:
-                if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical)
+                case TileShape.chevron:
                     return Chevron.getAlterHPadding(this.tileHeight, this.formatSettings.layout.chevronAngle)
-            default:
-                return Shape.getAlterHPadding(this.tileHeight, 0)
+                default:
+                    return 0
+            }
         }
+        return 0
     }
     get alterVerticalPadding(): number {
-        return this.shape.alterVPadding
+        if (this.formatSettings.layout.tileLayout == TileLayoutType.vertical) {
+            switch (this.tileShape) {
+                case TileShape.parallelogram:
+                    return ParallelogramVertical.getAlterVPadding(this.tileWidth, this.formatSettings.layout.parallelogramAngle)
+                case TileShape.chevron:
+                    return ChevronVertical.getAlterVPadding(this.tileWidth, this.formatSettings.layout.chevronAngle)
+                default:
+                    return 0
+            }
+        }
+        return 0
     }
+
     get contentFOHeight(): number {
         return this.shape.contentFODims.height
     }
@@ -323,11 +334,11 @@ export class Tile {
     get contentFOYPos(): number {
         return this.shape.contentFODims.yPos
     }
-    
 
 
 
-    get shapeRoundedCornerRadius(): number{
+
+    get shapeRoundedCornerRadius(): number {
         return this.formatSettings.effect.shapeRoundedCornerRadius
     }
 
@@ -341,29 +352,29 @@ export class Tile {
         return "url(#image" + this.i + ")"
     }
 
-    get shadow(): boolean{
+    get shadow(): boolean {
         return this.formatSettings.effect.shadow
     }
     get shadowColor(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'shadowColor')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowColor')
     }
     get shadowTransparency(): number {
-        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'shadowTransparency') / 100
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowTransparency') / 100
     }
     get shadowDistance(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'shadowDistance')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowDistance')
     }
     get shadowMaxDistance(): number {
         return Math.max(this.formatSettings.effect.shadowDistanceS, this.formatSettings.effect.shadowDistanceU, this.formatSettings.effect.shadowDistanceH)
     }
     get shadowStrength(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'shadowStrength')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowStrength')
     }
     get shadowMaxStrength(): number {
         return Math.max(this.formatSettings.effect.shadowStrengthS, this.formatSettings.effect.shadowStrengthU, this.formatSettings.effect.shadowStrengthH)
     }
     get shadowDirection(): Direction {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'shadowDirection')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowDirection')
     }
     get shadowDirectionCoords(): { x: number, y: number } {
         switch (this.shadowDirection) {
@@ -383,90 +394,90 @@ export class Tile {
         return this.shadow ? 3 * (this.shadowMaxDistance + this.shadowMaxStrength) : 0
     }
 
-    get glow(): boolean{
+    get glow(): boolean {
         return this.formatSettings.effect.glow
     }
     get glowColor(): string {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'glowColor')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'glowColor')
     }
     get glowTransparency(): number {
-        return 1 -getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'glowTransparency') / 100
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'glowTransparency') / 100
     }
     get glowStrength(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.effect, 'glowStrength')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'glowStrength')
     }
     get glowMaxStrength(): number {
         return Math.max(this.formatSettings.effect.glowStrengthS, this.formatSettings.effect.glowStrengthU, this.formatSettings.effect.glowStrengthH)
     }
     get glowSpace(): number {
-        return this.formatSettings.effect.glow ? 3 * (this.glowMaxStrength) : 0
+        return this.formatSettings.effect.glow ? 5 * (this.glowMaxStrength) : 0
     }
 
 
-    
+
     get iconURL(): string {
         return this.tileData.iconURL
     }
     get iconWidth(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.icon, 'width')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'width')
     }
     get iconHmargin(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.icon, 'hmargin')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'hmargin')
     }
     get iconTopMargin(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.icon, 'topMargin')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'topMargin')
     }
     get iconBottomMargin(): number {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.icon, 'bottomMargin')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'bottomMargin')
     }
     get spaceForIcon(): number {
         return this.contentFOWidth - this.iconHmargin
     }
     get iconPlacement(): IconPlacement {
-        return getMatchingStateProperty(this.currentState,this.formatSettings.icon, 'placement')
+        return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'placement')
     }
     get iconHeight(): number {
         return this.contentFOHeight - this.textContainerHeight - this.iconTopMargin - this.iconBottomMargin
     }
     get iconOpacity(): number {
-        return 1 - getMatchingStateProperty(this.currentState,this.formatSettings.icon, 'transparency') / 100
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'transparency') / 100
     }
 
     get bgImgURL(): string {
-        if(this.tileData.bgimgURL)
+        if (this.tileData.bgimgURL)
             return this.tileData.bgimgURL
         return ""
     }
-    
-    getBgImgDims(box: DOMRect): {width: number; height: number}{
-        let tileRatio = this.tileWidth/this.tileHeight
-        let imgRatio = box.width/box.height
-        if(tileRatio > imgRatio)
+
+    getBgImgDims(box: DOMRect): { width: number; height: number } {
+        let tileRatio = this.tileWidth / this.tileHeight
+        let imgRatio = box.width / box.height
+        if (tileRatio > imgRatio)
             return {
                 width: this.tileWidth,
-                height: box.height*this.tileWidth/box.width
+                height: box.height * this.tileWidth / box.width
             }
         else
-            return  {
-                width: box.width*this.tileHeight/box.height,
+            return {
+                width: box.width * this.tileHeight / box.height,
                 height: this.tileHeight
             }
     }
 
 
     //Tile data
-    get tileData(): TileData{
+    get tileData(): TileData {
         return this.tilesData[this.i];
     }
 
-    get isSelected(): boolean{
+    get isSelected(): boolean {
         return this.tileData.isSelected;
     }
-    get isHovered(): boolean{
+    get isHovered(): boolean {
         return this.tileData.isHovered;
     }
     get currentState(): State {
-        if(this.isSelected)
+        if (this.isSelected)
             return State.selected;
         else if (this.isHovered)
             return State.hovered;
@@ -504,7 +515,7 @@ export class Tile {
         return textContainer
     }
 
-    get textByIconContainer(): HTMLDivElement{
+    get textByIconContainer(): HTMLDivElement {
         let textContainer = this.textContainer
         if (this.iconPlacement == IconPlacement.left) {
             textContainer.style.display = 'inline-block'
@@ -520,7 +531,7 @@ export class Tile {
         }
         return textContainer
     }
-    
+
 
     get img(): HTMLDivElement {
         let img = document.createElement('div')
@@ -565,7 +576,7 @@ export class Tile {
     //     return container
     // }
 
-    get contentTextTextSecondary(): HTMLDivElement{
+    get contentTextTextSecondary(): HTMLDivElement {
         let contentContainer = document.createElement('div')
         contentContainer.className = "contentContainer"
 
@@ -588,17 +599,17 @@ export class Tile {
         return contentContainer
     }
 
-    get contentTextIconFormat(): HTMLDivElement{
+    get contentTextIconFormat(): HTMLDivElement {
         let contentContainer = document.createElement('div')
         contentContainer.className = "contentContainer"
-        
+
         let text = this.textElement
         text.textContent = this.text
 
         let textContainer = this.textByIconContainer
         textContainer.append(text)
 
-        if(this.iconPlacement == IconPlacement.left){
+        if (this.iconPlacement == IconPlacement.left) {
             contentContainer.style.display = 'inline-block'
             contentContainer.append(this.img, textContainer)
             contentContainer.style.paddingLeft = this.textHmargin + 'px'
@@ -616,7 +627,7 @@ export class Tile {
         return contentContainer
     }
 
-    get contentTextFormat(): HTMLDivElement{
+    get contentTextFormat(): HTMLDivElement {
         let contentContainer = document.createElement('div')
         contentContainer.className = "contentContainer"
 
@@ -634,7 +645,7 @@ export class Tile {
 
 
     get content(): HTMLDivElement {
-        switch(this.tileData.contentFormatType){
+        switch (this.tileData.contentFormatType) {
             case ContentFormatType.text_icon:
                 return this.contentTextIconFormat
             case ContentFormatType.text_textSecondary:
@@ -647,8 +658,8 @@ export class Tile {
 
     //Events
 
-    onTileMouseover(d?: Tile, i?: number, n?:BaseType[] | ArrayLike<BaseType>){}
-    onTileMouseout(d?: Tile, i?: number, n?:BaseType[] | ArrayLike<BaseType>){}
-    onTileClick(d?: Tile, i?: number, n?:BaseType[] | ArrayLike<BaseType>){} 
-    
+    onTileMouseover(d?: Tile, i?: number, n?: BaseType[] | ArrayLike<BaseType>) { }
+    onTileMouseout(d?: Tile, i?: number, n?: BaseType[] | ArrayLike<BaseType>) { }
+    onTileClick(d?: Tile, i?: number, n?: BaseType[] | ArrayLike<BaseType>) { }
+
 }

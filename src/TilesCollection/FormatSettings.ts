@@ -17,9 +17,9 @@ export class TileSettings {
     public hoverStyling: boolean = false
 
     public colorA: string = "";
-    public colorS: string = "#fff";
-    public colorU: string = "#fff";
-    public colorH: string = "#fff";
+    public colorS: string = "#262222";
+    public colorU: string = "#262222";
+    public colorH: string = "#262222";
   
     public strokeA: string = "";
     public strokeS: string = "#000";
@@ -42,9 +42,9 @@ export class TileSettings {
     public hoverStyling: boolean = false
 
     public colorA: string = "";
-    public colorS: string = "#252423";
-    public colorU: string = "#252423";
-    public colorH: string = "#252423";
+    public colorS: string = "#fff";
+    public colorU: string = "#fff";
+    public colorH: string = "#fff";
   
     public alignmentA: AlignmentType = AlignmentType.center;
     public alignmentS: AlignmentType = AlignmentType.center;
@@ -190,7 +190,7 @@ export class TileSettings {
     public shadowColorA: string = ""
     public shadowColorS: string = "#000"
     public shadowColorU: string = "#000"
-    // public shadowColorH: string = "#000"
+    public shadowColorH: string = "#000"
     
     public shadowTransparencyA: number = null
     public shadowTransparencyS: number = 70
@@ -215,9 +215,9 @@ export class TileSettings {
     public glow: boolean = false;
   
     public glowColorA: string = ""
-    public glowColorS: string = "#3380FF"
-    public glowColorU: string = "#3380FF"
-    // public glowColorH: string = "#3380FF"
+    public glowColorS: string = "#41A4FF"
+    public glowColorU: string = "#41A4FF"
+    public glowColorH: string = "#41A4FF"
   
     public glowTransparencyA: number = null
     public glowTransparencyS: number = 0 

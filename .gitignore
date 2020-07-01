@@ -1,3 +1,4 @@
 .tmp/*
 webpack.statistics.dev.html
 *.html
+node_modules/*

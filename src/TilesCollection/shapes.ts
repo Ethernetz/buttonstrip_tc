@@ -1,4 +1,4 @@
-import {containerProperties, Handle} from "../interfaces"
+import {containerProperties, Handle} from "./interfaces"
 import {roundPathCorners} from "./shape-rounding"
 import { path } from "d3"
 import {round} from './functions'
@@ -24,6 +24,9 @@ export class Shape{
     }
 
     static getAlterHPadding(height: number, angle: number){
+        return 0
+    }
+    static getAlterVPadding(height: number, angle: number){
         return 0
     }
 
@@ -205,8 +208,10 @@ export class ParallelogramVertical extends Shape implements Shape{
         return handles
     }
 
-    get alterVPadding(): number{
-        return -1 * (ParallelogramVertical._z || this.width/Math.tan(this.angle*(Math.PI/180)))
+    static getAlterVPadding(width: number, angle: number): number{
+        if(this.handleFocused)
+            return -1 * ParallelogramVertical._z
+        return -1* width/Math.tan(angle*(Math.PI/180))
     }
 }
 
@@ -347,8 +352,10 @@ export class ChevronVertical extends Shape implements Shape{
         ]
         return handles
     }
-    get alterVPadding(): number{
-        return -1 * (ChevronVertical._z || (0.5 * this.width) / Math.tan(this.angle * (Math.PI / 180)))
+    static getAlterVPadding(width: number, angle: number): number{
+        if(this.handleFocused)
+            return -1 * ChevronVertical._z
+        return -1* (0.5 * width) / Math.tan(angle * (Math.PI / 180))
     }
 }
 
