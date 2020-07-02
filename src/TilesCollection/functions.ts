@@ -19,7 +19,7 @@ export function calculateWordDimensions(text: string, fontFamily: string, fontSi
 }
 
 export function getMatchingStateProperty(state: State, formatObj: any, propBase: string){
-    if(propBase == 'strokeWidth' && State.unselected){ //TODO fix this edge case
+    if(propBase == 'strokeWidth' && state == State.unselected){ //TODO fix this edge case
         return formatObj[propBase + 'U'] || 0
     }
     switch(state){

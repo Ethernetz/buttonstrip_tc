@@ -220,10 +220,11 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
+       
         if (!(options && options.dataViews && options.dataViews[0]))
             return
         this.visualSettings = VisualSettings.parse(options.dataViews[0]) as VisualSettings
-
+        console.log(this.visualSettings)
 
         let objects: powerbi.VisualObjectInstancesToPersist = getObjectsToPersist(this.visualSettings)
         if (objects.merge.length != 0)

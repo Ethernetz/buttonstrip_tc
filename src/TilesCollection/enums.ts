@@ -51,11 +51,13 @@ export enum Direction {
     top = "top",
     top_right = "top_right",
     right = "right",
-    custom = "custom"
+    custom = "custom",
+    empty = ""
 }
 
-export enum IconPlacement {
+export enum IconPlacement{
     left = "left",
     above = "above",
-    below = "below"
+    below = "below",
+    empty = ""
 }

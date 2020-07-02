@@ -17,7 +17,8 @@ export function getPropertyStateNames(propBase: string): propertyStateName{
             all: propBase+"A",
             selected: propBase+"S",
             unselected: propBase+"U",
-            hover: propBase+"H"
+            hover: propBase+"H",
+            default: propBase+ "D"
         }
 }
 
@@ -58,7 +59,8 @@ export function getObjectsToPersist(visualSettings: VisualSettings): powerbi.Vis
                 selected: visualSettings[objKey][groupedKeyNames.selected],
                 unselected: visualSettings[objKey][groupedKeyNames.unselected],
                 hover: visualSettings[objKey][groupedKeyNames.hover],
-                state: visualSettings[objKey].state
+                state: visualSettings[objKey].state,
+                default: visualSettings[objKey][groupedKeyNames.default]
             }
             let leveledPropertyState = levelProperties(propertyState)
             if (leveledPropertyState.didChange) {
@@ -79,23 +81,34 @@ export function levelProperties(propertyStates: propertyStatesInput): propertySt
     let _selected = propertyStates.selected
     let _unselected = propertyStates.unselected
     let _hover = propertyStates.hover
-    let _allExists: boolean = typeof _all == 'number' ? _all >= 0 : _all && _all.length > 0
-    let _selectedExists: boolean = typeof _selected == 'number' ? _selected >= 0 : _selected && _selected.length > 0
-    let _nullValue = typeof _all == 'number' ? null : ""
-    if (propertyStates.state == State.all && _allExists)
+    let allExists = false
+    let nullValue = null
+    if(typeof _all == 'number'){
+        allExists = _all >= 0
+    } else {
+        allExists = _all != null && _all.length > 0
+        nullValue = ""
+    }
+
+    if(_selected == null || _unselected == null || _hover == null){
+        _selected = _unselected = _hover = propertyStates.default
+    }
+
+    if (propertyStates.state == State.all && allExists)
         _selected = _unselected = _hover = _all
-    if (_selectedExists && _selected == _unselected)
+    if (_selected == _unselected && _selected == _hover)
         _all = _selected
-    if (!(_selected == _unselected && _selected == _hover))
-        _all = _nullValue
+    if (_selected != _unselected || _selected != _hover)
+        _all = nullValue
     return {
         all: _all,
         selected: _selected,
         unselected: _unselected,
         hover: _hover,
-        didChange: !(propertyStates.all == _all && 
-                    (propertyStates.selected == null || propertyStates.selected == _selected)  && 
-                    (propertyStates.unselected == null || propertyStates.unselected == _unselected) &&
-                    (propertyStates.hover == null || propertyStates.hover == _hover))
+        default: propertyStates.default,
+        didChange: !((propertyStates.all == _all) && 
+                    propertyStates.selected == _selected  && 
+                    propertyStates.unselected == _unselected &&
+                    propertyStates.hover == _hover)
     }
 }
