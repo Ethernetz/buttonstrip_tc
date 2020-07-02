@@ -15,8 +15,8 @@ export class TilesCollection {
     public render(): void {
         this.formatSettings.viewport = this.viewport
 
-
         for (let i = 0; i < this.tilesData.length; i++) {
+            this.createTile(i)
             this.tiles.push(this.createTile(i))
         }
 
@@ -136,10 +136,10 @@ export class TilesCollection {
             .attr("class", "contentContainer")
 
         contentFO = this.container.selectAll('.contentFO').data(this.tiles)
-            .attr("height", function (d) { return d.contentFOHeight })
-            .attr("width", function (d) { return d.contentFOWidth })
-            .attr("x", function (d) { return d.contentFOXPos })
-            .attr("y", function (d) { return d.contentFOYPos })
+            .attr("height", function (d) { return d.contentBoundingBoxHeight })
+            .attr("width", function (d) { return d.contentBoundingBoxWidth })
+            .attr("x", function (d) { return d.contentBoundingBoxXPos })
+            .attr("y", function (d) { return d.contentBoundingBoxYPos })
         contentFO.select('.contentTable')
             .style("height", "100%")
             .style("width", "100%")
@@ -153,22 +153,16 @@ export class TilesCollection {
         
 
         contentFO.select('.textContainer')
-            .style("opacity", function (d) { return d.textFillOpacity })
+            .style("opacity", function (d) { return d.textOpacity })
             .style("font-size", function (d) { return d.fontSize + "pt" })
             .style("font-family", function (d) { return d.fontFamily })
-            .style("color", function (d) { return d.textFill })
+            .style("color", function (d) { return d.textColor })
         
-        contentFO.select('.textPrimaryContainer')
-            .style("opacity", function (d) { return d.textPrimaryFillOpacity })
-            .style("font-size", function (d) { return d.fontPrimarySize + "pt" })
-            .style("font-family", function (d) { return d.fontPrimaryFamily })
-            .style("color", function (d) { return d.textPrimaryFill })
-        
-        contentFO.select('.textSecondaryContainer')
-            .style("opacity", function (d) { return d.textSecondaryFillOpacity })
-            .style("font-size", function (d) { return d.fontSecondarySize + "pt" })
-            .style("font-family", function (d) { return d.fontSecondaryFamily })
-            .style("color", function (d) { return d.textSecondaryFill })
+        contentFO.select('.text2Container')
+            .style("opacity", function (d) { return d.text2Opacity })
+            .style("font-size", function (d) { return d.font2Size + "pt" })
+            .style("font-family", function (d) { return d.font2Family })
+            .style("color", function (d) { return d.text2Color })
 
 
 
@@ -204,6 +198,7 @@ export class TilesCollection {
     }
 
     public createTile(i): Tile {
+        new Tile(this, i, this.tilesData, this.formatSettings)
         return new Tile(this, i, this.tilesData, this.formatSettings)
     }
     onShift() { }

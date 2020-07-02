@@ -1,6 +1,5 @@
-import {containerProperties, Handle} from "./interfaces"
+import {boundingBox, Handle} from "./interfaces"
 import {roundPathCorners} from "./shape-rounding"
-import { path } from "d3"
 import {round} from './functions'
 export class Shape{
     xPos: number
@@ -23,13 +22,6 @@ export class Shape{
         return this.shapePath
     }
 
-    static getAlterHPadding(height: number, angle: number){
-        return 0
-    }
-    static getAlterVPadding(height: number, angle: number){
-        return 0
-    }
-
     get handles(): any[]{
         return []
     }
@@ -42,7 +34,7 @@ export interface Shape{
     height: number,
     shapePath: string,
     strokePath: string,
-    contentFODims: containerProperties,
+    contentBoundingBox: boundingBox,
     handles: any[]
 }
 
@@ -63,7 +55,7 @@ export class Rectangle extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos,
@@ -94,7 +86,7 @@ export class Parallelogram extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos + Parallelogram._z,
             yPos: this.yPos,
@@ -165,7 +157,7 @@ export class ParallelogramVertical extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos + ParallelogramVertical._z,
@@ -238,7 +230,7 @@ export class Chevron extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos + Chevron._z,
             yPos: this.yPos,
@@ -310,7 +302,7 @@ export class ChevronVertical extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos + ChevronVertical._z,
@@ -379,7 +371,7 @@ export class Pentagon extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos,
@@ -445,7 +437,7 @@ export class Hexagon extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos + Hexagon._z,
             yPos: this.yPos,
@@ -508,7 +500,7 @@ export class Ellipse extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos,
@@ -534,7 +526,7 @@ export class Tab_RoundedCorners extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos,
@@ -568,7 +560,7 @@ export class Tab_CutCorners extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos,
@@ -635,7 +627,7 @@ export class Tab_CutCorner extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentFODims(): containerProperties{
+    get contentBoundingBox(): boundingBox{
         return {
             xPos: this.xPos,
             yPos: this.yPos,

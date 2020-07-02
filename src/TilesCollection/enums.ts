@@ -8,7 +8,7 @@ export enum State {
 export enum ContentFormatType {
     text = "text",
     text_icon = "text_icon",
-    text_textSecondary = "text_textSecondary"
+    text_text2 = "text_text2"
 }
 
 export enum AlignmentType {

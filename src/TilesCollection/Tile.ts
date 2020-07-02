@@ -73,10 +73,10 @@ export class Tile {
         return this.tilesData.slice(this.rowStartingIndex, this.rowStartingIndex + this.tilesInRow).map(function (td) { return td.text }) as string[]
     }
 
-    get textFill(): string {
+    get textColor(): string {
         return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'color')
     }
-    get textFillOpacity(): number {
+    get textOpacity(): number {
         return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.text, 'transparency') / 100
     }
     get fontSize(): number {
@@ -95,30 +95,17 @@ export class Tile {
         return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'bmargin')
     }
 
-    get textPrimaryFill(): string {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'color')
+    get text2Color(): string {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'color')
     }
-    get textPrimaryFillOpacity(): number {
-        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'transparency') / 100
+    get text2Opacity(): number {
+        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.text, 'transparency') / 100
     }
-    get fontPrimarySize(): number {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'fontSize')
+    get font2Size(): number {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'fontSize')
     }
-    get fontPrimaryFamily(): string {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.textPrimary, 'fontFamily')
-    }
-
-    get textSecondaryFill(): string {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'color')
-    }
-    get textSecondaryFillOpacity(): number {
-        return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'transparency') / 100
-    }
-    get fontSecondarySize(): number {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'fontSize')
-    }
-    get fontSecondaryFamily(): string {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.textSecondary, 'fontFamily')
+    get font2Family(): string {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'fontFamily')
     }
 
     // get widthSpaceForAllText(): number {
@@ -155,7 +142,7 @@ export class Tile {
 
     get textContainerWidthType(): string {
         return this.inlineTextWidth + 2 * this.textHmargin >= Math.floor(this.maxInlineTextWidth)
-            && this.tileData.contentFormatType == ContentFormatType.text_icon
+            && this.contentFormatType == ContentFormatType.text_icon
             && this.iconPlacement == IconPlacement.left
             ? 'min-content' : 'auto'
     }
@@ -164,7 +151,7 @@ export class Tile {
         return this.boundedTextHeight + this.textBmargin
     }
     get contentContainerWidth(): number {
-        return this.shape.contentFODims.width
+        return this.shape.contentBoundingBox.width
     }
     get widthTakenByIcon(): number {
         return this.iconWidth + this.iconHmargin
@@ -173,8 +160,8 @@ export class Tile {
         return this.widthSpaceForText - this.widthTakenByIcon
     }
 
-    get textSecondary(): string {
-        return this.tileData.textSecondary
+    get text2(): string {
+        return this.tileData.text2
     }
 
     get tileFill(): string {
@@ -320,19 +307,19 @@ export class Tile {
         return 0
     }
 
-    get contentFOHeight(): number {
-        return this.shape.contentFODims.height
+    get contentBoundingBoxHeight(): number {
+        return this.shape.contentBoundingBox.height
     }
-    get contentFOWidth(): number {
-        return this.shape.contentFODims.width
-    }
-
-    get contentFOXPos(): number {
-        return this.shape.contentFODims.xPos
+    get contentBoundingBoxWidth(): number {
+        return this.shape.contentBoundingBox.width
     }
 
-    get contentFOYPos(): number {
-        return this.shape.contentFODims.yPos
+    get contentBoundingBoxXPos(): number {
+        return this.shape.contentBoundingBox.xPos
+    }
+
+    get contentBoundingBoxYPos(): number {
+        return this.shape.contentBoundingBox.yPos
     }
 
 
@@ -431,13 +418,13 @@ export class Tile {
         return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'bottomMargin')
     }
     get spaceForIcon(): number {
-        return this.contentFOWidth - this.iconHmargin
+        return this.contentBoundingBoxWidth - this.iconHmargin
     }
     get iconPlacement(): IconPlacement {
         return getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'placement')
     }
     get iconHeight(): number {
-        return this.contentFOHeight - this.textContainerHeight - this.iconTopMargin - this.iconBottomMargin
+        return this.contentBoundingBoxHeight - this.textContainerHeight - this.iconTopMargin - this.iconBottomMargin
     }
     get iconOpacity(): number {
         return 1 - getMatchingStateProperty(this.currentState, this.formatSettings.icon, 'transparency') / 100
@@ -564,9 +551,9 @@ export class Tile {
     }
 
 
-    // get textSecondaryContainer(): HTMLDivElement{
+    // get text2Container(): HTMLDivElement{
     //     let container = document.createElement("div")
-    //     container.className = 'textSecondary'
+    //     container.className = 'text2'
 
 
     //     let text = document.createElement('span')
@@ -576,7 +563,7 @@ export class Tile {
     //     return container
     // }
 
-    get contentTextTextSecondary(): HTMLDivElement {
+    get contentTextText2(): HTMLDivElement {
         let contentContainer = document.createElement('div')
         contentContainer.className = "contentContainer"
 
@@ -585,16 +572,15 @@ export class Tile {
 
         let textPrimaryContainer = this.textContainer
         textPrimaryContainer.append(text)
-        textPrimaryContainer.className = "textPrimaryContainer"
 
-        let textSecondary = this.textElement
-        textSecondary.textContent = this.textSecondary
+        let text2 = this.textElement
+        text2.textContent = this.text2
 
-        let textSecondaryContainer = document.createElement("div")
-        textSecondaryContainer.append(textSecondary)
-        textSecondaryContainer.className = "textSecondaryContainer"
+        let text2Container = document.createElement("div")
+        text2Container.append(text2)
+        text2Container.className = "text2Container"
 
-        contentContainer.append(textSecondaryContainer, textPrimaryContainer)
+        contentContainer.append(text2Container, textPrimaryContainer)
 
         return contentContainer
     }
@@ -615,8 +601,8 @@ export class Tile {
             contentContainer.style.paddingLeft = this.textHmargin + 'px'
             contentContainer.style.paddingRight = this.textHmargin + 'px'
         } else {
-            contentContainer.style.height = this.contentFOHeight + 'px'
-            contentContainer.style.maxHeight = this.contentFOHeight + 'px'
+            contentContainer.style.height = this.contentBoundingBoxHeight + 'px'
+            contentContainer.style.maxHeight = this.contentBoundingBoxHeight + 'px'
             if (this.iconPlacement == IconPlacement.above)
                 contentContainer.append(this.img, textContainer)
             else
@@ -645,14 +631,18 @@ export class Tile {
 
 
     get content(): HTMLDivElement {
-        switch (this.tileData.contentFormatType) {
+        switch (this.contentFormatType) {
             case ContentFormatType.text_icon:
                 return this.contentTextIconFormat
-            case ContentFormatType.text_textSecondary:
-                return this.contentTextTextSecondary
+            case ContentFormatType.text_text2:
+                return this.contentTextText2
             default:
                 return this.contentTextFormat
         }
+    }
+
+    get contentFormatType(): ContentFormatType {
+        return this.tileData.contentFormatType
     }
 
 
