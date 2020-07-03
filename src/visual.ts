@@ -49,7 +49,7 @@ import { valueFormatter } from "powerbi-visuals-utils-formattingutils"
 import * as d3 from "d3";
 // import { ProcessedVisualSettings } from "./processedvisualsettings";
 
-import { PropertyGroupKeys } from './TilesCollectionUtlities/interfaces'
+import { PropertyGroupKeys } from './TilesCollection/interfaces'
 import { getPropertyStateNameArr, getObjectsToPersist } from './TilesCollectionUtlities/functions'
 import { getCorrectPropertyStateName } from './functions'
 import { SelectionManagerUnbound } from './SelectionManagerUnbound'

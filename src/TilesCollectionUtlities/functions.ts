@@ -1,4 +1,5 @@
-import { PropertyGroupKeys, PropertyGroupValuesWithState, PropertyGroupValuesWithDidChange } from './interfaces'
+import { PropertyGroupKeys } from '../TilesCollection/interfaces'
+import { PropertyGroupValuesWithState, PropertyGroupValuesWithDidChange } from './interfaces'
 import {State} from '../TilesCollection/enums'
 import powerbi from "powerbi-visuals-api";
 import { VisualSettings } from '../settings';
