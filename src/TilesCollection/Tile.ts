@@ -107,11 +107,11 @@ export class Tile {
     get font2Family(): string {
         return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'fontFamily')
     }
+    get text2Align(): string {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'alignment')
+    }
 
-    // get widthSpaceForAllText(): number {
-    //     let totalPadding = (this.tilesInRow - 1) * this.formatSettings.layout.padding;
-    //     return this.viewportWidth - totalPadding - ProcessedVisualSettings.totalTextHmargin;
-    // }
+
     get allTextWidth(): number {
         return calculateWordDimensions(this.rowText.join(""), this.fontFamily, this.fontSize + "pt").width
     }
@@ -129,6 +129,9 @@ export class Tile {
     }
     get boundedTextHeight(): number {
         return calculateWordDimensions(this.text as string, this.fontFamily, this.fontSize + "pt", this.textContainerWidthType, (this.maxInlineTextWidth) + 'px').height;
+    }
+    get maxBoundedTextHeight(): number{
+        return this.collection.maxBoundedTextHeight
     }
 
     get beforeInRowText(): string[] {
@@ -148,13 +151,15 @@ export class Tile {
     }
 
     get textContainerHeight(): number {
-        return this.boundedTextHeight + this.textBmargin
+        return this.maxBoundedTextHeight + this.textBmargin
     }
     get contentContainerWidth(): number {
         return this.shape.contentBoundingBox.width
     }
     get widthTakenByIcon(): number {
-        return this.iconWidth + this.iconHmargin
+        if(this.iconPlacement == IconPlacement.left)
+            return this.iconWidth + this.iconHmargin
+        return 0
     }
     get maxInlineTextWidth(): number {
         return this.widthSpaceForText - this.widthTakenByIcon

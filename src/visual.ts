@@ -49,8 +49,9 @@ import { valueFormatter } from "powerbi-visuals-utils-formattingutils"
 import * as d3 from "d3";
 // import { ProcessedVisualSettings } from "./processedvisualsettings";
 
-import { propertyStateName } from './interfaces'
-import { getPropertyStateNameArr, getObjectsToPersist, getCorrectPropertyStateName } from './functions'
+import { PropertyGroupKeys } from './TilesCollectionUtlities/interfaces'
+import { getPropertyStateNameArr, getObjectsToPersist } from './TilesCollectionUtlities/functions'
+import { getCorrectPropertyStateName } from './functions'
 import { SelectionManagerUnbound } from './SelectionManagerUnbound'
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
@@ -103,9 +104,9 @@ export class Visual implements IVisual {
         let settingsKeys = Object.keys(settings)
         for (let i = 0; i < settingsKeys.length; i++) {
             let settingKey: string = settingsKeys[i]
-            let groupedKeyNamesArr: propertyStateName[] = getPropertyStateNameArr(Object.keys(settings[settingKey]))
+            let groupedKeyNamesArr: PropertyGroupKeys[] = getPropertyStateNameArr(Object.keys(settings[settingKey]))
             for (let j = 0; j < groupedKeyNamesArr.length; j++) {
-                let groupedKeyNames: propertyStateName = groupedKeyNamesArr[j]
+                let groupedKeyNames: PropertyGroupKeys = groupedKeyNamesArr[j]
                 switch (settings[settingKey].state) {
                     case State.all:
                         delete settings[settingKey][groupedKeyNames.selected]

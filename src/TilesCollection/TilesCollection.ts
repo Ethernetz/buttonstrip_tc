@@ -12,6 +12,8 @@ export class TilesCollection {
     container: Selection<SVGElement>;
     tiles: Tile[] = []
 
+    maxBoundedTextHeight: number = 0
+
     public render(): void {
         this.formatSettings.viewport = this.viewport
 
@@ -19,6 +21,12 @@ export class TilesCollection {
             this.createTile(i)
             this.tiles.push(this.createTile(i))
         }
+
+        for(let i = 0; i < this.tiles.length; i++){
+            this.maxBoundedTextHeight = Math.max(this.maxBoundedTextHeight, this.tiles[i].boundedTextHeight)
+        }
+
+
 
         this.container.selectAll("defs").remove();
         this.container.append("defs")
@@ -105,7 +113,7 @@ export class TilesCollection {
         let tileContainer = this.container.selectAll('.tileContainer').data(this.tiles)
         tileContainer.exit().remove()
         tileContainer = tileContainer.enter().append('g')
-            .attr("class", function (d) { return "tileContainer " + d.tileShape + d.tileData.text })
+            .attr("class", function (d) { return "tileContainer " + d.tileShape})
         tileContainer.append('path').attr("class", "fill")
         tileContainer.append('path').attr("class", "stroke")
 
@@ -148,7 +156,7 @@ export class TilesCollection {
             .style("display", "table-cell")
             .style("vertical-align", "middle")
             .html("")
-            .style("text-align", function (d) { return d.textAlign })
+            .style("text-align", function (d) {return d.textAlign })
             .append(function (d) { return d.content })
         
 
@@ -157,12 +165,14 @@ export class TilesCollection {
             .style("font-size", function (d) { return d.fontSize + "pt" })
             .style("font-family", function (d) { return d.fontFamily })
             .style("color", function (d) { return d.textColor })
+            .style("text-align", function (d) {return d.textAlign })
         
         contentFO.select('.text2Container')
             .style("opacity", function (d) { return d.text2Opacity })
             .style("font-size", function (d) { return d.font2Size + "pt" })
             .style("font-family", function (d) { return d.font2Family })
             .style("color", function (d) { return d.text2Color })
+            .style("text-align", function (d) {return d.text2Align })
 
 
 

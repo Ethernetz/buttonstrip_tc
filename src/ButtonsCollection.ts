@@ -9,8 +9,6 @@ import powerbi from "powerbi-visuals-api";
 import { TileData } from "./TilesCollection/TileData";
 import { ContentSource } from "./enums";
 
-// import { sizeTextContainer, styleText, makeTextTransparent } from './d3calls'
-
 export class ButtonsCollection extends TilesCollection {
     visual: Visual
     options: VisualUpdateOptions

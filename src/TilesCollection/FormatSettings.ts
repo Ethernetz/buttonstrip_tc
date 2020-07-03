@@ -171,7 +171,7 @@ export class TileSettings {
     public hoverStyling: boolean = false
   
     public placementD: IconPlacement = IconPlacement.left;
-    public placementA: IconPlacement = IconPlacement.empty;
+    public placementA: IconPlacement = null;
     public placementS: IconPlacement = null;
     public placementU: IconPlacement = null;
     public placementH: IconPlacement = null;
