@@ -370,30 +370,57 @@
                             "fontFamily": true
                         }
                     }
-                },
-                "hmarginA": {
-                    "displayName": "Horizontal margin",
+                },"marginLeftA": {
+                    "displayName": "Left margin",
                     "description": "Margin between text and tile left and right",
                     "type": {
                         "numeric": true
                     }
                 },
-                "hmarginS": {
-                    "displayName": "Horizontal margin",
+                "marginLeftS": {
+                    "displayName": "Left margin",
                     "description": "Margin between text and tile left and right",
                     "type": {
                         "numeric": true
                     }
                 },
-                "hmarginU": {
-                    "displayName": "Horizontal margin",
+                "marginLeftU": {
+                    "displayName": "Left margin",
                     "description": "Margin between text and tile left and right",
                     "type": {
                         "numeric": true
                     }
                 },
-                "hmarginH": {
-                    "displayName": "Horizontal margin",
+                "marginLeftH": {
+                    "displayName": "Left margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "marginRightA": {
+                    "displayName": "Right margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "marginRightS": {
+                    "displayName": "Right margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "marginRightU": {
+                    "displayName": "Right margin",
+                    "description": "Margin between text and tile left and right",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "marginRightH": {
+                    "displayName": "Right margin",
                     "description": "Margin between text and tile left and right",
                     "type": {
                         "numeric": true
@@ -829,6 +856,27 @@
                         ]
                     }
                 },
+                "tileWidth": {
+                    "displayName": "Tile width",
+                    "description": "The width of each tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "tileHeight": {
+                    "displayName": "Tile height",
+                    "description": "The height of each tile.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "autoHeight": {
+                    "displayName": "Auto height",
+                    "description": "Override height to be based on font size",
+                    "type": {
+                        "bool": true
+                    }
+                },
                 "tileLayout": {
                     "displayName": "Layout",
                     "description": "How tiles will be laid out.",
@@ -847,20 +895,6 @@
                                 "value": "grid"
                             }
                         ]
-                    }
-                },
-                "tileWidth": {
-                    "displayName": "Tile width",
-                    "description": "The width of each tile.",
-                    "type": {
-                        "numeric": true
-                    }
-                },
-                "tileHeight": {
-                    "displayName": "Tile height",
-                    "description": "The height of each tile.",
-                    "type": {
-                        "numeric": true
                     }
                 },
                 "tileAlignment": {

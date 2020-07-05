@@ -4,7 +4,7 @@ import { TileData } from './TileData'
 import { State, TileSizingType, TileLayoutType, AlignmentType, TileShape, Direction, ContentFormatType, IconPlacement } from './enums'
 import { getMatchingStateProperty, calculateWordDimensions } from './functions'
 import { Shape, Rectangle, Parallelogram, Chevron, Ellipse, Pentagon, Hexagon, Tab_RoundedCorners, Tab_CutCorners, Tab_CutCorner, ChevronVertical, ParallelogramVertical } from "./shapes"
-import { BaseType } from 'd3'
+import { BaseType, thresholdScott } from 'd3'
 import { TilesCollection } from './TilesCollection'
 import { Handle } from './interfaces'
 import * as d3 from 'd3'
@@ -88,8 +88,14 @@ export class Tile {
     get textAlign(): string {
         return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'alignment')
     }
-    get textHmargin(): number {
-        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'hmargin')
+    get textMarginLeft(): number {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'marginLeft')
+    }
+    get textMarginRight(): number {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'marginRight')
+    }
+    get totalHorizontalTextMargin(): number {
+        return this.textMarginLeft + this.textMarginRight
     }
     get textBmargin(): number {
         return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'bmargin')
@@ -116,10 +122,10 @@ export class Tile {
         return calculateWordDimensions(this.rowText.join(""), this.fontFamily, this.fontSize + "pt").width
     }
     get widthSpaceForText(): number {
-        return this.contentContainerWidth - 2 * this.textHmargin
+        return this.contentContainerWidth - this.totalHorizontalTextMargin
     }
     get widthSpaceForAllText(): number {
-        return this.viewport.width - this.rowLength * (2 * this.textHmargin) - this.totalTileHPadding - this.effectSpace
+        return this.viewport.width - this.rowLength*this.totalHorizontalTextMargin - this.totalTileHPadding - this.effectSpace
     }
     get inlineTextWidth(): number {
         return calculateWordDimensions(this.text, this.fontFamily, this.fontSize + "pt").width
@@ -144,7 +150,7 @@ export class Tile {
     }
 
     get textContainerWidthType(): string {
-        return this.inlineTextWidth + 2 * this.textHmargin >= Math.floor(this.maxInlineTextWidth)
+        return this.inlineTextWidth + this.totalHorizontalTextMargin >= Math.floor(this.maxInlineTextWidth)
             && this.contentFormatType == ContentFormatType.text_icon
             && this.iconPlacement == IconPlacement.left
             ? 'min-content' : 'auto'
@@ -209,14 +215,16 @@ export class Tile {
         }
     }
     get dynamicExtraWidthPerTile(): number {
-        let textSpaceRequired = this.allTextWidth + this.textHmargin * 2 * this.rowLength + this.totalTileHPadding
+        let textSpaceRequired = this.allTextWidth + this.totalHorizontalTextMargin*this.rowLength + this.totalTileHPadding
         let spaceRemaining = Math.max(0, this.containerWidth - textSpaceRequired)
         return spaceRemaining / this.rowLength
     }
     get tileHeight(): number {
+        if(this.formatSettings.layout.autoHeight)
+            return this.collection.maxInlineTextHeight+10
         if (this.formatSettings.layout.sizingMethod == TileSizingType.fixed)
             return this.formatSettings.layout.tileHeight
-        return Math.max((this.containerHeight - this.totalTileVPadding) / this.numRows, this.collection.maxInlineTextHeight)
+        return Math.max((this.containerHeight - this.totalTileVPadding) / this.numRows, this.collection.maxInlineTextHeight+10)
 
     }
 
@@ -506,9 +514,9 @@ export class Tile {
         let textContainer = document.createElement('div')
         textContainer.className = 'textContainer'
         textContainer.style.position = 'relative'
-        textContainer.style.paddingLeft = this.textHmargin + 'px'
-        textContainer.style.paddingRight = this.textHmargin + 'px'
-        textContainer.style.maxWidth = this.tileWidth + 'px'
+        textContainer.style.paddingLeft = this.textMarginLeft + 'px'
+        textContainer.style.paddingRight = this.textMarginRight + 'px'
+        textContainer.style.maxWidth = this.contentContainerWidth - this.totalHorizontalTextMargin + 'px'
         return textContainer
     }
 
@@ -608,8 +616,8 @@ export class Tile {
         if (this.iconPlacement == IconPlacement.left) {
             contentContainer.style.display = 'inline-block'
             contentContainer.append(this.img, textContainer)
-            contentContainer.style.paddingLeft = this.textHmargin + 'px'
-            contentContainer.style.paddingRight = this.textHmargin + 'px'
+            contentContainer.style.paddingLeft = this.textMarginLeft + 'px'
+            contentContainer.style.paddingRight = this.textMarginRight + 'px'
         } else {
             contentContainer.style.height = this.contentBoundingBoxHeight + 'px'
             contentContainer.style.maxHeight = this.contentBoundingBoxHeight + 'px'

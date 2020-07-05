@@ -29,29 +29,27 @@ export class TilesCollection {
         }
 
         let maxFontSize = Math.max(this.formatSettings.text.fontSizeS, this.formatSettings.text.fontSizeU, this.formatSettings.text.fontSizeH, this.formatSettings.text.fontSizeN)
-        this.maxInlineTextHeight = maxFontSize*4/3
-        this.minTileWidth = maxFontSize*5
+        this.maxInlineTextHeight = Math.round(maxFontSize * 4 / 3)
+        this.minTileWidth = maxFontSize * 5
 
         let totalHeight = this.tiles[this.tiles.length - 1].tileYpos + this.tiles[this.tiles.length - 1].tileHeight
-        let farRightTileIndex = Math.min(this.tiles.length-1, this.tiles[0].rowLength-1)
-        let totalWidth = this.tiles[farRightTileIndex].tileWidth + this.tiles[farRightTileIndex].tileXpos 
-        
-        let horScroll = totalWidth > this.viewport.width
-        let vertScroll =  totalHeight > this.viewport.height
+        let farRightTileIndex = Math.min(this.tiles.length - 1, this.tiles[0].rowLength - 1)
+        let totalWidth = this.tiles[farRightTileIndex].tileWidth + this.tiles[farRightTileIndex].tileXpos
 
-        if(vertScroll && !horScroll ){
-            console.log("v")
+        let horScroll = totalWidth > this.viewport.width
+        let vertScroll = totalHeight > this.viewport.height
+
+        if (vertScroll && !horScroll) {
             this.viewport.width -= 20
             totalWidth -= 20
-        } else if (horScroll && !vertScroll){
-            console.log("h")
-            this.viewport.height -=20
-            totalHeight -=20
+        } else if (horScroll && !vertScroll) {
+            this.viewport.height -= 20
+            totalHeight -= 20
         }
 
         this.svg
-        .style('width', totalWidth)
-        .style('height', totalHeight)
+            .style('width', totalWidth)
+            .style('height', totalHeight)
 
 
         this.container.selectAll("defs").remove();

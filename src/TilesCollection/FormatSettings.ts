@@ -10,7 +10,13 @@ export class FormatSettings{
   viewport: Viewport
 }
 
-export class TileSettings {
+export interface TileCollectionStatedFormatObject{
+  state: State,
+  statesUsed: StatesUsed
+}
+
+
+export class TileSettings implements TileCollectionStatedFormatObject{
     public state: State = State.all
     public statesUsed: StatesUsed = {
       selected: true,
@@ -49,7 +55,7 @@ export class TileSettings {
     public transparencyN: number = null; 
   }
 
-  export class TextSettings{
+  export class TextSettings implements TileCollectionStatedFormatObject{
     public state: State = State.all
     public statesUsed: StatesUsed = {
       selected: true,
@@ -87,12 +93,19 @@ export class TileSettings {
     public fontFamilyH: string = null;
     public fontFamilyN: string = null;
 
-    public hmarginD: number = 0;  
-    public hmarginA: number = null;
-    public hmarginS: number = null;
-    public hmarginU: number = null;
-    public hmarginH: number = null;
-    public hmarginN: number = null;
+    public marginLeftD: number = 0
+    public marginLeftA: number = null
+    public marginLeftS: number = null
+    public marginLeftU: number = null
+    public marginLeftH: number = null
+    public marginLeftN: number = null
+
+    public marginRightD: number = 0
+    public marginRightA: number = null
+    public marginRightS: number = null
+    public marginRightU: number = null
+    public marginRightH: number = null
+    public marginRightN: number = null
 
     public bmarginD: number = 0
     public bmarginA: number = null
@@ -123,13 +136,14 @@ export class TileSettings {
     public sizingMethod: TileSizingType = TileSizingType.uniform;
     public tileWidth: number = 150;
     public tileHeight: number = 75;
+    public autoHeight: boolean = false;
     public tileAlignment: AlignmentType = AlignmentType.left
     public tileLayout: TileLayoutType = TileLayoutType.horizontal;
     public rowLength: number = 2;
     public padding: number = 10;
   }
 
-  export class EffectSettings{
+  export class EffectSettings implements TileCollectionStatedFormatObject{
     public state: State = State.all
     public statesUsed: StatesUsed = {
       selected: true,
@@ -202,7 +216,7 @@ export class TileSettings {
     public glowStrengthN: number = null
   }
 
-  export class IconSettings{
+  export class IconSettings implements TileCollectionStatedFormatObject{
     public icons: boolean = false;
     public state: State = State.all
     public statesUsed: StatesUsed = {

@@ -22,9 +22,10 @@ export function getMatchingStateProperty(state: State, formatObj: any, propBase:
     if(propBase == 'strokeWidth' && state == State.unselected){ //TODO fix this edge case
         return formatObj[propBase + 'U'] || 0
     }
-        return formatObj[getCorrectPropertyStateName(state, propBase)] != null 
-        ? formatObj[getCorrectPropertyStateName(state, propBase)]
-        : formatObj[propBase + "D"]
+        // return formatObj[getCorrectPropertyStateName(state, propBase)] != null 
+        // ? formatObj[getCorrectPropertyStateName(state, propBase)]
+        // : formatObj[propBase + "D"]
+        return formatObj[getCorrectPropertyStateName(state, propBase)]
 }
 
 export function getCorrectPropertyStateName(state: State, propBase: string): string {
