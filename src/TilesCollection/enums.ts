@@ -2,7 +2,8 @@ export enum State {
     all = "all",
     selected = "selected",
     unselected = "unselected",
-    hovered = "hovered"
+    hovered = "hovered",
+    disabled = "disabled"
 }
 
 export enum ContentFormatType {

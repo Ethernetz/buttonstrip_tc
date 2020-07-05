@@ -22,19 +22,25 @@ export function getMatchingStateProperty(state: State, formatObj: any, propBase:
     if(propBase == 'strokeWidth' && state == State.unselected){ //TODO fix this edge case
         return formatObj[propBase + 'U'] || 0
     }
-    switch(state){
-        case State.all:
-            return formatObj[propBase + 'A']
-        case State.selected:
-            return formatObj[propBase + 'S']
-        case State.hovered:
-            if(formatObj.hoverStyling)
-                return formatObj[propBase + 'H']
-        case State.unselected:
-            return formatObj[propBase + 'U']
-    }
+        return formatObj[getCorrectPropertyStateName(state, propBase)] != null 
+        ? formatObj[getCorrectPropertyStateName(state, propBase)]
+        : formatObj[propBase + "D"]
 }
 
+export function getCorrectPropertyStateName(state: State, propBase: string): string {
+    switch (state) {
+        case State.all:
+            return propBase + "A"
+        case State.selected:
+            return propBase + "S"
+        case State.unselected:
+            return propBase + "U"
+        case State.hovered:
+            return propBase + "H"
+        case State.disabled:
+            return propBase + "N"
+    }
+}
 
 
 export function round(n, p?): number{

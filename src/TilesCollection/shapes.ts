@@ -1,4 +1,4 @@
-import {boundingBox, Handle} from "./interfaces"
+import {BoundingBox, Handle} from "./interfaces"
 import {roundPathCorners} from "./shape-rounding"
 import {round} from './functions'
 export class Shape{
@@ -34,7 +34,7 @@ export interface Shape{
     height: number,
     shapePath: string,
     strokePath: string,
-    contentBoundingBox: boundingBox,
+    contentBoundingBox: BoundingBox,
     handles: any[]
 }
 
@@ -55,10 +55,10 @@ export class Rectangle extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos,
+            x: this.xPos,
+            y: this.yPos,
             width: this.width,
             height: this.height
         }
@@ -86,10 +86,10 @@ export class Parallelogram extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos + Parallelogram._z,
-            yPos: this.yPos,
+            x: this.xPos + Parallelogram._z,
+            y: this.yPos,
             width: this.width - 2*Parallelogram._z,
             height: this.height
         }
@@ -157,10 +157,10 @@ export class ParallelogramVertical extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos + ParallelogramVertical._z,
+            x: this.xPos,
+            y: this.yPos + ParallelogramVertical._z,
             width: this.width,
             height: this.height - 2*ParallelogramVertical._z
         }
@@ -230,10 +230,10 @@ export class Chevron extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos + Chevron._z,
-            yPos: this.yPos,
+            x: this.xPos + Chevron._z,
+            y: this.yPos,
             width: this.width - 2*Chevron._z,
             height: this.height
         }
@@ -302,10 +302,10 @@ export class ChevronVertical extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos + ChevronVertical._z,
+            x: this.xPos,
+            y: this.yPos + ChevronVertical._z,
             width: this.width,
             height: this.height - 2*ChevronVertical._z
         }
@@ -371,10 +371,10 @@ export class Pentagon extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos,
+            x: this.xPos,
+            y: this.yPos,
             width: this.width - Pentagon._z,
             height: this.height
         }
@@ -437,10 +437,10 @@ export class Hexagon extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos + Hexagon._z,
-            yPos: this.yPos,
+            x: this.xPos + Hexagon._z,
+            y: this.yPos,
             width: this.width - 2*Hexagon._z,
             height: this.height
         }
@@ -500,10 +500,10 @@ export class Ellipse extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos,
+            x: this.xPos,
+            y: this.yPos,
             width: this.width,
             height: this.height
         }
@@ -526,10 +526,10 @@ export class Tab_RoundedCorners extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos,
+            x: this.xPos,
+            y: this.yPos,
             width: this.width,
             height: this.height
         }
@@ -560,10 +560,10 @@ export class Tab_CutCorners extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos,
+            x: this.xPos,
+            y: this.yPos,
             width: this.width,
             height: this.height
         }
@@ -627,10 +627,10 @@ export class Tab_CutCorner extends Shape implements Shape{
         return path.toString()
     }
 
-    get contentBoundingBox(): boundingBox{
+    get contentBoundingBox(): BoundingBox{
         return {
-            xPos: this.xPos,
-            yPos: this.yPos,
+            x: this.xPos,
+            y: this.yPos,
             width: this.width,
             height: this.height
         }

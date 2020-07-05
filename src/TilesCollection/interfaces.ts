@@ -3,7 +3,8 @@ export interface PropertyGroupKeys {
     all: string,
     selected: string,
     unselected: string,
-    hover: string
+    hover: string,
+    disabled: string
 }
 
 export interface PropertyGroupValues {
@@ -12,6 +13,7 @@ export interface PropertyGroupValues {
     selected: string | number,
     unselected: string | number,
     hover: string | number,
+    disabled: string | number
 }
 
 export interface Viewport {
@@ -34,9 +36,16 @@ export interface Handle{
     handleFocused: boolean,
 }
 
-export interface boundingBox{
-    xPos: number,
-    yPos: number,
+export interface BoundingBox{
+    x: number,
+    y: number,
     width: number,
     height: number
+}
+
+export interface StatesUsed {
+    selected: boolean,
+    unselected: boolean,
+    hover: boolean,
+    disabled: boolean
 }

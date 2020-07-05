@@ -6,5 +6,6 @@ export class TileData{
     bgimgURL?: string
     isSelected?: boolean
     isHovered?: boolean
+    isDisabled?: boolean
     contentFormatType?: ContentFormatType
 }

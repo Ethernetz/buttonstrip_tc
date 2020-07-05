@@ -199,7 +199,7 @@ export class Tile {
     get tileWidth(): number {
         switch (this.formatSettings.layout.sizingMethod) {
             case TileSizingType.uniform:
-                return (this.containerWidth - this.totalTileHPadding) / (this.rowLength)
+                return Math.max((this.containerWidth-this.totalTileHPadding)/this.rowLength, this.collection.minTileWidth)
             case TileSizingType.fixed:
                 return this.formatSettings.layout.tileWidth
             case TileSizingType.dynamic:
@@ -216,7 +216,7 @@ export class Tile {
     get tileHeight(): number {
         if (this.formatSettings.layout.sizingMethod == TileSizingType.fixed)
             return this.formatSettings.layout.tileHeight
-        return (this.containerHeight - this.totalTileVPadding) / this.numRows
+        return Math.max((this.containerHeight - this.totalTileVPadding) / this.numRows, this.collection.maxInlineTextHeight)
 
     }
 
@@ -320,13 +320,12 @@ export class Tile {
     }
 
     get contentBoundingBoxXPos(): number {
-        return this.shape.contentBoundingBox.xPos
+        return this.shape.contentBoundingBox.x
     }
 
     get contentBoundingBoxYPos(): number {
-        return this.shape.contentBoundingBox.yPos
+        return this.shape.contentBoundingBox.y
     }
-
 
 
 
@@ -468,8 +467,13 @@ export class Tile {
     get isHovered(): boolean {
         return this.tileData.isHovered;
     }
+    get isDisabled(): boolean {
+        return this.tileData.isDisabled;
+    }
     get currentState(): State {
-        if (this.isSelected)
+        if(this.isDisabled)
+            return State.disabled
+        else if (this.isSelected)
             return State.selected;
         else if (this.isHovered)
             return State.hovered;
@@ -504,6 +508,7 @@ export class Tile {
         textContainer.style.position = 'relative'
         textContainer.style.paddingLeft = this.textHmargin + 'px'
         textContainer.style.paddingRight = this.textHmargin + 'px'
+        textContainer.style.maxWidth = this.tileWidth + 'px'
         return textContainer
     }
 

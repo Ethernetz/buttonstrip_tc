@@ -29,7 +29,6 @@
 import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 import * as TileCollectionFormatSettings from "./TilesCollection/FormatSettings"
-import {AlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State} from './TilesCollection/enums'
 import {ContentSource} from './enums'
 
 export class TileSettings extends TileCollectionFormatSettings.TileSettings{

@@ -1,4 +1,4 @@
-import { Viewport } from './interfaces'
+import { Viewport, BoundingBox } from './interfaces'
 import { FormatSettings } from './FormatSettings'
 import { TileData } from './TileData'
 import { Tile } from './Tile'
@@ -10,10 +10,12 @@ export class TilesCollection {
     tilesData: TileData[] = [];
     viewport: Viewport;
     container: Selection<SVGElement>;
+    svg: Selection<SVGElement>
     tiles: Tile[] = []
 
     maxBoundedTextHeight: number = 0
-
+    maxInlineTextHeight: number = 0
+    minTileWidth: number = 0
     public render(): void {
         this.formatSettings.viewport = this.viewport
 
@@ -22,10 +24,34 @@ export class TilesCollection {
             this.tiles.push(this.createTile(i))
         }
 
-        for(let i = 0; i < this.tiles.length; i++){
+        for (let i = 0; i < this.tiles.length; i++) {
             this.maxBoundedTextHeight = Math.max(this.maxBoundedTextHeight, this.tiles[i].boundedTextHeight)
         }
 
+        let maxFontSize = Math.max(this.formatSettings.text.fontSizeS, this.formatSettings.text.fontSizeU, this.formatSettings.text.fontSizeH, this.formatSettings.text.fontSizeN)
+        this.maxInlineTextHeight = maxFontSize*4/3
+        this.minTileWidth = maxFontSize*5
+
+        let totalHeight = this.tiles[this.tiles.length - 1].tileYpos + this.tiles[this.tiles.length - 1].tileHeight
+        let farRightTileIndex = Math.min(this.tiles.length-1, this.tiles[0].rowLength-1)
+        let totalWidth = this.tiles[farRightTileIndex].tileWidth + this.tiles[farRightTileIndex].tileXpos 
+        
+        let horScroll = totalWidth > this.viewport.width
+        let vertScroll =  totalHeight > this.viewport.height
+
+        if(vertScroll && !horScroll ){
+            console.log("v")
+            this.viewport.width -= 20
+            totalWidth -= 20
+        } else if (horScroll && !vertScroll){
+            console.log("h")
+            this.viewport.height -=20
+            totalHeight -=20
+        }
+
+        this.svg
+        .style('width', totalWidth)
+        .style('height', totalHeight)
 
 
         this.container.selectAll("defs").remove();
@@ -82,8 +108,8 @@ export class TilesCollection {
             .attr("width", 1)
             .attr("height", 1)
             .append("image")
-            .attr("class", (d)=>{return "img" + d.i})
-            .on('load', function(d) {
+            .attr("class", (d) => { return "img" + d.i })
+            .on('load', function (d) {
                 let img: d3.Selection<d3.BaseType, unknown, HTMLElement, any> = d3.select('.img' + d.i)
                 let imgElement: Element = img.node() as any //TODO make types more clear
                 let dims = d.getBgImgDims(imgElement.getBoundingClientRect())
@@ -92,13 +118,13 @@ export class TilesCollection {
                     .attr("height", dims.height)
 
                 // d.setImageWidth() 
-           })
-            .attr("xlink:href", d => {return d.bgImgURL})
+            })
+            .attr("xlink:href", d => { return d.bgImgURL })
 
         let feMerge = filters.data(this.tiles).append("feMerge")
-            feMerge.append("feMergeNode").attr("in", "dropshadow")
-            feMerge.append("feMergeNode").attr("in", "glow")
-            feMerge.append("feMergeNode").attr("in", "image")
+        feMerge.append("feMergeNode").attr("in", "dropshadow")
+        feMerge.append("feMergeNode").attr("in", "glow")
+        feMerge.append("feMergeNode").attr("in", "image")
 
 
 
@@ -113,7 +139,7 @@ export class TilesCollection {
         let tileContainer = this.container.selectAll('.tileContainer').data(this.tiles)
         tileContainer.exit().remove()
         tileContainer = tileContainer.enter().append('g')
-            .attr("class", function (d) { return "tileContainer " + d.tileShape})
+            .attr("class", function (d) { return "tileContainer " + d.tileShape })
         tileContainer.append('path').attr("class", "fill")
         tileContainer.append('path').attr("class", "stroke")
 
@@ -121,7 +147,7 @@ export class TilesCollection {
         tileContainer = this.container.selectAll('.tileContainer').data(this.tiles)
         tileContainer.select(".fill")
             .attr("d", function (d) { return d.shapePath })
-            .attr("fill", function (d) { return d.bgImgURL ? d.bgimg : d.tileFill})
+            .attr("fill", function (d) { return d.bgImgURL ? d.bgimg : d.tileFill })
             .style("fill-opacity", function (d) { return d.tileFillOpacity })
             .style("filter", function (d) { return d.filter })
         tileContainer.select(".stroke")
@@ -156,23 +182,23 @@ export class TilesCollection {
             .style("display", "table-cell")
             .style("vertical-align", "middle")
             .html("")
-            .style("text-align", function (d) {return d.textAlign })
+            .style("text-align", function (d) { return d.textAlign })
             .append(function (d) { return d.content })
-        
+
 
         contentFO.select('.textContainer')
             .style("opacity", function (d) { return d.textOpacity })
             .style("font-size", function (d) { return d.fontSize + "pt" })
             .style("font-family", function (d) { return d.fontFamily })
             .style("color", function (d) { return d.textColor })
-            .style("text-align", function (d) {return d.textAlign })
-        
+            .style("text-align", function (d) { return d.textAlign })
+
         contentFO.select('.text2Container')
             .style("opacity", function (d) { return d.text2Opacity })
             .style("font-size", function (d) { return d.font2Size + "pt" })
             .style("font-family", function (d) { return d.font2Family })
             .style("color", function (d) { return d.text2Color })
-            .style("text-align", function (d) {return d.text2Align })
+            .style("text-align", function (d) { return d.text2Align })
 
 
 
@@ -205,6 +231,7 @@ export class TilesCollection {
                 if (d3.event.keyCode == 16)
                     this.onShiftUp()
             })
+
     }
 
     public createTile(i): Tile {
