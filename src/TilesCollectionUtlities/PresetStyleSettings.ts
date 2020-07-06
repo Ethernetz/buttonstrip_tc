@@ -199,8 +199,8 @@ export class GlowPreset {
 export class GlowEffectSettings {
     public glowColorA: string = "";
     public glowColorS: string = shadeHexColor(Preset.baseColor, 0.50);
-    public glowColorU: string = shadeHexColor(Preset.baseColor, 0.50);;
-    public glowColorH: string = shadeHexColor(Preset.baseColor, 0.50);;
+    public glowColorU: string = shadeHexColor(Preset.baseColor, 0.50);
+    public glowColorH: string = shadeHexColor(Preset.baseColor, 0.50);
     // public glowColorN: string = Preset.baseColor;
   
     public glowTransparencyA: number = null
@@ -216,6 +216,30 @@ export class GlowEffectSettings {
     // public glowStrengthN: number = 2
 }
 
+
+export class OutlinedPreset {
+    public tile: OutlinedTileSettings = new OutlinedTileSettings();
+}
+
+export class OutlinedTileSettings{
+    public colorA: string = Preset.baseColor;
+    public colorS: string = Preset.baseColor;
+    public colorU: string = Preset.baseColor;
+    public colorH: string = Preset.baseColor;
+    // public colorN: string = "#9400D3";
+
+    public strokeA: string = "";
+    public strokeS: string = shadeHexColor(Preset.baseColor, -0.25);
+    public strokeU: string = shadeHexColor(Preset.baseColor, -0.25);
+    public strokeH: string = shadeHexColor(Preset.baseColor, -0.25);
+    // public strokeN: string = shadeHexColor(Preset.baseColor, 0.15);
+
+    public strokeWidthA: number = null;
+    public strokeWidthS: number = 5;
+    public strokeWidthU: number = 1;
+    public strokeWidthH: number = 3;
+    // public strokeWidthN: number = 0;
+}
 
 
 function shadeHexColor(hex: string, percent: number): string {

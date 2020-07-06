@@ -1941,6 +1941,10 @@
                             {
                                 "displayName": "Glow",
                                 "value": "glow"
+                            },
+                            {
+                                "displayName": "Outlined",
+                                "value": "outlined"
                             }
                         ]
                     }

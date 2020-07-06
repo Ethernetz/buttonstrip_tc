@@ -2,7 +2,7 @@ import { PropertyGroupKeys, StatesUsed, PropertyGroupValues } from '../TilesColl
 import { State, PresetStyle } from '../TilesCollection/enums'
 import powerbi from "powerbi-visuals-api";
 import { VisualSettings } from '../settings';
-import { DarkerPreset, Preset, LighterPreset, FilledPreset, PressedPreset, DefaultPreset, PoppedPreset, GlowPreset } from './PresetStyleSettings'
+import { DarkerPreset, Preset, LighterPreset, FilledPreset, PressedPreset, DefaultPreset, PoppedPreset, GlowPreset, OutlinedPreset } from './PresetStyleSettings'
 
 
 export function getPropertyStateNameArr(propKeys: string[]): PropertyGroupKeys[] {
@@ -69,7 +69,8 @@ export function getObjectsToPersist(visualSettings: VisualSettings, currentPrese
                 disabled: visualSettings[objKey][propKeys.disabled],
             };
 
-            Preset.baseColor = visualSettings.presetStyle.color
+            Preset.baseColor = visualSettings && visualSettings["presetStyle"] && visualSettings["presetStyle"]["color"]
+
             let preset = usePreset ? getPreset(currentPresetStyle) : null
             if (preset){
                 propValuesAfter = styleWithPreset(propValuesAfter, new DefaultPreset(), objKey, propKeys)
@@ -111,6 +112,8 @@ export function getPreset(preset: PresetStyle): object {
             return new PressedPreset()
         case PresetStyle.glow:
             return new GlowPreset()
+        case PresetStyle.outlined:
+            return new OutlinedPreset()
         default:
             null
     }

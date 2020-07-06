@@ -193,6 +193,10 @@ export class Tile {
     get tileStrokeWidth(): number {
         return getMatchingStateProperty(this.currentState, this.formatSettings.tile, 'strokeWidth')
     }
+    get maxTileStrokeWidth(): number{
+        return Math.max(this.formatSettings.tile.strokeWidthS, this.formatSettings.tile.strokeWidthU, this.formatSettings.tile.strokeWidthH, this.tileStrokeWidth)
+    }
+
     get tilePadding(): number {
         return this.formatSettings.layout.padding
     }
@@ -348,7 +352,7 @@ export class Tile {
     }
 
     get effectSpace(): number {
-        return Math.max(this.shadowSpace, this.glowSpace, this.tileStrokeWidth)
+        return Math.max(this.shadowSpace, this.glowSpace, 2*this.maxTileStrokeWidth)
     }
     get filter(): string {
         return "url(#filter" + this.i + ")"
