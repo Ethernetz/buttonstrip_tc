@@ -62,3 +62,14 @@ export enum IconPlacement{
     below = "below",
     empty = ""
 }
+
+export enum PresetStyle{
+    none = "none",
+    darker = "darker",
+    lighter = "lighter",
+    filled = "filled",
+    popped = "popped",
+    pressed = "pressed",
+    glow = "glow",
+    outlined = "outlined"
+}

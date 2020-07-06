@@ -116,6 +116,12 @@ export class Tile {
     get text2Align(): string {
         return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'alignment')
     }
+    get tex2tMarginLeft(): number {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'marginLeft')
+    }
+    get text2MarginRight(): number {
+        return getMatchingStateProperty(this.currentState, this.formatSettings.text, 'marginRight')
+    }
 
 
     get allTextWidth(): number {
@@ -594,7 +600,7 @@ export class Tile {
         let text2 = this.textElement
         text2.textContent = this.text2
 
-        let text2Container = document.createElement("div")
+        let text2Container = this.textContainer
         text2Container.append(text2)
         text2Container.className = "text2Container"
 

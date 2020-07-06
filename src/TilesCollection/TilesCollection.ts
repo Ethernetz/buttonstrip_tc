@@ -32,9 +32,9 @@ export class TilesCollection {
         this.maxInlineTextHeight = Math.round(maxFontSize * 4 / 3)
         this.minTileWidth = maxFontSize * 5
 
-        let totalHeight = this.tiles[this.tiles.length - 1].tileYpos + this.tiles[this.tiles.length - 1].tileHeight
+        let totalHeight = this.tiles[this.tiles.length - 1].tileYpos + this.tiles[this.tiles.length - 1].tileHeight + this.tiles[0].effectSpace/2
         let farRightTileIndex = Math.min(this.tiles.length - 1, this.tiles[0].rowLength - 1)
-        let totalWidth = this.tiles[farRightTileIndex].tileWidth + this.tiles[farRightTileIndex].tileXpos
+        let totalWidth = this.tiles[farRightTileIndex].tileWidth + this.tiles[farRightTileIndex].tileXpos + this.tiles[0].effectSpace/2
 
         let horScroll = totalWidth > this.viewport.width
         let vertScroll = totalHeight > this.viewport.height

@@ -57,7 +57,7 @@ import { SelectionManagerUnbound } from './SelectionManagerUnbound'
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 
 // import * as enums from "./enums"
-import { TileSizingType, TileLayoutType, TileShape, IconPlacement, State } from './TilesCollection/enums'
+import { TileSizingType, TileLayoutType, TileShape, IconPlacement, State, PresetStyle } from './TilesCollection/enums'
 import { ContentSource } from './enums'
 
 import { select, merge } from "d3";
@@ -82,6 +82,8 @@ export class Visual implements IVisual {
     public hoveredIndex: number
 
     public shiftFired: boolean = false
+    public currentPresetStyle: PresetStyle = PresetStyle.none
+    public currentPresetBaseColor: string = ""
 
 
     constructor(options: VisualConstructorOptions) {
@@ -221,13 +223,19 @@ export class Visual implements IVisual {
     }
 
     public update(options: VisualUpdateOptions) {
-
         if (!(options && options.dataViews && options.dataViews[0]))
             return
         this.visualSettings = VisualSettings.parse(options.dataViews[0]) as VisualSettings
-        let objects: powerbi.VisualObjectInstancesToPersist = getObjectsToPersist(this.visualSettings)
+        let objects: powerbi.VisualObjectInstancesToPersist = getObjectsToPersist(this.visualSettings,
+            this.visualSettings.presetStyle.preset,
+            this.visualSettings.presetStyle.preset != this.currentPresetStyle || this.visualSettings.presetStyle.color != this.currentPresetBaseColor)
+        this.currentPresetStyle = this.visualSettings.presetStyle.preset
+        this.currentPresetBaseColor = this.visualSettings.presetStyle.color
+        console.log(objects.merge)
         if (objects.merge.length != 0)
             this.host.persistProperties(objects);
+
+
 
         let buttonsCollection = new ButtonsCollection()
 
@@ -257,7 +265,6 @@ export class Visual implements IVisual {
                 let pageValue: string = categories[0].values[i].toString();
                 let iconURL: string = categories[1] ? categories[1].values[i].toString() : "";
                 let bgImgURL: string = categories[2] ? categories[2].values[i].toString() : ""; //TODO tell if no icon & bgimg is cat[1]
-                console.log(dataView.categorical)
                 let tileSelectionId = this.host.createSelectionIdBuilder()
                     .withCategory(categories[0], i)
                     .createSelectionId();

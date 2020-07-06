@@ -30,6 +30,7 @@ import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 import * as TileCollectionFormatSettings from "./TilesCollection/FormatSettings"
 import {ContentSource} from './enums'
+import { PresetStyle } from "./TilesCollection/enums";
 
 export class TileSettings extends TileCollectionFormatSettings.TileSettings{
 }
@@ -88,6 +89,11 @@ export class BgImgSettings{
   public img10: string = ""
 }
 
+export class PresetStyleSettings{
+  public color: string = "#0D6ABF"
+  public preset: PresetStyle = PresetStyle.none
+}
+
 export class VisualSettings extends DataViewObjectsParser {
   public tile: TileSettings = new TileSettings();
   public text: TextSettings = new TextSettings();
@@ -96,4 +102,5 @@ export class VisualSettings extends DataViewObjectsParser {
   public effects: EffectSettings = new EffectSettings();
   public content: ContentSettings = new ContentSettings();
   public bgimg: BgImgSettings = new BgImgSettings();
+  public presetStyle: PresetStyleSettings = new PresetStyleSettings()
 }

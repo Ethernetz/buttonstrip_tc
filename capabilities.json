@@ -1894,8 +1894,60 @@
                     }
                 }
             }
+        },
+        "presetStyle": {
+            "displayName": "Preset styles",
+            "properties": {
+                "color": {
+                    "displayName": "Base color",
+                    "description": "Base color for the preset styles",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "preset": {
+                    "displayName": "Preset",
+                    "description": "Select a preset style based on the base color",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "None",
+                                "value": "none"
+                            },
+                            {
+                                "displayName": "Darker",
+                                "value": "darker"
+                            },
+                            {
+                                "displayName": "Lighter",
+                                "value": "lighter"
+                            },
+                            {
+                                "displayName": "Filled",
+                                "value": "filled"
+                            },
+                            {
+                                "displayName": "Popped",
+                                "value": "popped"
+                            },
+                            {
+                                "displayName": "Pressed",
+                                "value": "pressed"
+                            },
+                            {
+                                "displayName": "Glow",
+                                "value": "glow"
+                            }
+                        ]
+                    }
+                }
+            }
         }
-    },
+    }, 
     "suppressDefaultTitle": true,
     "dataViewMappings": [
         {

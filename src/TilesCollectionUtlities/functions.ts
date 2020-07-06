@@ -1,8 +1,8 @@
-import { PropertyGroupKeys, StatesUsed } from '../TilesCollection/interfaces'
-import { PropertyGroupValuesWithState, PropertyGroupValuesWithDidChange } from './interfaces'
-import { State } from '../TilesCollection/enums'
+import { PropertyGroupKeys, StatesUsed, PropertyGroupValues } from '../TilesCollection/interfaces'
+import { State, PresetStyle } from '../TilesCollection/enums'
 import powerbi from "powerbi-visuals-api";
 import { VisualSettings } from '../settings';
+import { DarkerPreset, Preset, LighterPreset, FilledPreset, PressedPreset, DefaultPreset, PoppedPreset, GlowPreset } from './PresetStyleSettings'
 
 
 export function getPropertyStateNameArr(propKeys: string[]): PropertyGroupKeys[] {
@@ -25,7 +25,7 @@ export function getPropertyStateNames(propKeys: string[], propBase: string): Pro
 }
 
 
-export function getObjectsToPersist(visualSettings: VisualSettings): powerbi.VisualObjectInstancesToPersist {
+export function getObjectsToPersist(visualSettings: VisualSettings, currentPresetStyle?: PresetStyle, usePreset?: boolean): powerbi.VisualObjectInstancesToPersist {
     let objKeys = Object.keys(visualSettings)
     let objects: powerbi.VisualObjectInstancesToPersist = {
         merge: []
@@ -51,26 +51,44 @@ export function getObjectsToPersist(visualSettings: VisualSettings): powerbi.Vis
 
         for (let j = 0; j < groupedKeyNamesArr.length; j++) {
             let propKeys: PropertyGroupKeys = groupedKeyNamesArr[j]
-            let propValues: PropertyGroupValuesWithState = {
+            let propValuesBefore: PropertyGroupValues = {
                 default: visualSettings[objKey][propKeys.default],
                 all: visualSettings[objKey][propKeys.all],
                 selected: visualSettings[objKey][propKeys.selected],
                 unselected: visualSettings[objKey][propKeys.unselected],
                 hover: visualSettings[objKey][propKeys.hover],
                 disabled: visualSettings[objKey][propKeys.disabled],
-                state: visualSettings[objKey].state,
             }
-            let leveledPropertyState = levelProperties(propValues, propKeys, statesUsed)
-            if (leveledPropertyState.didChange) {
-                object.properties[propKeys.all] = leveledPropertyState.all
+
+            let propValuesAfter:PropertyGroupValues = {
+                default: visualSettings[objKey][propKeys.default],
+                all: visualSettings[objKey][propKeys.all],
+                selected: visualSettings[objKey][propKeys.selected],
+                unselected: visualSettings[objKey][propKeys.unselected],
+                hover: visualSettings[objKey][propKeys.hover],
+                disabled: visualSettings[objKey][propKeys.disabled],
+            };
+
+            Preset.baseColor = visualSettings.presetStyle.color
+            let preset = usePreset ? getPreset(currentPresetStyle) : null
+            if (preset){
+                propValuesAfter = styleWithPreset(propValuesAfter, new DefaultPreset(), objKey, propKeys)
+                
+                propValuesAfter = styleWithPreset(propValuesAfter, preset, objKey, propKeys)
+                console.log(propValuesBefore, propValuesAfter)
+            }
+            propValuesAfter = levelProperties(propValuesAfter, propKeys, statesUsed, visualSettings[objKey].state)
+            console.log(propValuesBefore, propValuesAfter)
+            if (didChange(propValuesBefore, propValuesAfter)) {
+                object.properties[propKeys.all] = propValuesAfter.all
                 if (statesUsed.selected)
-                    object.properties[propKeys.selected] = leveledPropertyState.selected
+                    object.properties[propKeys.selected] = propValuesAfter.selected
                 if (statesUsed.unselected)
-                    object.properties[propKeys.unselected] = leveledPropertyState.unselected
+                    object.properties[propKeys.unselected] = propValuesAfter.unselected
                 if (statesUsed.hover)
-                    object.properties[propKeys.hover] = leveledPropertyState.hover
+                    object.properties[propKeys.hover] = propValuesAfter.hover
                 if (statesUsed.disabled)
-                    object.properties[propKeys.disabled] = leveledPropertyState.disabled
+                    object.properties[propKeys.disabled] = propValuesAfter.disabled
             }
         }
         if (Object.keys(object.properties).length != 0)
@@ -79,7 +97,38 @@ export function getObjectsToPersist(visualSettings: VisualSettings): powerbi.Vis
     return objects
 }
 
-export function levelProperties(propValues: PropertyGroupValuesWithState, propKeys: PropertyGroupKeys, statesUsed: StatesUsed): PropertyGroupValuesWithDidChange {
+export function getPreset(preset: PresetStyle): object {
+    switch (preset) {
+        case PresetStyle.darker:
+            return new DarkerPreset()
+        case PresetStyle.lighter:
+            return new LighterPreset()
+        case PresetStyle.filled:
+            return new FilledPreset()
+        case PresetStyle.popped:
+            return new PoppedPreset()
+        case PresetStyle.pressed:
+            return new PressedPreset()
+        case PresetStyle.glow:
+            return new GlowPreset()
+        default:
+            null
+    }
+}
+
+export function styleWithPreset(propValues: PropertyGroupValues, preset: any, objKey: string, propKeys: PropertyGroupKeys): PropertyGroupValues {
+    if (!preset || !objKey || !preset[objKey])
+        return propValues
+    
+    propValues.all = preset[objKey][propKeys.selected] !=null ? preset[objKey][propKeys.all] : propValues.all
+    propValues.selected = preset[objKey][propKeys.selected] !=null ? preset[objKey][propKeys.selected] : propValues.selected
+    propValues.unselected = preset[objKey][propKeys.unselected] !=null ? preset[objKey][propKeys.unselected] : propValues.unselected
+    propValues.hover = preset[objKey][propKeys.hover] !=null ? preset[objKey][propKeys.hover] : propValues.hover
+    propValues.disabled = preset[objKey][propKeys.disabled] !=null ? preset[objKey][propKeys.disabled] : propValues.disabled
+    return propValues
+}
+
+export function levelProperties(propValues: PropertyGroupValues, propKeys: PropertyGroupKeys, statesUsed: StatesUsed, state: State): PropertyGroupValues {
     let _all = propValues.all
     let _selected = propValues.selected
     let _unselected = propValues.unselected
@@ -94,18 +143,18 @@ export function levelProperties(propValues: PropertyGroupValuesWithState, propKe
         nullValue = ""
     }
 
-    let overrideWithAll: boolean = propValues.state == State.all && allExists
+    let overrideWithAll: boolean = state == State.all && allExists
     if (propKeys.selected && statesUsed.selected)
-        _selected = overrideWithAll ? _all : _selected || propValues.default
+        _selected = overrideWithAll ? _all : _selected == null ? propValues.default : _selected
 
     if (propKeys.unselected && statesUsed.unselected)
-        _unselected = overrideWithAll ? _all : _unselected || propValues.default
+        _unselected = overrideWithAll ? _all : _unselected == null ? propValues.default : _unselected
 
     if (propKeys.hover && statesUsed.hover)
-        _hover = overrideWithAll ? _all : _hover || propValues.default
+        _hover = overrideWithAll ? _all : _hover == null ? propValues.default : _hover
 
     if (propKeys.disabled && statesUsed.disabled)
-        _disabled = overrideWithAll ? _all : _disabled || propValues.default
+        _disabled = overrideWithAll ? _all : _disabled == null ? propValues.default : _disabled
 
 
     let allSame = (_selected == _unselected || !_unselected)
@@ -113,22 +162,20 @@ export function levelProperties(propValues: PropertyGroupValuesWithState, propKe
         && (_selected == _disabled || !_disabled);
 
     _all = allSame ? _selected : nullValue
-
-    let didChange: boolean = (propValues.all != _all ||
-        (propValues.selected != _selected) ||
-        propValues.unselected != _unselected ||
-        propValues.hover != _hover ||
-        propValues.disabled != _disabled)
-
-
-
     return {
         default: propValues.default,
         all: _all,
         selected: _selected,
         unselected: _unselected,
         hover: _hover,
-        disabled: _disabled,
-        didChange: didChange
+        disabled: _disabled
     }
+}
+
+export function didChange(beforeValues: PropertyGroupValues, afterValues: PropertyGroupValues): boolean {
+    return (beforeValues.all != afterValues.all ||
+        beforeValues.selected != afterValues.selected ||
+        beforeValues.unselected != afterValues.unselected ||
+        beforeValues.hover != afterValues.hover ||
+        beforeValues.disabled != afterValues.disabled)
 }
