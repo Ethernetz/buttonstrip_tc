@@ -211,9 +211,16 @@ export class Visual implements IVisual {
                 if (settings.effect.glow)
                     properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "glow") }
                 break
-            case "content":
-                properties = { ...properties, ...settings.content }
-                break
+            case "content":{
+                let filtered = Object.keys(settings.content)
+                .filter(key => !(settings.content.source == ContentSource.databound && (key.startsWith("text") || key.startsWith("icon")) || key == 'n' ))
+                .filter(key => !(settings.content.source == ContentSource.fixed && !settings.content.icons && key.startsWith("icon") && key != "icons"))
+                .reduce((obj, key) => {
+                    obj[key] = settings.content[key]
+                    return obj;
+                }, {})
+                properties = { ...properties, ...filtered }
+                break}
             case "bgimg":
                 properties.bgimgs = settings.bgimg.bgimgs
                 if (settings.bgimg.bgimgs)

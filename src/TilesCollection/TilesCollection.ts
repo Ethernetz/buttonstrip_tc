@@ -150,7 +150,7 @@ export class TilesCollection {
             .attr("d", function (d) { return d.shapePath })
             .attr("fill", function (d) { return d.bgImgURL ? "url(#image" + d.i + ")" : d.tileFill })
             .style("fill-opacity", function (d) { return d.tileFillOpacity })
-            .style("filter", function (d) { return "#filter" + d.i })
+            .style("filter", function (d) { return "url(#filter" + d.i + ")"})
         tile.select(".stroke")
             .attr("d", function (d) { return d.shapeStrokePath })
             .style("fill", "none")
