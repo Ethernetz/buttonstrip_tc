@@ -8,4 +8,7 @@ export class TileData{
     isHovered?: boolean
     isDisabled?: boolean
     contentFormatType?: ContentFormatType
+    sameState?: boolean
+    isRendered?: boolean
+    needsToBeRendered?: boolean
 }

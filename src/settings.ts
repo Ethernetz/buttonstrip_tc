@@ -99,7 +99,7 @@ export class VisualSettings extends DataViewObjectsParser {
   public text: TextSettings = new TextSettings();
   public icon: IconSettings = new IconSettings();
   public layout: LayoutSettings = new LayoutSettings();
-  public effects: EffectSettings = new EffectSettings();
+  public effect: EffectSettings = new EffectSettings();
   public content: ContentSettings = new ContentSettings();
   public bgimg: BgImgSettings = new BgImgSettings();
   public presetStyle: PresetStyleSettings = new PresetStyleSettings()

@@ -134,6 +134,12 @@ export class Parallelogram extends Shape implements Shape{
             return -1 * Parallelogram._z
         return -1* height / Math.tan(angle * (Math.PI / 180))
     }
+
+    static getExtraHSpace(height: number, angle: number): number{
+        if(this.handleFocused)
+            return 2 * Parallelogram._z
+        return 2*height / Math.tan(angle * (Math.PI / 180))
+    }
 }
 
 export class ParallelogramVertical extends Shape implements Shape{
@@ -204,6 +210,12 @@ export class ParallelogramVertical extends Shape implements Shape{
         if(this.handleFocused)
             return -1 * ParallelogramVertical._z
         return -1* width/Math.tan(angle*(Math.PI/180))
+    }
+
+    static getExtraVSpace(width: number, angle: number): number{
+        if(this.handleFocused)
+            return 2 * ParallelogramVertical._z
+        return 2*width/Math.tan(angle*(Math.PI/180))
     }
 }
 
@@ -277,6 +289,13 @@ export class Chevron extends Shape implements Shape{
             return -1*Chevron._z
         return -1 *(0.5 * height) / Math.tan(angle * (Math.PI / 180))
     }
+
+    static getExtraHSpace(height: number, angle: number): number{
+        if(this.handleFocused)
+            return 2 * Chevron._z
+        return 2*(0.5 * height) / Math.tan(angle * (Math.PI / 180))
+    }
+    
 }
 
 export class ChevronVertical extends Shape implements Shape{
@@ -349,6 +368,11 @@ export class ChevronVertical extends Shape implements Shape{
             return -1 * ChevronVertical._z
         return -1* (0.5 * width) / Math.tan(angle * (Math.PI / 180))
     }
+    static getExtraVSpace(width: number, angle: number): number{
+        if(this.handleFocused)
+            return 2 * ChevronVertical._z
+        return 2*(0.5 * width) / Math.tan(angle * (Math.PI / 180))
+    }
 }
 
 export class Pentagon extends Shape implements Shape{
@@ -413,6 +437,9 @@ export class Pentagon extends Shape implements Shape{
             }
         ]
         return handles
+    }
+    static getExtraHSpace(): number{
+        return Pentagon._z
     }
 }
 
@@ -479,6 +506,10 @@ export class Hexagon extends Shape implements Shape{
             }
         ]
         return handles
+    }
+
+    static getExtraHSpace(): number{
+        return 2 * Hexagon._z
     }
 }
 

@@ -36,6 +36,7 @@ import ISelectionManager = powerbi.extensibility.ISelectionManager;
 import ISelectionIdBuilder = powerbi.extensibility.ISelectionIdBuilder;
 import DataView = powerbi.DataView;
 import VisualObjectInstancesToPersist = powerbi.VisualObjectInstancesToPersist
+import DataViewPropertyValue = powerbi.DataViewPropertyValue
 import VisualObjectInstance = powerbi.VisualObjectInstance
 import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnumerationObject
 
@@ -63,7 +64,7 @@ import { ContentSource } from './enums'
 import { select, merge } from "d3";
 
 
-import { ButtonsCollection } from './ButtonsCollection'
+import { ButtonsCollection, ButtonData } from './ButtonsCollection'
 import { ContentFormatType } from "./TilesCollection/enums";
 
 export class Visual implements IVisual {
@@ -85,155 +86,175 @@ export class Visual implements IVisual {
     public currentPresetStyle: PresetStyle = PresetStyle.none
     public currentPresetBaseColor: string = ""
 
+    public visualElement: HTMLElement;
+    public selectionIdKeys: string[] = []
+
 
     constructor(options: VisualConstructorOptions) {
         this.selectionIdBuilder = options.host.createSelectionIdBuilder();
         this.selectionManager = options.host.createSelectionManager();
         this.selectionManagerUnbound = new SelectionManagerUnbound()
-        this.selectionManagerHover = options.host.createSelectionManager();
         this.host = options.host;
+        this.visualElement = options.element
+
         this.svg = d3.select(options.element)
             .append('svg')
-            .classed('navigator', true);
+            .classed('buttonstrip', true);
 
-        // let defs = this.svg.append("defs");
         this.container = this.svg.append("g")
             .classed('container', true);
     }
 
-    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
-        const settings: VisualSettings = this.visualSettings || <VisualSettings>VisualSettings.getDefault();
-        let settingsKeys = Object.keys(settings)
-        for (let i = 0; i < settingsKeys.length; i++) {
-            let settingKey: string = settingsKeys[i]
-            let groupedKeyNamesArr: PropertyGroupKeys[] = getPropertyStateNameArr(Object.keys(settings[settingKey]))
-            for (let j = 0; j < groupedKeyNamesArr.length; j++) {
-                let groupedKeyNames: PropertyGroupKeys = groupedKeyNamesArr[j]
-                switch (settings[settingKey].state) {
+    public getEnumeratedStateProperties(propertyGroup: any, prefix?: string): { [propertyName: string]: DataViewPropertyValue } {
+        let properties: { [propertyName: string]: DataViewPropertyValue } = {}
+        let groupedKeyNamesArr: PropertyGroupKeys[] = getPropertyStateNameArr(Object.keys(propertyGroup))
+        if (groupedKeyNamesArr.length > 0 && propertyGroup["state"]) {
+            let state: State = propertyGroup["state"]
+            for (let i = 0; i < groupedKeyNamesArr.length; i++) {
+                let groupedKeyNames = groupedKeyNamesArr[i]
+                if (prefix && !groupedKeyNames.default.startsWith(prefix))
+                    continue
+                switch (state) {
                     case State.all:
-                        delete settings[settingKey][groupedKeyNames.selected]
-                        delete settings[settingKey][groupedKeyNames.unselected]
-                        delete settings[settingKey][groupedKeyNames.hover]
+                        properties[groupedKeyNames.all] = propertyGroup[groupedKeyNames.all]
                         break
                     case State.selected:
-                        delete settings[settingKey][groupedKeyNames.all]
-                        delete settings[settingKey][groupedKeyNames.unselected]
-                        delete settings[settingKey][groupedKeyNames.hover]
+                        properties[groupedKeyNames.selected] = propertyGroup[groupedKeyNames.selected]
                         break
                     case State.unselected:
-                        delete settings[settingKey][groupedKeyNames.all]
-                        delete settings[settingKey][groupedKeyNames.selected]
-                        delete settings[settingKey][groupedKeyNames.hover]
+                        properties[groupedKeyNames.unselected] = propertyGroup[groupedKeyNames.unselected]
                         break
                     case State.hovered:
-                        delete settings[settingKey][groupedKeyNames.all]
-                        delete settings[settingKey][groupedKeyNames.selected]
-                        delete settings[settingKey][groupedKeyNames.unselected]
+                        properties[groupedKeyNames.hover] = propertyGroup[groupedKeyNames.hover]
+                        break
+                    case State.disabled:
+                        properties[groupedKeyNames.disabled] = propertyGroup[groupedKeyNames.disabled]
                         break
                 }
             }
         }
-        let iconSettingsKeys: string[] = Object.keys(settings.icon)
-        if (!settings.icon.icons)
-            for (let i = 0; i < iconSettingsKeys.length; i++)
-                if (iconSettingsKeys[i] != 'icons')
-                    delete settings.icon[iconSettingsKeys[i]]
-        let effectSettingsKeys: string[] = Object.keys(settings.effects)
-        if (!settings.effects.shadow)
-            for (let i = 0; i < effectSettingsKeys.length; i++)
-                if (effectSettingsKeys[i].startsWith("shadow") && effectSettingsKeys[i] != "shadow")
-                    delete settings.effects[effectSettingsKeys[i]]
-        if (!settings.effects.glow)
-            for (let i = 0; i < effectSettingsKeys.length; i++)
-                if (effectSettingsKeys[i].startsWith("glow") && effectSettingsKeys[i] != "glow")
-                    delete settings.effects[effectSettingsKeys[i]]
 
-
-        switch (settings.content.source) {
-            case ContentSource.databound:
-                delete settings.content.n
-                delete settings.content.icons
-                for (let i = 1; i < 11; i++) {
-                    delete settings.content['text' + i]
-                    delete settings.content['icon' + i]
-                    delete settings.bgimg['img' + i]
-                }
-                break
-
-            case ContentSource.fixed:
-                for (let i = 10; i > settings.content.n; i--) {
-                    delete settings.content['text' + i]
-                    delete settings.content['icon' + i]
-                    delete settings.bgimg['img' + i]
-                }
-                if (!this.visualSettings.content.icons)
-                    for (let i = 1; i < 11; i++)
-                        delete settings.content['icon' + i]
-                if (!this.visualSettings.bgimg.bgimgs)
-                    for (let i = 1; i < 11; i++)
-                        delete settings.bgimg['img' + i]
-                break
-        }
-
-        if (!this.visualSettings.content.icons)
-            for (let i = 1; i < 11; i++)
-                delete settings.content['icon' + i]
-        if (!this.visualSettings.bgimg.bgimgs)
-            for (let i = 1; i < 11; i++)
-                delete settings.bgimg['img' + i]
-
-
-        let iconPlacement = settings.icon[getCorrectPropertyStateName(settings.icon.state, 'placement')] as IconPlacement
-        if (iconPlacement == IconPlacement.left) {
-            delete settings.icon[getCorrectPropertyStateName(settings.icon.state, "topMargin")]
-            delete settings.icon[getCorrectPropertyStateName(settings.icon.state, "bottomMargin")]
-        }
-        if (!(settings.icon.icons && iconPlacement == IconPlacement.above))
-            delete settings.text[getCorrectPropertyStateName(settings.text.state, "bmargin")]
-
-        if (settings.layout.sizingMethod != TileSizingType.fixed) {
-            delete settings.layout.tileWidth;
-            delete settings.layout.tileHeight;
-            delete settings.layout.tileAlignment;
-        }
-        if (settings.layout.tileLayout != TileLayoutType.grid) {
-            delete settings.layout.rowLength
-        }
-
-        if (settings.layout.tileShape != TileShape.parallelogram) {
-            delete settings.layout.parallelogramAngle
-        }
-        if (settings.layout.tileShape != TileShape.chevron) {
-            delete settings.layout.chevronAngle
-        }
-        if (settings.layout.tileShape != TileShape.pentagon) {
-            delete settings.layout.pentagonAngle
-        }
-        if (settings.layout.tileShape != TileShape.hexagon) {
-            delete settings.layout.hexagonAngle
-        }
-        if (settings.layout.tileShape != TileShape.tab_cutCorners) {
-            delete settings.layout.tab_cutCornersLength
-        }
-        if (settings.layout.tileShape != TileShape.tab_cutCorner) {
-            delete settings.layout.tab_cutCornerLength
-        }
-
-        return VisualSettings.enumerateObjectInstances(settings, options);
+        return properties
     }
 
+    public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstanceEnumeration {
+        let objectName = options.objectName;
+        let objectEnumeration: VisualObjectInstance[] = [];
+
+        let properties: { [propertyName: string]: DataViewPropertyValue } = {}
+
+
+        const settings: VisualSettings = this.visualSettings || <VisualSettings>VisualSettings.getDefault();
+        switch (objectName) {
+            case "tile":
+                properties.state = settings.tile.state
+                properties.hoverStyling = settings.tile.hoverStyling
+                properties = {...properties, ...this.getEnumeratedStateProperties(settings.tile) }
+                break
+            case "text": {
+                properties.state = settings.text.state
+                properties.hoverStyling = settings.text.hoverStyling
+                let iconPlacement = settings.icon[getCorrectPropertyStateName(settings.text.state, 'placement')] as IconPlacement
+                let filtered = Object.keys(settings.text)
+                    .filter(key => !(settings.icon.icons && iconPlacement != IconPlacement.above && key == "bmarginA"))
+                    .reduce((obj, key) => {
+                        obj[key] = settings.text[key]
+                        return obj;
+                    }, {})
+
+                properties = {...properties, ...this.getEnumeratedStateProperties(filtered) }
+                break
+            }
+            case "icon":{
+                properties.icons = settings.icon.icons
+                let excludeWhenLeft = ["topMarginA", "bottomMarginA"]
+
+                if (settings.icon.icons) {
+                    let iconPlacement = settings.icon[getCorrectPropertyStateName(settings.icon.state, 'placement')] as IconPlacement
+                    properties.state = settings.icon.state
+                    properties.hoverStyling = settings.icon.hoverStyling
+                    let filtered = Object.keys(settings.icon)
+                        .filter(key => !(iconPlacement && excludeWhenLeft.indexOf(key) > -1))
+                        .reduce((obj, key) => {
+                            obj[key] = settings.icon[key]
+                            return obj;
+                        }, {})
+
+
+                    properties = { ...properties, ...this.getEnumeratedStateProperties(filtered) }
+                }
+                break}
+            case "layout": {
+                let excludeWhenNotFixed = ["tileWidth", "tileHeight", "tileAlignment"]
+
+                let filtered = Object.keys(settings.layout)
+                    .filter(key => !(key.endsWith("Angle") || key.endsWith("Length"))
+                        || key == settings.layout.tileShape + "Angle"
+                        || key == settings.layout.tileShape + "Length")
+                    .filter(key => !(settings.layout.sizingMethod != TileSizingType.fixed && excludeWhenNotFixed.indexOf(key) > -1))
+                    .filter(key => !(settings.layout.tileLayout != TileLayoutType.grid && key == "tilesPerRow"))
+                    .reduce((obj, key) => {
+                        obj[key] = settings.layout[key]
+                        return obj;
+                    }, {})
+
+                properties = { ...properties, ...filtered }
+                break
+            }
+            case "effect":
+                properties.state = settings.effect.state
+                properties.hoverStyling = settings.effect.hoverStyling
+                properties.shadow = settings.effect.shadow
+                if (settings.effect.shadow)
+                    properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "shadow") }
+                properties.glow = settings.effect.glow
+                if (settings.effect.glow)
+                    properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "glow") }
+                break
+            case "content":
+                properties = { ...properties, ...settings.content }
+                break
+            case "bgimg":
+                properties.bgimgs = settings.bgimg.bgimgs
+                if (settings.bgimg.bgimgs)
+                    properties = { ...properties, ...this.getEnumeratedStateProperties(settings.bgimg) }
+                break
+            case "presetStyle":
+                properties = { ...properties, ...settings.presetStyle }
+                break
+        }
+
+        objectEnumeration.push({
+            objectName: objectName,
+            properties: properties,
+            selector: null
+        })
+
+        return objectEnumeration
+    }
+
+    public options: VisualUpdateOptions;
+
     public update(options: VisualUpdateOptions) {
-        if (!(options && options.dataViews && options.dataViews[0]))
+        console.log("updating")
+        if (!(options
+            && options.dataViews
+            && options.dataViews[0]
+            && options.dataViews[0].categorical
+            && options.dataViews[0].categorical.categories
+        ))
             return
+        this.options = options
         this.visualSettings = VisualSettings.parse(options.dataViews[0]) as VisualSettings
+
         let objects: powerbi.VisualObjectInstancesToPersist = getObjectsToPersist(this.visualSettings,
             this.visualSettings.presetStyle.preset,
             this.visualSettings.presetStyle.preset != this.currentPresetStyle || this.visualSettings.presetStyle.color != this.currentPresetBaseColor)
         this.currentPresetStyle = this.visualSettings.presetStyle.preset
         this.currentPresetBaseColor = this.visualSettings.presetStyle.color
-        console.log(objects.merge)
         if (objects.merge.length != 0)
             this.host.persistProperties(objects);
+
 
 
 
@@ -243,48 +264,60 @@ export class Visual implements IVisual {
         buttonsCollection.formatSettings.text = this.visualSettings.text
         buttonsCollection.formatSettings.icon = this.visualSettings.icon
         buttonsCollection.formatSettings.layout = this.visualSettings.layout
-        buttonsCollection.formatSettings.effect = this.visualSettings.effects
+        buttonsCollection.formatSettings.effect = this.visualSettings.effect
 
 
-        buttonsCollection.container = this.container
         buttonsCollection.svg = this.svg
+        buttonsCollection.container = this.container
         buttonsCollection.viewport = {
             height: options.viewport.height,
             width: options.viewport.width,
         }
         buttonsCollection.visual = this
         buttonsCollection.options = options
+        buttonsCollection.visualElement = this.visualElement
 
+        buttonsCollection.render(this.createButtonData())
+    }
+
+    public createButtonData(): ButtonData[] {
+
+        let buttonData: ButtonData[] = []
 
         if (this.visualSettings.content.source == ContentSource.databound) {
-            let dataView = options.dataViews[0]
-            let categories: powerbi.DataViewCategoryColumn[] = dataView.categorical.categories;
-            let selectionIdKeys: string[] = (this.selectionManager.getSelectionIds() as powerbi.visuals.ISelectionId[]).map(x => x.getKey()) as string[]
+            
+            let dataView = this.options.dataViews[0]
+            let allCategories: powerbi.DataViewCategoryColumn[] = dataView.categorical.categories;
+            let textCategory = allCategories[0]
+            let iconURLCategory = allCategories[1]
+            let bgimgURLCategory = allCategories[2]
 
-            for (let i = 0; i < categories[0].values.length; i++) {
-                let pageValue: string = categories[0].values[i].toString();
-                let iconURL: string = categories[1] ? categories[1].values[i].toString() : "";
-                let bgImgURL: string = categories[2] ? categories[2].values[i].toString() : ""; //TODO tell if no icon & bgimg is cat[1]
+            let selectionIdKeys: string[] = (this.selectionManager.getSelectionIds() as powerbi.visuals.ISelectionId[]).map(x => x.getKey()) as string[]
+            if (selectionIdKeys.indexOf(undefined) == -1)
+                this.selectionIdKeys = selectionIdKeys
+
+
+            for (let i = 0; i < textCategory.values.length; i++) {
+                
+                let text: string =  textCategory ? textCategory.values[i].toString() : "Unknown";
+                let iconURL: string = iconURLCategory ? iconURLCategory.values[i].toString() : "";
+                let bgImgURL: string = bgimgURLCategory ? bgimgURLCategory.values[i].toString() : ""; //TODO what happens when BGimg but no icon? 
                 let tileSelectionId = this.host.createSelectionIdBuilder()
-                    .withCategory(categories[0], i)
+                    .withCategory(textCategory, i)
                     .createSelectionId();
-                buttonsCollection.tilesData.push({
-                    text: pageValue,
+                buttonData.push({
+                    text: text,
                     iconURL: this.visualSettings.icon.icons ? iconURL : "",
                     bgimgURL: this.visualSettings.bgimg.bgimgs ? bgImgURL : "",
                     contentFormatType: this.visualSettings.icon.icons ? ContentFormatType.text_icon : ContentFormatType.text,
                     selectionId: tileSelectionId,
                     isHovered: this.hoveredIndex == i,
-                    get isSelected(): boolean {
-                        return this.selectionId &&
-                            selectionIdKeys &&
-                            selectionIdKeys.indexOf(this.selectionId.getKey() as string) > -1
-                    }
+                    isSelected: this.selectionIdKeys.indexOf(tileSelectionId.getKey() as string) > -1
                 });
             }
         } else {
             for (let i = 0; i < this.visualSettings.content.n; i++) {
-                buttonsCollection.tilesData.push({
+                buttonData.push({
                     text: this.visualSettings.content['text' + (i + 1)],
                     iconURL: this.visualSettings.content.icons ? this.visualSettings.content['icon' + (i + 1)] : "",
                     bgimgURL: this.visualSettings.bgimg.bgimgs ? this.visualSettings.bgimg['img' + (i + 1)] : "",
@@ -295,7 +328,7 @@ export class Visual implements IVisual {
             }
         }
 
-        buttonsCollection.render()
+        return buttonData
     }
 
 

@@ -8,62 +8,38 @@ import { BaseType, thresholdScott } from 'd3'
 import { TilesCollection } from './TilesCollection'
 import { Handle } from './interfaces'
 import * as d3 from 'd3'
+import { UniversalTileData } from './UniversalTileData'
+import { setLocaleOptions } from 'powerbi-visuals-utils-formattingutils/lib/src/valueFormatter'
 export class Tile {
     collection: TilesCollection
     i: number;
     tilesData: TileData[]
+    univeralTileData: UniversalTileData
     formatSettings: FormatSettings;
     constructor(collection: TilesCollection, i: number, tilesData: TileData[], formatSettings: FormatSettings) {
         this.collection = collection
         this.i = i;
         this.tilesData = tilesData;
+        this.univeralTileData = this.collection.universalTileData;
         this.formatSettings = formatSettings;
     }
     //Format Settings
 
-    get viewport(): Viewport {
-        return this.formatSettings.viewport
-    }
-    get viewportWidth(): number {
-        return this.viewport.width
-    }
-    get viewportHeight(): number {
-        return this.viewport.height
-    }
-    get containerWidth(): number {
-        return this.viewportWidth - this.effectSpace
-    }
-    get containerHeight(): number {
-        return this.viewportHeight - this.effectSpace
-    }
 
-    get n(): number {
-        return this.tilesData.length
-    }
-    get rowLength(): number {
-        switch (this.formatSettings.layout.tileLayout) {
-            case (TileLayoutType.horizontal):
-                return this.n
-            case (TileLayoutType.vertical):
-                return 1
-            case (TileLayoutType.grid):
-                return Math.max(1, this.formatSettings.layout.rowLength)
-        }
-    }
-    get numRows(): number {
-        return Math.ceil(this.n / this.rowLength)
-    }
     get tilesInRow(): number {
-        return (this.numRows - 1) * this.rowLength > this.i || this.n % this.rowLength == 0 ? this.rowLength : this.n % this.rowLength
+        return (this.univeralTileData.numRows - 1) * this.univeralTileData.rowLength > this.i
+            || this.univeralTileData.n % this.univeralTileData.rowLength == 0
+            ? this.univeralTileData.rowLength
+            : this.univeralTileData.n % this.univeralTileData.rowLength
     }
     get rowNumber(): number {
-        return Math.floor(this.i / this.rowLength)
+        return Math.floor(this.i / this.univeralTileData.rowLength)
     }
     get indexInRow(): number {
-        return this.i % this.rowLength
+        return this.i % this.univeralTileData.rowLength
     }
     get rowStartingIndex(): number {
-        return this.rowNumber * this.rowLength
+        return this.rowNumber * this.univeralTileData.rowLength
     }
 
     get text(): string {
@@ -131,7 +107,7 @@ export class Tile {
         return this.contentContainerWidth - this.totalHorizontalTextMargin
     }
     get widthSpaceForAllText(): number {
-        return this.viewport.width - this.rowLength*this.totalHorizontalTextMargin - this.totalTileHPadding - this.effectSpace
+        return this.univeralTileData.viewport.width - this.univeralTileData.rowLength * this.totalHorizontalTextMargin - this.totalTileHPadding - this.univeralTileData.effectSpace
     }
     get inlineTextWidth(): number {
         return calculateWordDimensions(this.text, this.fontFamily, this.fontSize + "pt").width
@@ -142,7 +118,7 @@ export class Tile {
     get boundedTextHeight(): number {
         return calculateWordDimensions(this.text as string, this.fontFamily, this.fontSize + "pt", this.textContainerWidthType, (this.maxInlineTextWidth) + 'px').height;
     }
-    get maxBoundedTextHeight(): number{
+    get maxBoundedTextHeight(): number {
         return this.collection.maxBoundedTextHeight
     }
 
@@ -169,7 +145,7 @@ export class Tile {
         return this.shape.contentBoundingBox.width
     }
     get widthTakenByIcon(): number {
-        if(this.iconPlacement == IconPlacement.left)
+        if (this.iconPlacement == IconPlacement.left)
             return this.iconWidth + this.iconHmargin
         return 0
     }
@@ -193,9 +169,6 @@ export class Tile {
     get tileStrokeWidth(): number {
         return getMatchingStateProperty(this.currentState, this.formatSettings.tile, 'strokeWidth')
     }
-    get maxTileStrokeWidth(): number{
-        return Math.max(this.formatSettings.tile.strokeWidthS, this.formatSettings.tile.strokeWidthU, this.formatSettings.tile.strokeWidthH, this.tileStrokeWidth)
-    }
 
     get tilePadding(): number {
         return this.formatSettings.layout.padding
@@ -204,37 +177,37 @@ export class Tile {
         return this.tilePadding + this.alterHorizontalPadding
     }
     get totalTileHPadding(): number {
-        return this.tileHPadding * (this.rowLength - 1)
+        return this.tileHPadding * (this.univeralTileData.rowLength - 1)
     }
     get tileVPadding(): number {
         return this.tilePadding + this.alterVerticalPadding
     }
     get totalTileVPadding(): number {
-        return this.tileVPadding * (this.numRows - 1)
+        return this.tileVPadding * (this.univeralTileData.numRows - 1)
     }
     get tileWidth(): number {
         switch (this.formatSettings.layout.sizingMethod) {
             case TileSizingType.uniform:
-                return Math.max((this.containerWidth-this.totalTileHPadding)/this.rowLength, this.collection.minTileWidth)
+                return Math.max((this.univeralTileData.containerWidth - this.totalTileHPadding) / this.univeralTileData.rowLength, this.univeralTileData.minTileWidth + this.shapeExtraHSpace)
             case TileSizingType.fixed:
                 return this.formatSettings.layout.tileWidth
             case TileSizingType.dynamic:
-                if (this.indexInRow == this.rowLength - 1)
-                    return this.containerWidth - this.tileXpos
+                if (this.indexInRow == this.univeralTileData.rowLength - 1)
+                    return this.univeralTileData.containerWidth - this.tileXpos
                 return this.inlineTextWidth + this.dynamicExtraWidthPerTile
         }
     }
     get dynamicExtraWidthPerTile(): number {
-        let textSpaceRequired = this.allTextWidth + this.totalHorizontalTextMargin*this.rowLength + this.totalTileHPadding
-        let spaceRemaining = Math.max(0, this.containerWidth - textSpaceRequired)
-        return spaceRemaining / this.rowLength
+        let textSpaceRequired = this.allTextWidth + this.totalHorizontalTextMargin * this.univeralTileData.rowLength + this.totalTileHPadding
+        let spaceRemaining = Math.max(0, this.univeralTileData.containerWidth - textSpaceRequired)
+        return spaceRemaining / this.univeralTileData.rowLength
     }
     get tileHeight(): number {
-        if(this.formatSettings.layout.autoHeight)
-            return this.collection.maxInlineTextHeight+10
+        if (this.formatSettings.layout.autoHeight)
+            return this.univeralTileData.maxInlineTextHeight + 10
         if (this.formatSettings.layout.sizingMethod == TileSizingType.fixed)
             return this.formatSettings.layout.tileHeight
-        return Math.max((this.containerHeight - this.totalTileVPadding) / this.numRows, this.collection.maxInlineTextHeight+10)
+        return Math.max((this.univeralTileData.containerHeight - this.totalTileVPadding) / this.univeralTileData.numRows, this.univeralTileData.maxInlineTextHeight + this.shapeExtraVSpace)
 
     }
 
@@ -242,24 +215,24 @@ export class Tile {
         switch (this.formatSettings.layout.sizingMethod) {
             case TileSizingType.fixed:
                 let areaTaken = this.tilesInRow * this.tileWidth + (this.tilesInRow - 1) * this.tileHPadding
-                let areaRemaining = this.containerWidth - areaTaken
+                let areaRemaining = this.univeralTileData.containerWidth - areaTaken
                 switch (this.formatSettings.layout.tileAlignment) {
                     case AlignmentType.left:
-                        return this.indexInRow * (this.tileWidth + this.tileHPadding) + this.effectSpace / 2
+                        return this.indexInRow * (this.tileWidth + this.tileHPadding) + this.univeralTileData.effectSpace / 2
                     case AlignmentType.right:
-                        return areaRemaining + this.indexInRow * (this.tileWidth + this.tileHPadding) + this.effectSpace / 2
+                        return areaRemaining + this.indexInRow * (this.tileWidth + this.tileHPadding) + this.univeralTileData.effectSpace / 2
                     case AlignmentType.center:
-                        return areaRemaining / 2 + this.indexInRow * (this.tileWidth + this.tileHPadding) + this.effectSpace / 2
+                        return areaRemaining / 2 + this.indexInRow * (this.tileWidth + this.tileHPadding) + this.univeralTileData.effectSpace / 2
 
                 }
             case TileSizingType.uniform:
-                return this.indexInRow * (this.tileWidth + this.tileHPadding) + this.effectSpace / 2
+                return this.indexInRow * (this.tileWidth + this.tileHPadding) + this.univeralTileData.effectSpace / 2
             case TileSizingType.dynamic:
-                return this.beforeInRowTextWidth + this.dynamicExtraWidthPerTile * this.indexInRow + this.effectSpace / 2 + this.indexInRow * (this.tileHPadding)
+                return this.beforeInRowTextWidth + this.dynamicExtraWidthPerTile * this.indexInRow + this.univeralTileData.effectSpace / 2 + this.indexInRow * (this.tileHPadding)
         }
     }
     get tileYpos(): number {
-        return this.rowNumber * (this.tileHeight + this.tileVPadding) + this.effectSpace / 2
+        return this.rowNumber * (this.tileHeight + this.tileVPadding) + this.univeralTileData.effectSpace / 2
     }
 
 
@@ -304,30 +277,58 @@ export class Tile {
         return this.shape.handles
     }
     get alterHorizontalPadding(): number {
-        if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical) {
-            switch (this.tileShape) {
-                case TileShape.parallelogram:
-                    return Parallelogram.getAlterHPadding(this.tileHeight, this.formatSettings.layout.parallelogramAngle)
-                case TileShape.chevron:
-                    return Chevron.getAlterHPadding(this.tileHeight, this.formatSettings.layout.chevronAngle)
-                default:
-                    return 0
-            }
+        if (this.formatSettings.layout.tileLayout == TileLayoutType.vertical)
+            return 0
+        switch (this.tileShape) {
+            case TileShape.parallelogram:
+                return Parallelogram.getAlterHPadding(this.tileHeight, this.formatSettings.layout.parallelogramAngle)
+            case TileShape.chevron:
+                return Chevron.getAlterHPadding(this.tileHeight, this.formatSettings.layout.chevronAngle)
+            default:
+                return 0
         }
-        return 0
     }
     get alterVerticalPadding(): number {
-        if (this.formatSettings.layout.tileLayout == TileLayoutType.vertical) {
-            switch (this.tileShape) {
-                case TileShape.parallelogram:
-                    return ParallelogramVertical.getAlterVPadding(this.tileWidth, this.formatSettings.layout.parallelogramAngle)
-                case TileShape.chevron:
-                    return ChevronVertical.getAlterVPadding(this.tileWidth, this.formatSettings.layout.chevronAngle)
-                default:
-                    return 0
-            }
+        if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical)
+            return 0
+        switch (this.tileShape) {
+            case TileShape.parallelogram:
+                return ParallelogramVertical.getAlterVPadding(this.tileWidth, this.formatSettings.layout.parallelogramAngle)
+            case TileShape.chevron:
+                return ChevronVertical.getAlterVPadding(this.tileWidth, this.formatSettings.layout.chevronAngle)
+            default:
+                return 0
         }
-        return 0
+    }
+
+    get shapeExtraHSpace(): number {
+        if (this.formatSettings.layout.tileLayout == TileLayoutType.vertical)
+            return 0
+        switch (this.tileShape) {
+            case TileShape.parallelogram:
+                return Parallelogram.getExtraHSpace(this.tileHeight, this.formatSettings.layout.parallelogramAngle)
+            case TileShape.chevron:
+                return Chevron.getExtraHSpace(this.tileHeight, this.formatSettings.layout.chevronAngle)
+            case TileShape.pentagon:
+                return Pentagon.getExtraHSpace()
+            case TileShape.hexagon:
+                return Hexagon.getExtraHSpace()
+            default:
+                return 0
+        }
+    }
+
+    get shapeExtraVSpace(): number {
+        if (this.formatSettings.layout.tileLayout != TileLayoutType.vertical)
+            return 0
+        switch (this.tileShape) {
+            case TileShape.parallelogram:
+                return ParallelogramVertical.getExtraVSpace(this.tileWidth, this.formatSettings.layout.parallelogramAngle)
+            case TileShape.chevron:
+                return ChevronVertical.getExtraVSpace(this.tileWidth, this.formatSettings.layout.chevronAngle)
+            default:
+                return 0
+        }
     }
 
     get contentBoundingBoxHeight(): number {
@@ -351,19 +352,6 @@ export class Tile {
         return this.formatSettings.effect.shapeRoundedCornerRadius
     }
 
-    get effectSpace(): number {
-        return Math.max(this.shadowSpace, this.glowSpace, 2*this.maxTileStrokeWidth)
-    }
-    get filter(): string {
-        return "url(#filter" + this.i + ")"
-    }
-    get bgimg(): string {
-        return "url(#image" + this.i + ")"
-    }
-
-    get shadow(): boolean {
-        return this.formatSettings.effect.shadow
-    }
     get shadowColor(): string {
         return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowColor')
     }
@@ -373,14 +361,8 @@ export class Tile {
     get shadowDistance(): number {
         return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowDistance')
     }
-    get shadowMaxDistance(): number {
-        return Math.max(this.formatSettings.effect.shadowDistanceS, this.formatSettings.effect.shadowDistanceU, this.formatSettings.effect.shadowDistanceH)
-    }
     get shadowStrength(): number {
         return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowStrength')
-    }
-    get shadowMaxStrength(): number {
-        return Math.max(this.formatSettings.effect.shadowStrengthS, this.formatSettings.effect.shadowStrengthU, this.formatSettings.effect.shadowStrengthH)
     }
     get shadowDirection(): Direction {
         return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'shadowDirection')
@@ -399,13 +381,7 @@ export class Tile {
             case Direction.custom: return { x: 0, y: 0 }
         }
     }
-    get shadowSpace(): number {
-        return this.shadow ? 3 * (this.shadowMaxDistance + this.shadowMaxStrength) : 0
-    }
 
-    get glow(): boolean {
-        return this.formatSettings.effect.glow
-    }
     get glowColor(): string {
         return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'glowColor')
     }
@@ -414,12 +390,6 @@ export class Tile {
     }
     get glowStrength(): number {
         return getMatchingStateProperty(this.currentState, this.formatSettings.effect, 'glowStrength')
-    }
-    get glowMaxStrength(): number {
-        return Math.max(this.formatSettings.effect.glowStrengthS, this.formatSettings.effect.glowStrengthU, this.formatSettings.effect.glowStrengthH)
-    }
-    get glowSpace(): number {
-        return this.formatSettings.effect.glow ? 5 * (this.glowMaxStrength) : 0
     }
 
 
@@ -489,8 +459,8 @@ export class Tile {
         return this.tileData.isDisabled;
     }
     get currentState(): State {
-        if(this.isDisabled)
-            return State.disabled
+        if (this.isDisabled)
+            return this.isHovered ? State.hovered : State.disabled
         else if (this.isSelected)
             return State.selected;
         else if (this.isHovered)
@@ -548,34 +518,34 @@ export class Tile {
     }
 
 
-    get img(): HTMLDivElement {
-        let img = document.createElement('div')
-        img.className = 'icon'
-        img.style.backgroundImage = "url(" + this.iconURL + ")"
-        img.style.backgroundRepeat = 'no-repeat'
-        img.style.opacity = this.iconOpacity.toString()
+    get icon(): HTMLDivElement {
+        let icon = document.createElement('div')
+        icon.className = 'icon'
+        icon.style.backgroundImage = "url(" + this.iconURL + ")"
+        icon.style.backgroundRepeat = 'no-repeat'
+        icon.style.opacity = this.iconOpacity.toString()
         if (this.iconPlacement == IconPlacement.left) {
-            img.style.minWidth = this.iconWidth + 'px'
-            img.style.height = this.iconWidth + 'px'
-            img.style.display = 'inline-block'
-            img.style.verticalAlign = 'middle'
-            img.style.marginRight = this.iconHmargin + 'px'
-            img.style.backgroundPosition = 'center center'
-            img.style.backgroundSize = 'contain'
+            icon.style.minWidth = this.iconWidth + 'px'
+            icon.style.height = this.iconWidth + 'px'
+            icon.style.display = 'inline-block'
+            icon.style.verticalAlign = 'middle'
+            icon.style.marginRight = this.iconHmargin + 'px'
+            icon.style.backgroundPosition = 'center center'
+            icon.style.backgroundSize = 'contain'
         } else {
-            img.style.maxWidth = this.spaceForIcon + 'px'
-            img.style.height = this.iconHeight + 'px'
-            img.style.backgroundSize = Math.min(this.iconWidth, this.spaceForIcon) + 'px '
-            img.style.margin = this.iconTopMargin + 'px ' + this.iconHmargin + 'px ' + this.iconBottomMargin + 'px '
+            icon.style.maxWidth = this.spaceForIcon + 'px'
+            icon.style.height = this.iconHeight + 'px'
+            icon.style.backgroundSize = Math.min(this.iconWidth, this.spaceForIcon) + 'px '
+            icon.style.margin = this.iconTopMargin + 'px ' + this.iconHmargin + 'px ' + this.iconBottomMargin + 'px '
             if (this.iconPlacement == IconPlacement.above) {
-                img.style.backgroundPosition = 'center bottom'
+                icon.style.backgroundPosition = 'center bottom'
             } else {
-                img.style.backgroundPosition = 'center top'
-                img.style.position = 'absolute'
-                img.style.bottom = '0'
+                icon.style.backgroundPosition = 'center top'
+                // icon.style.position = 'absolute'
+                // icon.style.bottom = '0'
             }
         }
-        return img
+        return icon
     }
 
 
@@ -625,16 +595,16 @@ export class Tile {
 
         if (this.iconPlacement == IconPlacement.left) {
             contentContainer.style.display = 'inline-block'
-            contentContainer.append(this.img, textContainer)
+            contentContainer.append(this.icon, textContainer)
             contentContainer.style.paddingLeft = this.textMarginLeft + 'px'
             contentContainer.style.paddingRight = this.textMarginRight + 'px'
         } else {
             contentContainer.style.height = this.contentBoundingBoxHeight + 'px'
             contentContainer.style.maxHeight = this.contentBoundingBoxHeight + 'px'
             if (this.iconPlacement == IconPlacement.above)
-                contentContainer.append(this.img, textContainer)
+                contentContainer.append(this.icon, textContainer)
             else
-                contentContainer.append(textContainer, this.img)
+                contentContainer.append(textContainer, this.icon)
         }
 
 
@@ -672,6 +642,19 @@ export class Tile {
     get contentFormatType(): ContentFormatType {
         return this.tileData.contentFormatType
     }
+
+
+    get inHorizontalWindow(): boolean {
+        return this.tileXpos + this.tileWidth > this.univeralTileData.scrollLeft && this.tileXpos < this.univeralTileData.scrollLeft + this.univeralTileData.viewportWidth
+    }
+    get inVerticalWindow(): boolean {
+        return this.tileYpos + this.tileHeight > this.univeralTileData.scrollTop && this.tileYpos < this.univeralTileData.scrollTop + this.univeralTileData.viewportHeight
+    }
+    get inViewWindow(): boolean {
+        return this.inVerticalWindow && this.inHorizontalWindow
+    }
+
+
 
 
     //Events

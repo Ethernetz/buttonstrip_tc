@@ -1,4 +1,4 @@
-import {Viewport, StatesUsed} from './interfaces'
+import {StatesUsed} from './interfaces'
 import {AlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State} from './enums'
 
 export class FormatSettings{
@@ -7,7 +7,6 @@ export class FormatSettings{
   public layout: LayoutSettings = new LayoutSettings();
   public effect: EffectSettings = new EffectSettings();
   public icon: IconSettings = new IconSettings();
-  viewport: Viewport
 }
 
 export interface TileCollectionStatedFormatObject{
@@ -139,7 +138,7 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public autoHeight: boolean = false;
     public tileAlignment: AlignmentType = AlignmentType.left
     public tileLayout: TileLayoutType = TileLayoutType.horizontal;
-    public rowLength: number = 2;
+    public tilesPerRow: number = 2;
     public padding: number = 10;
   }
 

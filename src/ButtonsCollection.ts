@@ -32,20 +32,16 @@ export class Button extends Tile {
             this.visual.selectionManager.select((<ButtonData>this.tileData).selectionId, this.visual.visualSettings.content.multiselect) 
         else
             this.visual.selectionManagerUnbound.select(this.i, this.visual.visualSettings.content.multiselect) //FIXED
-        this.visual.update(this.collection.options)
+        this.collection.render(this.visual.createButtonData()) 
     }
 
     onTileMouseover() {
         this.visual.hoveredIndex = this.i
-        let vs = this.collection.visual.visualSettings
-        if(vs.tile.hoverStyling || vs.text.hoverStyling || vs.icon.hoverStyling || vs.effects.hoverStyling)
-            this.visual.update(this.collection.options)
+        this.collection.render(this.visual.createButtonData()) 
     }
     onTileMouseout() {
         this.visual.hoveredIndex = null
-        let vs = this.collection.visual.visualSettings
-        if(vs.tile.hoverStyling || vs.text.hoverStyling || vs.icon.hoverStyling || vs.effects.hoverStyling)
-            this.visual.update(this.collection.options)
+        this.collection.render(this.visual.createButtonData()) 
     }
 }
 

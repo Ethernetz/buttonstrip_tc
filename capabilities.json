@@ -922,7 +922,7 @@
                 }
             }
         },
-        "effects": {
+        "effect": {
             "displayName": "Effects",
             "properties": {
                 "state": {

@@ -1,6 +1,7 @@
 import { Viewport, BoundingBox } from './interfaces'
 import { FormatSettings } from './FormatSettings'
 import { TileData } from './TileData'
+import { UniversalTileData } from './UniversalTileData'
 import { Tile } from './Tile'
 import * as d3 from 'd3';
 
@@ -11,155 +12,156 @@ export class TilesCollection {
     viewport: Viewport;
     container: Selection<SVGElement>;
     svg: Selection<SVGElement>
+    universalTileData: UniversalTileData;
     tiles: Tile[] = []
-
+    visualElement: HTMLElement;
     maxBoundedTextHeight: number = 0
-    maxInlineTextHeight: number = 0
-    minTileWidth: number = 0
-    public render(): void {
-        this.formatSettings.viewport = this.viewport
 
-        for (let i = 0; i < this.tilesData.length; i++) {
-            this.createTile(i)
-            this.tiles.push(this.createTile(i))
+
+    public createTiles(tilesData: TileData[]): Tile[] {
+        let tiles: Tile[] = []
+        for (let i = 0; i < tilesData.length; i++)
+            tiles.push(this.createTile(i))
+        return tiles
+    }
+
+
+    public sameDataState(tdold: TileData, tdnew: TileData): boolean {
+        // return JSON.stringify(tdold) === JSON.stringify(tdnew) //TODO is this better?
+        return (tdold.isDisabled == tdnew.isDisabled)
+            && (tdold.isSelected == tdnew.isSelected)
+            && (tdold.isHovered == tdnew.isHovered)
+    }
+
+    public render(newTilesData: TileData[]): void {
+        if (this.tilesData.length > 0){
+            for (let i = 0; i < newTilesData.length; i++)
+                newTilesData[i].sameState = this.tilesData[i] && this.sameDataState(this.tilesData[i], newTilesData[i])
+            }
+        else {
+            for (let i = 0; i < newTilesData.length; i++)
+                newTilesData[i].needsToBeRendered = true
+            this.clear()
         }
+        
+        this.tilesData = newTilesData.map((d, i)=>{return {...this.tilesData[i], ...d}})
 
-        for (let i = 0; i < this.tiles.length; i++) {
-            this.maxBoundedTextHeight = Math.max(this.maxBoundedTextHeight, this.tiles[i].boundedTextHeight)
-        }
+        this.universalTileData = this.createUniversalTileData()
+        this.tiles = this.createTiles(this.tilesData)
 
-        let maxFontSize = Math.max(this.formatSettings.text.fontSizeS, this.formatSettings.text.fontSizeU, this.formatSettings.text.fontSizeH, this.formatSettings.text.fontSizeN)
-        this.maxInlineTextHeight = Math.round(maxFontSize * 4 / 3)
-        this.minTileWidth = maxFontSize * 5
+        this.universalTileData.viewport.height = this.viewport.height - 0.1
+        this.universalTileData.viewport.width = this.viewport.width - 0.1
 
-        let totalHeight = this.tiles[this.tiles.length - 1].tileYpos + this.tiles[this.tiles.length - 1].tileHeight + this.tiles[0].effectSpace/2
-        let farRightTileIndex = Math.min(this.tiles.length - 1, this.tiles[0].rowLength - 1)
-        let totalWidth = this.tiles[farRightTileIndex].tileWidth + this.tiles[farRightTileIndex].tileXpos + this.tiles[0].effectSpace/2
+
+        let lastTile = this.tiles[this.tiles.length - 1]
+        let totalHeight = lastTile.tileYpos + lastTile.tileHeight + this.universalTileData.effectSpace / 2
+
+        let rightmostTile = this.tiles[Math.min(this.tiles.length - 1, this.universalTileData.rowLength - 1)]
+        let totalWidth = rightmostTile.tileWidth + rightmostTile.tileXpos + this.universalTileData.effectSpace / 2
 
         let horScroll = totalWidth > this.viewport.width
         let vertScroll = totalHeight > this.viewport.height
 
-        if (vertScroll && !horScroll) {
-            this.viewport.width -= 20
-            totalWidth -= 20
-        } else if (horScroll && !vertScroll) {
-            this.viewport.height -= 20
-            totalHeight -= 20
+        if (this.visualElement) {
+            if(vertScroll || horScroll){
+
+                if (vertScroll && !horScroll) {
+                    this.universalTileData.viewport.width -= 20
+                    totalWidth -= 20
+                } else if (horScroll && !vertScroll) {
+                    this.universalTileData.viewport.height -= 20
+                    totalHeight -= 20
+                }
+
+                this.visualElement.style.fontSize = "0px"
+                this.visualElement.style.overflow = 'auto';
+                this.visualElement.onscroll = () => {this.render(this.tilesData);}
+
+
+                this.universalTileData.scrollLeft = this.visualElement.scrollLeft
+                this.universalTileData.scrollTop = this.visualElement.scrollTop
+
+                for (let i = 0; i < this.tiles.length; i++){
+                    this.tilesData[i].needsToBeRendered = !this.tilesData[i].isRendered && this.tiles[i].inViewWindow
+                }
+
+                totalHeight = lastTile.tileYpos + lastTile.tileHeight + this.universalTileData.effectSpace / 2
+                totalWidth = rightmostTile.tileWidth + rightmostTile.tileXpos + this.universalTileData.effectSpace / 2
+            } else {
+                this.visualElement.style.overflow = 'hidden'
+                this.universalTileData.scrollLeft = 0
+                this.universalTileData.scrollTop = 0
+            }
         }
 
         this.svg
             .style('width', totalWidth)
             .style('height', totalHeight)
 
+        let longestTextTiles: Tile[] = this.tiles.sort((a, b)=> b.text.length - a.text.length ).slice(0, 5)
+        this.maxBoundedTextHeight = longestTextTiles.map((d)=> d.boundedTextHeight).sort((a, b)=> b - a)[0]
 
-        this.container.selectAll("defs").remove();
-        this.container.append("defs")
-        let defs = this.container.selectAll("defs")
-        let filters = defs
-            .selectAll("filter").data(this.tiles)
-            .enter()
-            .append("filter")
-            .attr("id", d => { return "filter" + d.i })
+        this.draw()
+    }
 
-        filters.filter(d => { return d.shadow })
-            .append("feDropShadow")
-            .attr("dx", d => { return d.shadowDirectionCoords.x * d.shadowDistance })
-            .attr("dy", d => { return d.shadowDirectionCoords.y * d.shadowDistance })
-            .attr("stdDeviation", d => { return d.shadowStrength })
-            .attr("flood-color", d => { return d.shadowColor })
-            .attr("flood-opacity", d => { return d.shadowTransparency })
-            .attr("result", "dropshadow")
+    public clear() {
+        this.container.selectAll('.tileContainer').remove()
+    }
 
-        filters.filter(d => { return d.glow })
-            .append("feDropShadow")
-            .attr("dx", 0)
-            .attr("dy", 0)
-            .attr("stdDeviation", d => { return d.glowStrength })
-            .attr("flood-color", d => { return d.glowColor })
-            .attr("flood-opacity", d => { return d.glowTransparency })
-            .attr("result", "glow")
+    public draw() {
+        let tileContainer = this.container.selectAll('.tileContainer')
+        .data(this.tiles
+            .filter((d)=>d.tileData.isRendered || d.tileData.needsToBeRendered),
+            function(d) { return (<Tile>d).i.toString(); }
+        )
 
-        defs.append("g")
-            .attr("id", "handleHorizontal")
-            .attr("class", "handle")
-            .append("path")
-            .attr("d", "M 0 0 l 6 12 l -12 0 z")
-            .attr("fill", "#FFD700")
-            .style("stroke", "#252423")
-            .style("stroke-width", 0.5)
-        defs.append("g")
-            .attr("id", "handleVertical")
-            .attr("class", "handle")
-            .append("path")
-            .attr("d", "M 0 0 l -12 6 l 0 -12 z")
-            .attr("fill", "#FFD700")
-            .style("stroke", "#252423")
-            .style("stroke-width", 0.5)
+        tileContainer.exit()
+            .remove()
+        let tileContainerEnter = tileContainer.enter()
+            .append('g')
+            .attr("class", "tileContainer")
+            .attr("id", (d)=>{return d.text})
 
-        let patterns = defs
-            .selectAll("pattern").data(this.tiles)
-            .enter()
-            .append("pattern")
-            .attr("id", d => { return "image" + d.i })
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", 1)
-            .attr("height", 1)
-            .append("image")
-            .attr("class", (d) => { return "img" + d.i })
-            .on('load', function (d) {
-                let img: d3.Selection<d3.BaseType, unknown, HTMLElement, any> = d3.select('.img' + d.i)
-                let imgElement: Element = img.node() as any //TODO make types more clear
-                let dims = d.getBgImgDims(imgElement.getBoundingClientRect())
-                img
-                    .attr("width", dims.width)
-                    .attr("height", dims.height)
-
-                // d.setImageWidth() 
+        tileContainer = tileContainer.merge(tileContainerEnter)
+            
+        let tileContainerFiltered = tileContainer
+            .filter((d)=>{return (!d.tileData.sameState) || d.tileData.needsToBeRendered})
+            .each((d)=>{
+                d.tileData.needsToBeRendered = false
+                d.tileData.isRendered = true
             })
-            .attr("xlink:href", d => { return d.bgImgURL })
 
-        let feMerge = filters.data(this.tiles).append("feMerge")
-        feMerge.append("feMergeNode").attr("in", "dropshadow")
-        feMerge.append("feMergeNode").attr("in", "glow")
-        feMerge.append("feMergeNode").attr("in", "image")
+        console.log(tileContainerFiltered.size())
+        
+        let tileEnter = tileContainerEnter
+            .append('g')
+            .attr("class", "tile")
+        tileEnter
+            .append('path')
+            .attr("class", "fill")
+        tileEnter
+            .append('path')
+            .attr("class", "stroke")
 
+        let tile = tileContainerFiltered.select('.tile')
+       
 
-
-
-
-
-        // Do I need this
-        // this.container.selectAll(".tileContainer, .contentFO, .cover").filter((d, i, nodes: Element[]) => {
-        //     return !nodes[i].classList.contains(this.formatSettings.layout.tileShape)
-        // }).remove()
-
-        let tileContainer = this.container.selectAll('.tileContainer').data(this.tiles)
-        tileContainer.exit().remove()
-        tileContainer = tileContainer.enter().append('g')
-            .attr("class", function (d) { return "tileContainer " + d.tileShape })
-        tileContainer.append('path').attr("class", "fill")
-        tileContainer.append('path').attr("class", "stroke")
-
-
-        tileContainer = this.container.selectAll('.tileContainer').data(this.tiles)
-        tileContainer.select(".fill")
+        tile.select(".fill")
             .attr("d", function (d) { return d.shapePath })
-            .attr("fill", function (d) { return d.bgImgURL ? d.bgimg : d.tileFill })
+            .attr("fill", function (d) { return d.bgImgURL ? "url(#image" + d.i + ")" : d.tileFill })
             .style("fill-opacity", function (d) { return d.tileFillOpacity })
-            .style("filter", function (d) { return d.filter })
-        tileContainer.select(".stroke")
+            .style("filter", function (d) { return "#filter" + d.i })
+        tile.select(".stroke")
             .attr("d", function (d) { return d.shapeStrokePath })
-            .style("fill-opacity", 0)
+            .style("fill", "none")
             .style("stroke", function (d) { return d.tileStroke })
             .style("stroke-width", function (d) { return d.tileStrokeWidth })
 
 
-        let contentFO = this.container.selectAll('.contentFO').data(this.tiles)
-        contentFO.exit().remove()
-        contentFO.enter()
+        let contentFOEnter = tileContainerEnter
             .append('foreignObject')
-            .attr("class", function (d) { return "contentFO " + d.tileShape })
+            .attr("class", "contentFO")
+        contentFOEnter
             .append("xhtml:div")
             .attr("class", "contentTable")
             .append("xhtml:div")
@@ -167,7 +169,8 @@ export class TilesCollection {
             .append("xhtml:div")
             .attr("class", "contentContainer")
 
-        contentFO = this.container.selectAll('.contentFO').data(this.tiles)
+        let contentFO = tileContainerFiltered.select('.contentFO')
+        contentFO
             .attr("height", function (d) { return d.contentBoundingBoxHeight })
             .attr("width", function (d) { return d.contentBoundingBoxWidth })
             .attr("x", function (d) { return d.contentBoundingBoxXPos })
@@ -182,7 +185,6 @@ export class TilesCollection {
             .html("")
             .style("text-align", function (d) { return d.textAlign })
             .append(function (d) { return d.content })
-
 
         contentFO.select('.textContainer')
             .style("opacity", function (d) { return d.textOpacity })
@@ -200,15 +202,18 @@ export class TilesCollection {
 
 
 
-        let covers = this.container.selectAll('.cover').data(this.tiles)
-        covers.exit().remove()
-        covers.enter().append('g')
-            .attr("class", "cover " + this.formatSettings.layout.tileShape)
+        let coverEnter = tileContainerEnter
+            .append('g')
+            .attr("class", "cover")
+
+        coverEnter
             .append("path")
-        covers = this.container.selectAll('.cover').data(this.tiles)
-        covers.select("path")
+            .attr("class", "coverPath")
+
+        let cover = tileContainerFiltered.select('.cover')
+        cover.select('.coverPath')
             .attr("d", function (d) { return d.shapePath })
-            .style("fill-opacity", function (d) { return 0 })
+            .style("fill-opacity", 0)
             .on('mouseover', (d, i, n) => {
                 d.onTileMouseover(d, i, n)
             })
@@ -218,6 +223,89 @@ export class TilesCollection {
             .on('click', (d, i, n) => {
                 d.onTileClick(d, i, n)
             })
+
+
+
+
+
+        let defsEnter = tileContainerEnter
+            .append("defs")
+
+        let filterEnter = defsEnter
+            .append("filter")
+            .attr("id", d => { return "filter" + d.i })
+            .attr("class", "filter")
+
+        let filter = tileContainerFiltered.select("filter")
+
+        filter.html("")
+
+        filter.filter(() => { return this.universalTileData.shadow })
+            .append("feDropShadow")
+            .attr("dx", d => { return d.shadowDirectionCoords.x * d.shadowDistance })
+            .attr("dy", d => { return d.shadowDirectionCoords.y * d.shadowDistance })
+            .attr("stdDeviation", d => { return d.shadowStrength })
+            .attr("flood-color", d => { return d.shadowColor })
+            .attr("flood-opacity", d => { return d.shadowTransparency })
+            .attr("result", "dropshadow")
+
+        filter.filter(() => { return this.universalTileData.glow })
+            .append("feDropShadow")
+            .attr("dx", 0)
+            .attr("dy", 0)
+            .attr("stdDeviation", d => { return d.glowStrength })
+            .attr("flood-color", d => { return d.glowColor })
+            .attr("flood-opacity", d => { return d.glowTransparency })
+            .attr("result", "glow")
+
+
+        let patternEnter = defsEnter
+            .append("pattern")
+            .attr("class", "backgroundImage")
+            .append("image")
+            .attr("class", (d) => { return "img" })
+            .attr("id", d => { return "img" + d.i })
+
+        let pattern = tileContainerFiltered.select("pattern")
+            .filter((d) => { return d.bgImgURL != "" })
+        pattern
+            .attr("id", d => { return "image" + d.i })
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 1)
+            .attr("height", 1)
+
+        pattern.select('.img')
+            .on('load', function (d, i, n) {
+                let imgElement: Element = this as any //TODO make types more clear
+                let dims = d.getBgImgDims(imgElement.getBoundingClientRect())
+                d3.select(this)
+                    .attr("width", dims.width)
+                    .attr("height", dims.height)
+            })
+            .attr("xlink:href", d => { return d.bgImgURL })
+
+        let feMerge = filter.append("feMerge")
+        feMerge.append("feMergeNode").attr("in", "dropshadow")
+        feMerge.append("feMergeNode").attr("in", "glow")
+
+
+        // defs.append("g")
+        //     .attr("id", "handleHorizontal")
+        //     .attr("class", "handle")
+        //     .append("path")
+        //     .attr("d", "M 0 0 l 6 12 l -12 0 z")
+        //     .attr("fill", "#FFD700")
+        //     .style("stroke", "#252423")
+        //     .style("stroke-width", 0.5)
+        // defs.append("g")
+        //     .attr("id", "handleVertical")
+        //     .attr("class", "handle")
+        //     .append("path")
+        //     .attr("d", "M 0 0 l -12 6 l 0 -12 z")
+        //     .attr("fill", "#FFD700")
+        //     .style("stroke", "#252423")
+        //     .style("stroke-width", 0.5)
 
 
         d3.select("body")
@@ -232,10 +320,13 @@ export class TilesCollection {
 
     }
 
-    public createTile(i): Tile {
-        new Tile(this, i, this.tilesData, this.formatSettings)
+    public createTile(i: number): Tile {
         return new Tile(this, i, this.tilesData, this.formatSettings)
     }
+    public createUniversalTileData(): UniversalTileData {
+        return new UniversalTileData(this.tilesData, this.formatSettings)
+    }
+
     onShift() { }
     onShiftUp() { }
 }

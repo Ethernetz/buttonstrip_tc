@@ -76,10 +76,8 @@ export function getObjectsToPersist(visualSettings: VisualSettings, currentPrese
                 propValuesAfter = styleWithPreset(propValuesAfter, new DefaultPreset(), objKey, propKeys)
                 
                 propValuesAfter = styleWithPreset(propValuesAfter, preset, objKey, propKeys)
-                console.log(propValuesBefore, propValuesAfter)
             }
             propValuesAfter = levelProperties(propValuesAfter, propKeys, statesUsed, visualSettings[objKey].state)
-            console.log(propValuesBefore, propValuesAfter)
             if (didChange(propValuesBefore, propValuesAfter)) {
                 object.properties[propKeys.all] = propValuesAfter.all
                 if (statesUsed.selected)
