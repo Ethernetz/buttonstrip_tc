@@ -6,7 +6,7 @@ export class Preset {
 export class DefaultPreset {
     public tile: DefaultTileSettings = new DefaultTileSettings();
     public text: DefaultTextSettings = new DefaultTextSettings();
-    public effects: DefaultEffectSettings = new DefaultEffectSettings();
+    public effect: DefaultEffectSettings = new DefaultEffectSettings();
 }
 
 export class DefaultTileSettings {
@@ -133,7 +133,7 @@ export class FilledTextSettings {
 }
 
 export class PoppedPreset {
-    effects: PoppedEffectSettings = new PoppedEffectSettings();
+    effect: PoppedEffectSettings = new PoppedEffectSettings();
 }
 export class PoppedEffectSettings {
     public shadowColorA: string = "";
@@ -165,7 +165,7 @@ export class PoppedEffectSettings {
 
 
 export class PressedPreset {
-    effects: PressedEffectSettings = new PressedEffectSettings();
+    effect: PressedEffectSettings = new PressedEffectSettings();
 }
 export class PressedEffectSettings {
     public shadowColorA: string = "";
@@ -195,7 +195,7 @@ export class PressedEffectSettings {
 }
 
 export class GlowPreset {
-    effects: GlowEffectSettings = new GlowEffectSettings();
+    effect: GlowEffectSettings = new GlowEffectSettings();
 }
 export class GlowEffectSettings {
     public glowColorA: string = "";

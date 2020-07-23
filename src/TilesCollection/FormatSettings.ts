@@ -1,10 +1,11 @@
 import {StatesUsed} from './interfaces'
-import {AlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State} from './enums'
+import {HorizontalAlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State, VerticalAlignmentType} from './enums'
 
 export class FormatSettings{
   public tile: TileSettings = new TileSettings();
   public text: TextSettings = new TextSettings();
   public layout: LayoutSettings = new LayoutSettings();
+  public contentAlignment: ContentAlignmentSettings = new ContentAlignmentSettings();
   public effect: EffectSettings = new EffectSettings();
   public icon: IconSettings = new IconSettings();
 }
@@ -55,6 +56,7 @@ export class TileSettings implements TileCollectionStatedFormatObject{
   }
 
   export class TextSettings implements TileCollectionStatedFormatObject{
+    public show: boolean = true;
     public state: State = State.all
     public statesUsed: StatesUsed = {
       selected: true,
@@ -70,14 +72,7 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public colorU: string = null;
     public colorH: string = null;
     public colorN: string = null;
-  
-    public alignmentD: AlignmentType = AlignmentType.center;
-    public alignmentA: AlignmentType = null;
-    public alignmentS: AlignmentType = null;
-    public alignmentU: AlignmentType = null;
-    public alignmentH: AlignmentType = null;
-    public alignmentN: AlignmentType = null;
-  
+
     public fontSizeD: number = 14;
     public fontSizeA: number = null;
     public fontSizeS: number = null;
@@ -92,27 +87,6 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public fontFamilyH: string = null;
     public fontFamilyN: string = null;
 
-    public marginLeftD: number = 0
-    public marginLeftA: number = null
-    public marginLeftS: number = null
-    public marginLeftU: number = null
-    public marginLeftH: number = null
-    public marginLeftN: number = null
-
-    public marginRightD: number = 0
-    public marginRightA: number = null
-    public marginRightS: number = null
-    public marginRightU: number = null
-    public marginRightH: number = null
-    public marginRightN: number = null
-
-    public bmarginD: number = 0
-    public bmarginA: number = null
-    public bmarginS: number = null;
-    public bmarginU: number = null;
-    public bmarginH: number = null;
-    public bmarginN: number = null;
-    
     public transparencyD: number = 0;
     public transparencyA: number = null;
     public transparencyS: number = null;
@@ -136,10 +110,79 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public tileWidth: number = 150;
     public tileHeight: number = 75;
     public autoHeight: boolean = false;
-    public tileAlignment: AlignmentType = AlignmentType.left
+    public tileAlignment: HorizontalAlignmentType = HorizontalAlignmentType.left
     public tileLayout: TileLayoutType = TileLayoutType.horizontal;
     public tilesPerRow: number = 2;
     public padding: number = 10;
+  }
+
+  export class ContentAlignmentSettings implements TileCollectionStatedFormatObject{
+    public state: State = State.all
+    public statesUsed: StatesUsed = {
+      selected: true,
+      unselected: true,
+      hover: true,
+      disabled: false
+    }
+    public hoverStyling: boolean = false
+
+    public iconPlacementD: IconPlacement = IconPlacement.left;
+    public iconPlacementA: IconPlacement = IconPlacement.left;
+    public iconPlacementS: IconPlacement = null;
+    public iconPlacementU: IconPlacement = null;
+    public iconPlacementH: IconPlacement = null;
+    public iconPlacementN: IconPlacement = null;
+
+    public iconTextPaddingD: number = 20
+    public iconTextPaddingA: number = null
+    public iconTextPaddingS: number = null
+    public iconTextPaddingU: number = null
+    public iconTextPaddingH: number = null
+    public iconTextPaddingN: number = null
+
+  
+    public horizontalAlignmentD: HorizontalAlignmentType = HorizontalAlignmentType.center;
+    public horizontalAlignmentA: HorizontalAlignmentType = HorizontalAlignmentType.center;
+    public horizontalAlignmentS: HorizontalAlignmentType = null;
+    public horizontalAlignmentU: HorizontalAlignmentType = null;
+    public horizontalAlignmentH: HorizontalAlignmentType = null;
+    public horizontalAlignmentN: HorizontalAlignmentType = null;
+
+    public verticalAlignmentD: VerticalAlignmentType = VerticalAlignmentType.middle;
+    public verticalAlignmentA: VerticalAlignmentType = VerticalAlignmentType.middle;
+    public verticalAlignmentS: VerticalAlignmentType = null;
+    public verticalAlignmentU: VerticalAlignmentType = null;
+    public verticalAlignmentH: VerticalAlignmentType = null;
+    public verticalAlignmentN: VerticalAlignmentType = null;
+
+    public leftMarginD: number = 0
+    public leftMarginA: number = null
+    public leftMarginS: number = null
+    public leftMarginU: number = null
+    public leftMarginH: number = null
+    public leftMarginN: number = null
+
+    public rightMarginD: number = 0
+    public rightMarginA: number = null
+    public rightMarginS: number = null
+    public rightMarginU: number = null
+    public rightMarginH: number = null
+    public rightMarginN: number = null
+
+    public topMarginD: number = 0
+    public topMarginA: number = null
+    public topMarginS: number = null;
+    public topMarginU: number = null;
+    public topMarginH: number = null;
+    public topMarginN: number = null;
+
+    public bottomMarginD: number = 0
+    public bottomMarginA: number = null
+    public bottomMarginS: number = null;
+    public bottomMarginU: number = null;
+    public bottomMarginH: number = null;
+    public bottomMarginN: number = null;
+    
   }
 
   export class EffectSettings implements TileCollectionStatedFormatObject{
@@ -216,7 +259,7 @@ export class TileSettings implements TileCollectionStatedFormatObject{
   }
 
   export class IconSettings implements TileCollectionStatedFormatObject{
-    public icons: boolean = false;
+    public show: boolean = false;
     public state: State = State.all
     public statesUsed: StatesUsed = {
       selected: true,
@@ -226,40 +269,12 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     }
     public hoverStyling: boolean = false
   
-    public placementD: IconPlacement = IconPlacement.left;
-    public placementA: IconPlacement = null;
-    public placementS: IconPlacement = null;
-    public placementU: IconPlacement = null;
-    public placementH: IconPlacement = null;
-    public placementN: IconPlacement = null;
-  
     public widthD: number = 40;
     public widthA: number = null;
     public widthS: number = null;
     public widthU: number = null;
     public widthH: number = null;
     public widthN: number = null;
-  
-    public hmarginD: number = 10;
-    public hmarginA: number = null;
-    public hmarginS: number = null;
-    public hmarginU: number = null;
-    public hmarginH: number = null;
-    public hmarginN: number = null;
-  
-    public topMarginD: number = 10;
-    public topMarginA: number = null;
-    public topMarginS: number = null;
-    public topMarginU: number = null;
-    public topMarginH: number = null;
-    public topMarginN: number = null;
-  
-    public bottomMarginD: number = 10;
-    public bottomMarginA: number = null;
-    public bottomMarginS: number = null;
-    public bottomMarginU: number = null;
-    public bottomMarginH: number = null;
-    public bottomMarginN: number = null;
   
     public transparencyD: number = 0;
     public transparencyA: number = null;

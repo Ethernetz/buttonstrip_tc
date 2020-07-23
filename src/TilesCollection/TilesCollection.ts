@@ -4,6 +4,7 @@ import { TileData } from './TileData'
 import { UniversalTileData } from './UniversalTileData'
 import { Tile } from './Tile'
 import * as d3 from 'd3';
+import { ContentFormatType } from './enums'
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 export class TilesCollection {
@@ -15,75 +16,122 @@ export class TilesCollection {
     universalTileData: UniversalTileData;
     tiles: Tile[] = []
     visualElement: HTMLElement;
-    maxBoundedTextHeight: number = 0
 
-
-    public createTiles(tilesData: TileData[]): Tile[] {
-        let tiles: Tile[] = []
-        for (let i = 0; i < tilesData.length; i++)
-            tiles.push(this.createTile(i))
-        return tiles
-    }
-
-
-    public sameDataState(tdold: TileData, tdnew: TileData): boolean {
-        // return JSON.stringify(tdold) === JSON.stringify(tdnew) //TODO is this better?
-        return (tdold.isDisabled == tdnew.isDisabled)
-            && (tdold.isSelected == tdnew.isSelected)
-            && (tdold.isHovered == tdnew.isHovered)
-    }
-
-    public render(newTilesData: TileData[]): void {
-        if (this.tilesData.length > 0){
-            for (let i = 0; i < newTilesData.length; i++)
-                newTilesData[i].sameState = this.tilesData[i] && this.sameDataState(this.tilesData[i], newTilesData[i])
-            }
-        else {
-            for (let i = 0; i < newTilesData.length; i++)
-                newTilesData[i].needsToBeRendered = true
-            this.clear()
-        }
+    public onDataChange(newTilesData: TileData[]){
+        let bgimgAspectRatios: { [URL: string]: number} = {};
+        for(let i = 0; i < this.tilesData.length; i++)
+            if(this.tilesData[i].bgimgURL && this.tilesData[i].bgimgAspectRatio)
+                bgimgAspectRatios[(this.tilesData[i].bgimgURL)] = this.tilesData[i].bgimgAspectRatio
         
-        this.tilesData = newTilesData.map((d, i)=>{return {...this.tilesData[i], ...d}})
+        this.tilesData = newTilesData
+
+        for(let i = 0; i < this.tilesData.length; i++)
+            if(this.tilesData[i].bgimgURL && bgimgAspectRatios[this.tilesData[i].bgimgURL] != null)
+                this.tilesData[i].bgimgAspectRatio = bgimgAspectRatios[this.tilesData[i].bgimgURL]
+
+        console.log("data changed")
+
 
         this.universalTileData = this.createUniversalTileData()
         this.tiles = this.createTiles(this.tilesData)
+        this.setWindow()
+        this.setTextBounds()
+        this.setMaxIconHeight(()=>{this.clear(); this.draw()})
+    }
+
+    public setTextBounds(){
+        this.universalTileData.maxBoundedTextHeight = this.getMaxBoundedTextHeight()
+    }
+
+    public setMaxIconHeight(callback?: ()=> any): void{
+        let asyncI = 0;
+        let asyncCount = this.tiles.length;
+        console.log(this.tiles.length)
+        let maxIconHeight: number = 0
+        let readImageDimensions = ()=>{
+            if(asyncI >= asyncCount){
+                this.universalTileData.maxIconHeight = maxIconHeight
+                console.log(this.universalTileData.maxIconHeight)
+                callback()
+                return
+            }
+
+            if(!this.tiles[asyncI].iconURL){
+                asyncI++
+                readImageDimensions();
+                return
+            }
+
+            var img = new Image();
+            img.onload = (event) => {
+                let loadedImg = event.currentTarget as HTMLImageElement
+                maxIconHeight = loadedImg ? Math.max((loadedImg.height/loadedImg.width) * this.universalTileData.maxIconWidth, maxIconHeight) : maxIconHeight
+                asyncI++;
+                if (asyncI < asyncCount) {
+                    readImageDimensions();
+                }
+            }
+            img.src = this.tiles[asyncI].iconURL;
+        }
+        readImageDimensions();
+    }
+
+    public onStateChange(newTilesData: TileData[]): void {
+        if (this.tilesData.length > 0)
+            for (let i = 0; i < newTilesData.length; i++)
+                newTilesData[i].changedState = !this.tilesData[i] || !this.isSameDataState(this.tilesData[i], newTilesData[i])
+        else 
+            this.onDataChange(newTilesData)
+
+        this.tilesData = newTilesData.map((d, i)=>{return {...this.tilesData[i], ...d}})
+        this.tiles = this.createTiles(this.tilesData)
+
+        this.setTextBounds()
+        this.draw()
+    }
+
+    public onResize(){
+        this.clear()
+        this.setWindow()
+        this.setTextBounds()
+        this.draw()
+    }
+
+    public onScroll(){
+        this.universalTileData.scrollLeft = this.visualElement.scrollLeft
+        this.universalTileData.scrollTop = this.visualElement.scrollTop
+        this.setNeedsToBeRendered()
+        this.draw()
+    }
+
+    public setWindow(){
 
         this.universalTileData.viewport.height = this.viewport.height - 0.1
         this.universalTileData.viewport.width = this.viewport.width - 0.1
-
 
         let lastTile = this.tiles[this.tiles.length - 1]
         let totalHeight = lastTile.tileYpos + lastTile.tileHeight + this.universalTileData.effectSpace / 2
 
         let rightmostTile = this.tiles[Math.min(this.tiles.length - 1, this.universalTileData.rowLength - 1)]
         let totalWidth = rightmostTile.tileWidth + rightmostTile.tileXpos + this.universalTileData.effectSpace / 2
-
+       
         let horScroll = totalWidth > this.viewport.width
         let vertScroll = totalHeight > this.viewport.height
-
         if (this.visualElement) {
             if(vertScroll || horScroll){
-
-                if (vertScroll && !horScroll) {
+                if (vertScroll && !horScroll)
                     this.universalTileData.viewport.width -= 20
-                    totalWidth -= 20
-                } else if (horScroll && !vertScroll) {
+                if (horScroll && !vertScroll)
                     this.universalTileData.viewport.height -= 20
-                    totalHeight -= 20
-                }
+                
 
                 this.visualElement.style.fontSize = "0px"
                 this.visualElement.style.overflow = 'auto';
-                this.visualElement.onscroll = () => {this.render(this.tilesData);}
+                this.visualElement.onscroll = () => {this.onScroll();}
 
 
                 this.universalTileData.scrollLeft = this.visualElement.scrollLeft
                 this.universalTileData.scrollTop = this.visualElement.scrollTop
-
-                for (let i = 0; i < this.tiles.length; i++){
-                    this.tilesData[i].needsToBeRendered = !this.tilesData[i].isRendered && this.tiles[i].inViewWindow
-                }
 
                 totalHeight = lastTile.tileYpos + lastTile.tileHeight + this.universalTileData.effectSpace / 2
                 totalWidth = rightmostTile.tileWidth + rightmostTile.tileXpos + this.universalTileData.effectSpace / 2
@@ -94,30 +142,26 @@ export class TilesCollection {
             }
         }
 
+        this.setNeedsToBeRendered()
+
         this.svg
             .style('width', totalWidth)
             .style('height', totalHeight)
-
-        let longestTextTiles: Tile[] = this.tiles.sort((a, b)=> b.text.length - a.text.length ).slice(0, 5)
-        this.maxBoundedTextHeight = longestTextTiles.map((d)=> d.boundedTextHeight).sort((a, b)=> b - a)[0]
-
-        this.draw()
     }
 
-    public clear() {
-        this.container.selectAll('.tileContainer').remove()
-    }
+    
 
     public draw() {
         let tileContainer = this.container.selectAll('.tileContainer')
         .data(this.tiles
             .filter((d)=>d.tileData.isRendered || d.tileData.needsToBeRendered),
-            function(d) { return (<Tile>d).i.toString(); }
+            function(d) { return (<Tile>d).i.toString() }
         )
 
         tileContainer.exit()
             .remove()
         let tileContainerEnter = tileContainer.enter()
+            .each((d)=>{d.tileData.needsToBeRendered = true; console.log("entering");})
             .append('g')
             .attr("class", "tileContainer")
             .attr("id", (d)=>{return d.text})
@@ -125,13 +169,14 @@ export class TilesCollection {
         tileContainer = tileContainer.merge(tileContainerEnter)
             
         let tileContainerFiltered = tileContainer
-            .filter((d)=>{return (!d.tileData.sameState) || d.tileData.needsToBeRendered})
+            .filter((d)=>{return d.tileData.changedState || d.tileData.needsToBeRendered})
             .each((d)=>{
+                d.tileData.changedState = false
                 d.tileData.needsToBeRendered = false
                 d.tileData.isRendered = true
             })
 
-        console.log(tileContainerFiltered.size())
+        console.log("changing", tileContainerFiltered.size())
         
         let tileEnter = tileContainerEnter
             .append('g')
@@ -181,24 +226,24 @@ export class TilesCollection {
             .style("display", "table")
         contentFO.select(".contentTableCell")
             .style("display", "table-cell")
-            .style("vertical-align", "middle")
+            .style("vertical-align", function (d) { return d.contentVerticalAlignment })
             .html("")
-            .style("text-align", function (d) { return d.textAlign })
-            .append(function (d) { return d.content })
+            .style("text-align", function (d) { return d.contentHorizontalAlignment })
+            .append(function (d) { return d.contentContainer })
 
         contentFO.select('.textContainer')
             .style("opacity", function (d) { return d.textOpacity })
             .style("font-size", function (d) { return d.fontSize + "pt" })
             .style("font-family", function (d) { return d.fontFamily })
             .style("color", function (d) { return d.textColor })
-            .style("text-align", function (d) { return d.textAlign })
+            // .style("text-align", function (d) { return d.contentHorizontalAlignment })
 
         contentFO.select('.text2Container')
             .style("opacity", function (d) { return d.text2Opacity })
             .style("font-size", function (d) { return d.font2Size + "pt" })
             .style("font-family", function (d) { return d.font2Family })
             .style("color", function (d) { return d.text2Color })
-            .style("text-align", function (d) { return d.text2Align })
+            // .style("text-align", function (d) { return d.text2Align })
 
 
 
@@ -276,9 +321,18 @@ export class TilesCollection {
             .attr("height", 1)
 
         pattern.select('.img')
+            .filter((d)=>{return d.tileData.bgimgAspectRatio != null})
+            .attr("xlink:href", d => { return d.bgImgURL })
+            .attr("width", (d)=>d.getBgImgDims(d.tileData.bgimgAspectRatio).width)
+            .attr("height", (d)=>d.getBgImgDims(d.tileData.bgimgAspectRatio).height)
+
+        pattern.select('.img')
+            .filter((d)=>{return !d.tileData.bgimgAspectRatio})
             .on('load', function (d, i, n) {
                 let imgElement: Element = this as any //TODO make types more clear
-                let dims = d.getBgImgDims(imgElement.getBoundingClientRect())
+                let aspectRatio = imgElement.getBoundingClientRect().width/imgElement.getBoundingClientRect().height
+                let dims = d.getBgImgDims(aspectRatio)
+                d.tileData.bgimgAspectRatio = aspectRatio
                 d3.select(this)
                     .attr("width", dims.width)
                     .attr("height", dims.height)
@@ -324,7 +378,38 @@ export class TilesCollection {
         return new Tile(this, i, this.tilesData, this.formatSettings)
     }
     public createUniversalTileData(): UniversalTileData {
-        return new UniversalTileData(this.tilesData, this.formatSettings)
+        return new UniversalTileData(this.tilesData, this.formatSettings, this)
+    }
+    public createTiles(tilesData: TileData[]): Tile[] {
+        let tiles: Tile[] = []
+        for (let i = 0; i < tilesData.length; i++)
+            tiles.push(this.createTile(i))
+        return tiles
+    }
+
+    public setNeedsToBeRendered(){
+        for (let i = 0; i < this.tiles.length; i++){
+            this.tilesData[i].needsToBeRendered = !this.tilesData[i].isRendered && this.tiles[i].inViewWindow
+        }
+    }
+
+    public getMaxBoundedTextHeight(): number {
+        let mutableTiles = [...this.tiles]
+        let longestTextTiles: Tile[] = mutableTiles.slice().sort((a, b)=> b.text.length - a.text.length ).slice(0, 5)
+        return longestTextTiles.map((d)=> d.maxIndividualBoundedTextHeight).sort((a, b)=> b - a)[0]
+    }
+    
+
+    public isSameDataState(tdold: TileData, tdnew: TileData): boolean {
+        // return JSON.stringify(tdold) === JSON.stringify(tdnew) //TODO is this better?
+        return (tdold.isDisabled == tdnew.isDisabled)
+            && (tdold.isSelected == tdnew.isSelected)
+            && (tdold.isHovered == tdnew.isHovered)
+    }
+
+
+    public clear() {
+        this.container.selectAll('.tileContainer').remove()
     }
 
     onShift() { }

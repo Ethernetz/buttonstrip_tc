@@ -44,6 +44,9 @@ export class IconSettings extends TileCollectionFormatSettings.IconSettings{
 export class LayoutSettings extends TileCollectionFormatSettings.LayoutSettings{
 }
 
+export class ContentAlignmentSettings extends TileCollectionFormatSettings.ContentAlignmentSettings{
+}
+
 export class EffectSettings extends TileCollectionFormatSettings.EffectSettings{
 }
 
@@ -76,7 +79,7 @@ export class ContentSettings{
 }
 
 export class BgImgSettings{
-  public bgimgs: boolean = false
+  public show: boolean = false
   public img1: string = ""
   public img2: string = ""
   public img3: string = ""
@@ -90,15 +93,18 @@ export class BgImgSettings{
 }
 
 export class PresetStyleSettings{
-  public color: string = "#0D6ABF"
+  public color: string = "#41A4FF"
   public preset: PresetStyle = PresetStyle.none
 }
+
+
 
 export class VisualSettings extends DataViewObjectsParser {
   public tile: TileSettings = new TileSettings();
   public text: TextSettings = new TextSettings();
   public icon: IconSettings = new IconSettings();
   public layout: LayoutSettings = new LayoutSettings();
+  public contentAlignment: ContentAlignmentSettings = new ContentAlignmentSettings();
   public effect: EffectSettings = new EffectSettings();
   public content: ContentSettings = new ContentSettings();
   public bgimg: BgImgSettings = new BgImgSettings();

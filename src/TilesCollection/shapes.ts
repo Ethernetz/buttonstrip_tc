@@ -438,8 +438,10 @@ export class Pentagon extends Shape implements Shape{
         ]
         return handles
     }
-    static getExtraHSpace(): number{
-        return Pentagon._z
+    static getExtraHSpace(height: number, angle: number): number{
+        if(this.handleFocused)
+            return 2 * Pentagon._z
+        return 0.5*height/Math.tan(angle*(Math.PI/180))
     }
 }
 
@@ -508,8 +510,10 @@ export class Hexagon extends Shape implements Shape{
         return handles
     }
 
-    static getExtraHSpace(): number{
-        return 2 * Hexagon._z
+    static getExtraHSpace(height: number, angle: number): number{
+        if(this.handleFocused)
+            return 2 * Hexagon._z
+        return 0.5*height/Math.tan(angle*(Math.PI/180))
     }
 }
 

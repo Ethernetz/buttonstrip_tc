@@ -137,9 +137,10 @@ export function levelProperties(propValues: PropertyGroupValues, propKeys: Prope
     let _disabled = propValues.disabled
     let allExists = false
     let nullValue = null
-    if (typeof _all == 'number') {
-        allExists = _all >= 0
+    if (typeof propValues.default == 'number' || typeof propValues.default == 'object') {
+        allExists = _all != null && _all >= 0
     } else {
+        _all = <string>_all
         allExists = _all != null && _all.length > 0
         nullValue = ""
     }

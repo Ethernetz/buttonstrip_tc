@@ -11,7 +11,6 @@ import { ContentSource } from "./enums";
 
 export class ButtonsCollection extends TilesCollection {
     visual: Visual
-    options: VisualUpdateOptions
     tilesData = <ButtonData[]>this.tilesData
 
     public createTile(i): Tile {
@@ -32,16 +31,16 @@ export class Button extends Tile {
             this.visual.selectionManager.select((<ButtonData>this.tileData).selectionId, this.visual.visualSettings.content.multiselect) 
         else
             this.visual.selectionManagerUnbound.select(this.i, this.visual.visualSettings.content.multiselect) //FIXED
-        this.collection.render(this.visual.createButtonData()) 
+        this.collection.onStateChange(this.visual.createButtonData()) 
     }
 
     onTileMouseover() {
         this.visual.hoveredIndex = this.i
-        this.collection.render(this.visual.createButtonData()) 
+        this.collection.onStateChange(this.visual.createButtonData()) 
     }
     onTileMouseout() {
         this.visual.hoveredIndex = null
-        this.collection.render(this.visual.createButtonData()) 
+        this.collection.onStateChange(this.visual.createButtonData()) 
     }
 }
 
