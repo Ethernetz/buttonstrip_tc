@@ -1,5 +1,5 @@
 import {StatesUsed} from './interfaces'
-import {HorizontalAlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State, VerticalAlignmentType} from './enums'
+import {HorizontalAlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State, VerticalAlignmentType, GradientDirection} from './enums'
 
 export class FormatSettings{
   public tile: TileSettings = new TileSettings();
@@ -197,6 +197,26 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public hoverStyling: boolean = false
   
 
+    public gradient: boolean = false;
+    
+    public reverseGradient: boolean = false; 
+
+    public gradientColorD: string = "#41A4FF"
+    public gradientColorA: string = "";
+    public gradientColorS: string = null;
+    public gradientColorU: string = null;
+    public gradientColorH: string = null;
+    public gradientColorN: string = null;
+
+    public gradientDirectionD: GradientDirection = GradientDirection.horizontal
+    public gradientDirectionA: GradientDirection = null;
+    public gradientDirectionS: GradientDirection = null;
+    public gradientDirectionU: GradientDirection = null;
+    public gradientDirectionH: GradientDirection = null;
+    public gradientDirectionN: GradientDirection = null;
+
+
+
     public shadow: boolean = false;
   
     public shadowColorD: string = "#000"
@@ -256,6 +276,17 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public glowStrengthU: number = null
     public glowStrengthH: number = null
     public glowStrengthN: number = null
+
+
+    public lighting: boolean = false;
+    public lightingStrengthD: number = 40    
+    public lightingStrengthA: number = null
+    public lightingStrengthS: number = null
+    public lightingStrengthU: number = null
+    public lightingStrengthH: number = null
+    public lightingStrengthN: number = null
+
+
   }
 
   export class IconSettings implements TileCollectionStatedFormatObject{

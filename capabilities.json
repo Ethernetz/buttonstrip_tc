@@ -687,6 +687,192 @@
                         "numeric": true
                     }
                 },
+                "gradient": {
+                    "displayName": "Gradient",
+                    "description": "Add a gradient to each tile",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "reverseGradient": {
+                    "displayName": "Reverse colors",
+                    "description": "Reverse the gradient colors",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "gradientColorA": {
+                    "displayName": "Color",
+                    "description": "Secondary color of gradient",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "gradientColorS": {
+                    "displayName": "Color",
+                    "description": "Secondary color of gradient",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "gradientColorU": {
+                    "displayName": "Color",
+                    "description": "Secondary color of gradient",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "gradientColorH": {
+                    "displayName": "Color",
+                    "description": "Secondary color of gradient",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "gradientDirectionA": {
+                    "displayName": "Direction",
+                    "description": "Direction of the gradient",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Horizontal",
+                                "value": "horizontal"
+                            },
+                            {
+                                "displayName": "Vertical",
+                                "value": "vertical"
+                            },
+                            {
+                                "displayName": "Diagonal 1",
+                                "value": "diagonal1"
+                            },
+                            {
+                                "displayName": "Diagonal 2",
+                                "value": "diagonal2"
+                            },
+                            {
+                                "displayName": "Radial",
+                                "value": "radial"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "gradientDirectionS": {
+                    "displayName": "Direction",
+                    "description": "Direction of the gradient",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Horizontal",
+                                "value": "horizontal"
+                            },
+                            {
+                                "displayName": "Vertical",
+                                "value": "vertical"
+                            },
+                            {
+                                "displayName": "Diagonal 1",
+                                "value": "diagonal1"
+                            },
+                            {
+                                "displayName": "Diagonal 2",
+                                "value": "diagonal2"
+                            },
+                            {
+                                "displayName": "Radial",
+                                "value": "radial"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "gradientDirectionU": {
+                    "displayName": "Direction",
+                    "description": "Direction of the gradient",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Horizontal",
+                                "value": "horizontal"
+                            },
+                            {
+                                "displayName": "Vertical",
+                                "value": "vertical"
+                            },
+                            {
+                                "displayName": "Diagonal 1",
+                                "value": "diagonal1"
+                            },
+                            {
+                                "displayName": "Diagonal 2",
+                                "value": "diagonal2"
+                            },
+                            {
+                                "displayName": "Radial",
+                                "value": "radial"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
+                "gradientDirectionH": {
+                    "displayName": "Direction",
+                    "description": "Direction of the gradient",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Horizontal",
+                                "value": "horizontal"
+                            },
+                            {
+                                "displayName": "Vertical",
+                                "value": "vertical"
+                            },
+                            {
+                                "displayName": "Diagonal 1",
+                                "value": "diagonal1"
+                            },
+                            {
+                                "displayName": "Diagonal 2",
+                                "value": "diagonal2"
+                            },
+                            {
+                                "displayName": "Radial",
+                                "value": "radial"
+                            },
+                            {
+                                "displayName": "Custom",
+                                "value": "custom"
+                            }
+                        ]
+                    }
+                },
                 "shadow": {
                     "displayName": "Shadow",
                     "description": "Add a shadow to each tile",
@@ -1115,6 +1301,41 @@
                     }
                 },
                 "glowStrengthH": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "lighting": {
+                    "displayName": "Lighting",
+                    "description": "Add lighting to each tile",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "lightingStrengthA": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "lightingStrengthS": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "lightingStrengthU": {
+                    "displayName": "Strength",
+                    "description": "Strength of the glow.",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "lightingStrengthH": {
                     "displayName": "Strength",
                     "description": "Strength of the glow.",
                     "type": {

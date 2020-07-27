@@ -118,7 +118,7 @@ export class Visual implements IVisual {
             let state: State = propertyGroup["state"]
             for (let i = 0; i < groupedKeyNamesArr.length; i++) {
                 let groupedKeyNames = groupedKeyNamesArr[i]
-                if (prefix && !groupedKeyNames.default.startsWith(prefix))
+                if (prefix && (!groupedKeyNames.default || !groupedKeyNames.default.startsWith(prefix)))
                     continue
                 switch (state) {
                     case State.all:
@@ -212,17 +212,26 @@ export class Visual implements IVisual {
                 properties = { ...properties, ...this.getEnumeratedStateProperties(filtered) }
                 break
             }
-            case "effect":
+            case "effect": {
                 properties.shapeRoundedCornerRadius = settings.effect.shapeRoundedCornerRadius
                 properties.state = settings.effect.state
                 properties.hoverStyling = settings.effect.hoverStyling
+                properties.gradient = settings.effect.gradient
+                if (settings.effect.gradient) {
+                    properties.reverseGradient = settings.effect.reverseGradient
+                    properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "gradient") }
+                }
                 properties.shadow = settings.effect.shadow
                 if (settings.effect.shadow)
                     properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "shadow") }
                 properties.glow = settings.effect.glow
                 if (settings.effect.glow)
                     properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "glow") }
+                properties.lighting = settings.effect.lighting
+                if (settings.effect.lighting)
+                    properties = { ...properties, ...this.getEnumeratedStateProperties(settings.effect, "lighting") }
                 break
+            }
             case "content": {
                 let filtered = Object.keys(settings.content)
                     .filter(key => !(settings.content.source == ContentSource.databound && (key.startsWith("text") || key.startsWith("icon") || key == 'n')))

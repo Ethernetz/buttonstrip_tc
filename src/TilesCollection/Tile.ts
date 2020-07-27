@@ -1,7 +1,7 @@
 import { Viewport } from './interfaces'
 import { FormatSettings, TextSettings, ContentAlignmentSettings, LayoutSettings, TileSettings, EffectSettings, IconSettings } from './FormatSettings'
 import { TileData } from './TileData'
-import { State, TileSizingType, TileLayoutType, HorizontalAlignmentType, TileShape, Direction, ContentFormatType, IconPlacement, VerticalAlignmentType } from './enums'
+import { State, TileSizingType, TileLayoutType, HorizontalAlignmentType, TileShape, Direction, ContentFormatType, IconPlacement, VerticalAlignmentType, GradientDirection } from './enums'
 import { getMatchingStateProperty, calculateWordDimensions } from './functions'
 import { Shape, Rectangle, Parallelogram, Chevron, Ellipse, Pentagon, Hexagon, Tab_RoundedCorners, Tab_CutCorners, Tab_CutCorner, ChevronVertical, ParallelogramVertical } from "./shapes"
 import { BaseType, thresholdScott } from 'd3'
@@ -131,7 +131,7 @@ export class Tile {
         return calculateWordDimensions(this.text as string, this.fontFamily, this.maxFontSize + "pt", this.textContainerWidthType, (this.maxHorizontalTextSpace) + 'px').height;
     }
 
-    get maxFontSize(): number{
+    get maxFontSize(): number {
         return this.universalTileData.maxFontSize
     }
 
@@ -183,10 +183,38 @@ export class Tile {
         return getMatchingStateProperty(this.currentState, this.tileSettings, 'strokeWidth')
     }
 
-    get layoutSettings(): LayoutSettings{
+    get tileHasGradient(): boolean {
+        return this.effectSettings.gradient
+    }
+    get gradientColor(): string {
+        return getMatchingStateProperty(this.currentState, this.effectSettings, 'gradientColor')
+    }
+    get gradientDirection(): GradientDirection {
+        return getMatchingStateProperty(this.currentState, this.effectSettings, 'gradientDirection')
+    }
+    get gradientCoordinates(): { x1: number, x2: number; y1: number; y2: number } {
+        switch (this.gradientDirection) {
+            case GradientDirection.horizontal:
+                return { x1: 0, x2: 1, y1: 0, y2: 0 }
+            case GradientDirection.vertical:
+                return { x1: 0, x2: 0, y1: 0, y2: 1 }
+            case GradientDirection.diagonal1:
+                return { x1: 0, x2: 1, y1: 0, y2: 1 }
+            case GradientDirection.diagonal2:
+                return { x1: 1, x2: 0, y1: 0, y2: 1 }
+            default:
+                return { x1: 0, x2: 1, y1: 0, y2: 0 }
+        }
+    }
+    get reversGradientColors(): boolean {
+        return this.effectSettings.reverseGradient
+    }
+
+
+    get layoutSettings(): LayoutSettings {
         return this.formatSettings.layout
     }
-    
+
     get tilePadding(): number {
         return this.layoutSettings.padding
     }
@@ -412,6 +440,10 @@ export class Tile {
         return getMatchingStateProperty(this.currentState, this.effectSettings, 'glowStrength')
     }
 
+    get lightingStrength(): number {
+        return getMatchingStateProperty(this.currentState, this.effectSettings, 'lightingStrength')
+    }
+
 
 
     get iconURL(): string {
@@ -489,9 +521,9 @@ export class Tile {
     }
 
     get maxHorizontalTextSpace(): number {
-        console.log(1)
-        console.log(this.contentContainerWidth)
-        console.log(2)
+        // console.log(1)
+        // console.log(this.contentContainerWidth)
+        // console.log(2)
         let maxSpace = this.contentContainerWidth - this.totalContentHorizontalMargin
         if (this.contentFormatType == ContentFormatType.text_icon && this.iconPlacement == IconPlacement.left)
             maxSpace -= (this.iconWidth + this.iconTextPadding)
@@ -523,7 +555,7 @@ export class Tile {
         textContainer = this.setTextContainerAlignments(textContainer)
         return textContainer
     }
-    
+
 
     get icon(): HTMLImageElement {
         let icon = document.createElement('img') as HTMLImageElement

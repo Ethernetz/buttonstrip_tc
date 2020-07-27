@@ -130,4 +130,8 @@ export class UniversalTileData{
     get glowMaxStrength(): number {
         return this.getMaxOfPropertyGroup(this.effectSettings, 'glowStrength')
     }
+
+    get lighting(): boolean{
+        return this.effectSettings.lighting
+    }
 }

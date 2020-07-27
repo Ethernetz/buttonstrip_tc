@@ -4,7 +4,7 @@ import { TileData } from './TileData'
 import { UniversalTileData } from './UniversalTileData'
 import { Tile } from './Tile'
 import * as d3 from 'd3';
-import { ContentFormatType } from './enums'
+import { ContentFormatType, GradientDirection } from './enums'
 
 type Selection<T extends d3.BaseType> = d3.Selection<T, any, any, any>;
 export class TilesCollection {
@@ -34,8 +34,10 @@ export class TilesCollection {
 
         this.universalTileData = this.createUniversalTileData()
         this.tiles = this.createTiles(this.tilesData)
+        console.log("here")
         this.setWindow()
         this.setTextBounds()
+        console.log("and here")
         this.setMaxIconHeight(()=>{this.clear(); this.draw()})
     }
 
@@ -46,16 +48,13 @@ export class TilesCollection {
     public setMaxIconHeight(callback?: ()=> any): void{
         let asyncI = 0;
         let asyncCount = this.tiles.length;
-        console.log(this.tiles.length)
         let maxIconHeight: number = 0
         let readImageDimensions = ()=>{
             if(asyncI >= asyncCount){
                 this.universalTileData.maxIconHeight = maxIconHeight
-                console.log(this.universalTileData.maxIconHeight)
                 callback()
                 return
             }
-
             if(!this.tiles[asyncI].iconURL){
                 asyncI++
                 readImageDimensions();
@@ -67,9 +66,7 @@ export class TilesCollection {
                 let loadedImg = event.currentTarget as HTMLImageElement
                 maxIconHeight = loadedImg ? Math.max((loadedImg.height/loadedImg.width) * this.universalTileData.maxIconWidth, maxIconHeight) : maxIconHeight
                 asyncI++;
-                if (asyncI < asyncCount) {
-                    readImageDimensions();
-                }
+                readImageDimensions();
             }
             img.src = this.tiles[asyncI].iconURL;
         }
@@ -152,6 +149,7 @@ export class TilesCollection {
     
 
     public draw() {
+        console.log("drawing")
         let tileContainer = this.container.selectAll('.tileContainer')
         .data(this.tiles
             .filter((d)=>d.tileData.isRendered || d.tileData.needsToBeRendered),
@@ -193,9 +191,9 @@ export class TilesCollection {
 
         tile.select(".fill")
             .attr("d", function (d) { return d.shapePath })
-            .attr("fill", function (d) { return d.bgImgURL ? "url(#image" + d.i + ")" : d.tileFill })
+            .attr("fill", function (d) { return d.bgImgURL ? "url(#image" + d.i + ")" : d.tileHasGradient ? "url(#gradient" + d.i + ")" :  d.tileFill })
             .style("fill-opacity", function (d) { return d.tileFillOpacity })
-            .style("filter", function (d) { return "url(#filter" + d.i + ")"})
+            .attr("filter", function (d) { return "url(#filter" + d.i + ")"})
         tile.select(".stroke")
             .attr("d", function (d) { return d.shapeStrokePath })
             .style("fill", "none")
@@ -281,12 +279,60 @@ export class TilesCollection {
             .attr("id", d => { return "filter" + d.i })
             .attr("class", "filter")
 
+        let dropshadowEnter = filterEnter.filter(() => this.universalTileData.shadow)
+            .append("feDropShadow")
+            .attr("class", "dropshadow")
+
+        let glowEnter = filterEnter.filter(() => this.universalTileData.glow)
+            .append("feDropShadow")
+            .attr("class", "glow")
+
+        let lightingEnter = filterEnter.filter(()=> this.universalTileData.lighting)
+
+        lightingEnter
+            .append("feGaussianBlur")
+            .attr("in", "SourceAlpha")
+            .attr("stdDeviation", 2)
+            .attr("result", "blur1")
+        
+        lightingEnter
+            .append("feSpecularLighting")
+            .attr("result", "specOut")
+            .attr("in", "blur1")
+            .attr("specularConstant", 1.2)
+            .attr("specularExponent", 12)
+            .attr("lighting-color", "#fff")
+            .append("feDistantLight")
+            .attr("azimuth", 225)
+            .attr("class", "lighting")
+            .append("fePointLight")
+            // .attr("x", 50)
+            // .attr("y", 100)
+            // .attr("z", 200)
+        
+        lightingEnter
+            .append("feComposite")
+            .attr("in", "SourceGraphic")
+            .attr("in2", "specOut")
+            .attr("operator", "arithmetic")
+            .attr("k1", 0)
+            .attr("k2", 1)
+            .attr("k3", 1)
+            .attr("k4", 0)
+            .attr("result", "lighting")
+
+
+
+        let feMerge = filterEnter.append("feMerge")
+            feMerge.append("feMergeNode").attr("in", "dropshadow")
+            feMerge.append("feMergeNode").attr("in", "glow")
+            feMerge.append("feMergeNode").attr("in", "lighting")
+
+
         let filter = tileContainerFiltered.select("filter")
 
-        filter.html("")
-
-        filter.filter(() => { return this.universalTileData.shadow })
-            .append("feDropShadow")
+        let dropshadow = filter.select(".dropshadow")
+        dropshadow
             .attr("dx", d => { return d.shadowDirectionCoords.x * d.shadowDistance })
             .attr("dy", d => { return d.shadowDirectionCoords.y * d.shadowDistance })
             .attr("stdDeviation", d => { return d.shadowStrength })
@@ -294,14 +340,20 @@ export class TilesCollection {
             .attr("flood-opacity", d => { return d.shadowTransparency })
             .attr("result", "dropshadow")
 
-        filter.filter(() => { return this.universalTileData.glow })
-            .append("feDropShadow")
+        let glow = filter.select(".glow")
+        glow
             .attr("dx", 0)
             .attr("dy", 0)
             .attr("stdDeviation", d => { return d.glowStrength })
-            .attr("flood-color", d => { return d.glowColor })
+            .attr("flood-color", d => {  return d.glowColor })
             .attr("flood-opacity", d => { return d.glowTransparency })
             .attr("result", "glow")
+        
+        let lighting = filter.select(".lighting")
+            .attr("elevation", (d)=>d.lightingStrength)
+
+
+        
 
 
         let patternEnter = defsEnter
@@ -339,27 +391,52 @@ export class TilesCollection {
             })
             .attr("xlink:href", d => { return d.bgImgURL })
 
-        let feMerge = filter.append("feMerge")
-        feMerge.append("feMergeNode").attr("in", "dropshadow")
-        feMerge.append("feMergeNode").attr("in", "glow")
+
+        let linearGradientEnter = defsEnter
+            .filter((d)=>d.tileHasGradient)
+            .filter((d)=>d.gradientDirection != GradientDirection.radial)
+            .append("linearGradient")
+            .attr("id", d => { return "gradient" + d.i })
+            .attr("class", "gradient")
+
+        let radialGradientEnter = defsEnter
+            .filter((d)=>d.tileHasGradient)
+            .filter((d)=>d.gradientDirection == GradientDirection.radial)
+            .append("radialGradient")
+            .attr("id", d => { return "gradient" + d.i })
+            .attr("class", "gradient")
 
 
-        // defs.append("g")
-        //     .attr("id", "handleHorizontal")
-        //     .attr("class", "handle")
-        //     .append("path")
-        //     .attr("d", "M 0 0 l 6 12 l -12 0 z")
-        //     .attr("fill", "#FFD700")
-        //     .style("stroke", "#252423")
-        //     .style("stroke-width", 0.5)
-        // defs.append("g")
-        //     .attr("id", "handleVertical")
-        //     .attr("class", "handle")
-        //     .append("path")
-        //     .attr("d", "M 0 0 l -12 6 l 0 -12 z")
-        //     .attr("fill", "#FFD700")
-        //     .style("stroke", "#252423")
-        //     .style("stroke-width", 0.5)
+        let gradientEnter = defsEnter
+            .select(".gradient")
+            
+        let gradientStop1Enter = gradientEnter
+            .append("stop")
+            .attr("class", "stop1")
+            .attr("offset", "0%")
+        
+        let gradientStop2Enter = gradientEnter
+            .append("stop")
+            .attr("class", "stop2")
+            .attr("offset", "100%")
+
+        let linearGradient = tileContainerFiltered.select("linearGradient")
+            .attr("x1", (d)=>d.gradientCoordinates.x1)
+            .attr("x2", (d)=>d.gradientCoordinates.x2)
+            .attr("y1", (d)=>d.gradientCoordinates.y1)
+            .attr("y2", (d)=>d.gradientCoordinates.y2)
+
+
+
+        let gradient = tileContainerFiltered.select(".gradient")
+        let gradientStop1 = gradient
+            .select(".stop1")
+            .attr("stop-color", (d)=>d.reversGradientColors ? d.gradientColor : d.tileFill)
+            
+        let gradientStop2 = gradient
+            .select(".stop2")
+            .attr("stop-color", (d)=>d.reversGradientColors ? d.tileFill : d.gradientColor)
+            
 
 
         d3.select("body")
