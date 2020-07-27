@@ -234,6 +234,7 @@ export class TilesCollection {
             .style("font-size", function (d) { return d.fontSize + "pt" })
             .style("font-family", function (d) { return d.fontFamily })
             .style("color", function (d) { return d.textColor })
+            .style("background", function(d) {return d.textBackgroundOpacity > 0 ? d.textBackground : "rgba(0,0,0,0)"})
             // .style("text-align", function (d) { return d.contentHorizontalAlignment })
 
         contentFO.select('.text2Container')
@@ -287,46 +288,10 @@ export class TilesCollection {
             .append("feDropShadow")
             .attr("class", "glow")
 
-        let lightingEnter = filterEnter.filter(()=> this.universalTileData.lighting)
-
-        lightingEnter
-            .append("feGaussianBlur")
-            .attr("in", "SourceAlpha")
-            .attr("stdDeviation", 2)
-            .attr("result", "blur1")
-        
-        lightingEnter
-            .append("feSpecularLighting")
-            .attr("result", "specOut")
-            .attr("in", "blur1")
-            .attr("specularConstant", 1.2)
-            .attr("specularExponent", 12)
-            .attr("lighting-color", "#fff")
-            .append("feDistantLight")
-            .attr("azimuth", 225)
-            .attr("class", "lighting")
-            .append("fePointLight")
-            // .attr("x", 50)
-            // .attr("y", 100)
-            // .attr("z", 200)
-        
-        lightingEnter
-            .append("feComposite")
-            .attr("in", "SourceGraphic")
-            .attr("in2", "specOut")
-            .attr("operator", "arithmetic")
-            .attr("k1", 0)
-            .attr("k2", 1)
-            .attr("k3", 1)
-            .attr("k4", 0)
-            .attr("result", "lighting")
-
-
 
         let feMerge = filterEnter.append("feMerge")
             feMerge.append("feMergeNode").attr("in", "dropshadow")
             feMerge.append("feMergeNode").attr("in", "glow")
-            feMerge.append("feMergeNode").attr("in", "lighting")
 
 
         let filter = tileContainerFiltered.select("filter")
@@ -348,9 +313,6 @@ export class TilesCollection {
             .attr("flood-color", d => {  return d.glowColor })
             .attr("flood-opacity", d => { return d.glowTransparency })
             .attr("result", "glow")
-        
-        let lighting = filter.select(".lighting")
-            .attr("elevation", (d)=>d.lightingStrength)
 
 
         

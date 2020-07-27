@@ -48,3 +48,18 @@ export function round(n, p?): number{
     let x = p ? Math.pow(10, p) : 100
     return Math.round(n*x) / x
 }
+
+export function hexToRgb(hex: string): {r: number, g: number, b: number} {
+    if(!hex.startsWith("#"))
+        return {r:0, b:0, g:0}
+    if(hex.length == 4)
+        hex = "#" + hex.substr(1).replace(/./g, '$&$&')
+    if(hex.length != 7)
+        return {r:0, b:0, g:0}
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }

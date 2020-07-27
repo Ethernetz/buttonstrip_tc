@@ -1,4 +1,4 @@
-import { FormatSettings, LayoutSettings, TextSettings, IconSettings, TileSettings, EffectSettings } from './FormatSettings'
+import { FormatSettings, LayoutSettings, TextSettings, IconSettings, TileStrokeSettings, EffectSettings } from './FormatSettings'
 import { TileData } from './TileData'
 import { Viewport } from './interfaces';
 import { TileLayoutType, State, TileSizingType } from './enums';
@@ -33,8 +33,8 @@ export class UniversalTileData{
     get iconSettings(): IconSettings{
         return this.formatSettings.icon
     }
-    get tileSettings(): TileSettings{
-        return this.formatSettings.tile
+    get tileStrokeSettings(): TileStrokeSettings{
+        return this.formatSettings.tileStroke
     }
     get effectSettings(): EffectSettings{
         return this.formatSettings.effect
@@ -86,7 +86,7 @@ export class UniversalTileData{
 
 
     get maxTileStrokeWidth(): number{        
-        return this.getMaxOfPropertyGroup(this.tileSettings, 'strokeWidth')
+        return this.getMaxOfPropertyGroup(this.tileStrokeSettings, 'strokeWidth')
     }
 
     get maxFontSize(): number{
@@ -129,9 +129,5 @@ export class UniversalTileData{
     }
     get glowMaxStrength(): number {
         return this.getMaxOfPropertyGroup(this.effectSettings, 'glowStrength')
-    }
-
-    get lighting(): boolean{
-        return this.effectSettings.lighting
     }
 }

@@ -1,21 +1,26 @@
+import * as TileCollectionFormatSettings from "../TilesCollection/FormatSettings"
+
 export class Preset {
     public static baseColor: string;
 }
 
 
 export class DefaultPreset {
-    public tile: DefaultTileSettings = new DefaultTileSettings();
+    public tileFill: DefaultTileFillSettings = new DefaultTileFillSettings();
+    public tileStroke: DefaultTileStrokeSettings = new DefaultTileStrokeSettings();
     public text: DefaultTextSettings = new DefaultTextSettings();
     public effect: DefaultEffectSettings = new DefaultEffectSettings();
 }
 
-export class DefaultTileSettings {
+export class DefaultTileFillSettings extends TileCollectionFormatSettings.TileFillSettings {
     public colorA: string = "";
     public colorS: string = Preset.baseColor;
     public colorU: string = Preset.baseColor;
     public colorH: string = Preset.baseColor;
     public colorN: string = Preset.baseColor;
+}
 
+export class DefaultTileStrokeSettings extends TileCollectionFormatSettings.TileStrokeSettings {
     public strokeA: string = "";
     public strokeS: string =  Preset.baseColor;
     public strokeU: string =  Preset.baseColor;
@@ -28,14 +33,16 @@ export class DefaultTileSettings {
     public strokeWidthH: number = 0;
     public strokeWidthN: number = 0;
 }
-export class DefaultTextSettings {
+
+
+export class DefaultTextSettings extends TileCollectionFormatSettings.TileStrokeSettings{
     public colorA: string = "";
     public colorS: string = isLightShaded(Preset.baseColor) ? "#262222" : "#fff";
     public colorU: string = isLightShaded(Preset.baseColor) ? "#262222" : "#fff";
     public colorH: string = isLightShaded(Preset.baseColor) ? "#262222" : "#fff";
     public colorN: string = isLightShaded(Preset.baseColor) ? "#262222" : "#fff";
 }
-export class DefaultEffectSettings {
+export class DefaultEffectSettings extends TileCollectionFormatSettings.EffectSettings{
     public shadowColorA: string = "";
     public shadowColorS: string = "#000";
     public shadowColorU: string = "#000";
@@ -64,10 +71,10 @@ export class DefaultEffectSettings {
 
 
 export class DarkerPreset {
-    public tile: DarkerTileSettings = new DarkerTileSettings();
+    public tileFill: DarkerTileFillSettings = new DarkerTileFillSettings();
     public text: DarkerTextSettings = new DarkerTextSettings();
 }
-export class DarkerTileSettings {
+export class DarkerTileFillSettings{
     public colorA: string = "";
     public colorS: string = shadeHexColor(Preset.baseColor, -0.30);
     public colorU: string = Preset.baseColor;
@@ -83,10 +90,10 @@ export class DarkerTextSettings {
 }
 
 export class LighterPreset {
-    public tile: LighterTileSettings = new LighterTileSettings();
+    public tileFill: LighterTileFillSettings = new LighterTileFillSettings();
     public text: LighterTextSettings = new LighterTextSettings();
 }
-export class LighterTileSettings {
+export class LighterTileFillSettings {
     public colorA: string = "";
     public colorS: string = shadeHexColor(Preset.baseColor, 0.30);
     public colorU: string = Preset.baseColor;
@@ -102,16 +109,18 @@ export class LighterTextSettings {
 }
 
 export class FilledPreset {
-    public tile: FilledTileSettings = new FilledTileSettings();
+    public tileFill: FilledTileFillSettings = new FilledTileFillSettings();
+    public tileStroke: FilledTileStrokeSettings = new FilledTileStrokeSettings();
     public text: FilledTextSettings = new FilledTextSettings();
 }
-export class FilledTileSettings {
+export class FilledTileFillSettings {
     public colorA: string = "";
     public colorS: string = Preset.baseColor;
     public colorU: string = "#fff";
     public colorH: string = shadeHexColor(Preset.baseColor, 0.15);
     public colorN: string = "#fff";
-
+}
+export class FilledTileStrokeSettings {
     public strokeA: string = "";
     public strokeS: string = shadeHexColor(Preset.baseColor, 0.15);
     public strokeU: string = shadeHexColor(Preset.baseColor, 0.15);
@@ -219,16 +228,18 @@ export class GlowEffectSettings {
 
 
 export class OutlinedPreset {
-    public tile: OutlinedTileSettings = new OutlinedTileSettings();
+    public tileFill: OutlinedTileFillSettings = new OutlinedTileFillSettings();
+    public tileStroke: OutlinedTileStrokeSettings = new OutlinedTileStrokeSettings();
 }
 
-export class OutlinedTileSettings{
+export class OutlinedTileFillSettings{
     public colorA: string = "";
     public colorS: string = Preset.baseColor;
     public colorU: string = Preset.baseColor;
     public colorH: string = Preset.baseColor;
     public colorN: string = isLightShaded(Preset.baseColor) ? shadeHexColor(Preset.baseColor, -0.55) : shadeHexColor(Preset.baseColor, 0.55);
-
+}
+export class OutlinedTileStrokeSettings{
     public strokeA: string = "";
     public strokeS: string = shadeHexColor(Preset.baseColor, -0.25);
     public strokeU: string = shadeHexColor(Preset.baseColor, -0.25);

@@ -2,8 +2,10 @@ import {StatesUsed} from './interfaces'
 import {HorizontalAlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State, VerticalAlignmentType, GradientDirection} from './enums'
 
 export class FormatSettings{
-  public tile: TileSettings = new TileSettings();
+  public tileStroke: TileStrokeSettings = new TileStrokeSettings();
+  public tileFill: TileFillSettings = new TileFillSettings();
   public text: TextSettings = new TextSettings();
+  public shape: ShapeSettings = new ShapeSettings();
   public layout: LayoutSettings = new LayoutSettings();
   public contentAlignment: ContentAlignmentSettings = new ContentAlignmentSettings();
   public effect: EffectSettings = new EffectSettings();
@@ -16,7 +18,31 @@ export interface TileCollectionStatedFormatObject{
 }
 
 
-export class TileSettings implements TileCollectionStatedFormatObject{
+export class TileStrokeSettings implements TileCollectionStatedFormatObject{
+    public state: State = State.all
+    public statesUsed: StatesUsed = {
+      selected: true,
+      unselected: true,
+      hover: true,
+      disabled: false
+    }
+    public hoverStyling: boolean = false
+  
+    public strokeD: string = "#000";
+    public strokeA: string = "";
+    public strokeS: string = null;
+    public strokeU: string = null;
+    public strokeH: string = null;
+    public strokeN: string = null;
+  
+    public strokeWidthD: number = 0;
+    public strokeWidthA: number = null;
+    public strokeWidthS: number = null;
+    public strokeWidthU: number = null;
+    public strokeWidthH: number = null;
+    public strokeWidthN: number = null;
+  }
+export class TileFillSettings implements TileCollectionStatedFormatObject{
     public state: State = State.all
     public statesUsed: StatesUsed = {
       selected: true,
@@ -32,21 +58,7 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public colorU: string = null;
     public colorH: string = null;
     public colorN: string = null;
-  
-    public strokeD: string = "#000";
-    public strokeA: string = "";
-    public strokeS: string = null;
-    public strokeU: string = null;
-    public strokeH: string = null;
-    public strokeN: string = null;
-  
-    public strokeWidthD: number = 0;
-    public strokeWidthA: number = null;
-    public strokeWidthS: number = null;
-    public strokeWidthU: number = null;
-    public strokeWidthH: number = null;
-    public strokeWidthN: number = null;
-  
+
     public transparencyD: number = 0;
     public transparencyA: number = null;
     public transparencyS: number = null;
@@ -94,9 +106,23 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public transparencyH: number = null;
     public transparencyN: number = null;
    
+
+    public backgroundColorD: string = "#fff";
+    public backgroundColorA: string = "";
+    public backgroundColorS: string = null;
+    public backgroundColorU: string = null;
+    public backgroundColorH: string = null;
+    public backgroundColorN: string = null;
+
+    public backgroundTransparencyD: number = 100;
+    public backgroundTransparencyA: number = null;
+    public backgroundTransparencyS: number = null;
+    public backgroundTransparencyU: number = null;
+    public backgroundTransparencyH: number = null;
+    public backgroundTransparencyN: number = null;
   }
 
-  export class LayoutSettings{
+  export class ShapeSettings{
     public tileShape: TileShape = TileShape.rectangle
     
     public parallelogramAngle: number = 80
@@ -105,7 +131,9 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public hexagonAngle: number = 60
     public tab_cutCornersLength: number = 20
     public tab_cutCornerLength: number = 20
-  
+  }
+
+  export class LayoutSettings{
     public sizingMethod: TileSizingType = TileSizingType.uniform;
     public tileWidth: number = 150;
     public tileHeight: number = 75;
@@ -276,15 +304,6 @@ export class TileSettings implements TileCollectionStatedFormatObject{
     public glowStrengthU: number = null
     public glowStrengthH: number = null
     public glowStrengthN: number = null
-
-
-    public lighting: boolean = false;
-    public lightingStrengthD: number = 40    
-    public lightingStrengthA: number = null
-    public lightingStrengthS: number = null
-    public lightingStrengthU: number = null
-    public lightingStrengthH: number = null
-    public lightingStrengthN: number = null
 
 
   }

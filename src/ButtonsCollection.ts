@@ -28,9 +28,9 @@ export class Button extends Tile {
 
     onTileClick() {
         if(this.visual.visualSettings.content.source == ContentSource.databound)
-            this.visual.selectionManager.select((<ButtonData>this.tileData).selectionId, this.visual.visualSettings.content.multiselect) 
+            this.visual.selectionManager.select((<ButtonData>this.tileData).selectionId) 
         else
-            this.visual.selectionManagerUnbound.select(this.i, this.visual.visualSettings.content.multiselect) //FIXED
+            this.visual.selectionManagerUnbound.select(this.i)
         this.collection.onStateChange(this.visual.createButtonData()) 
     }
 
