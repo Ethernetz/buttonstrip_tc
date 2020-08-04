@@ -203,7 +203,7 @@ export class UniversalTileData {
             case TileShape.chevron:
                 return new Chevron(h, w, this.shapeDirection, this.shapeSettings.chevronAngle, this.roundedCornerRadius)
             case TileShape.ellipse:
-                return new Ellipse(width, height, this.shapeDirection)
+                return new Ellipse(height, width, this.shapeDirection)
             case TileShape.pentagon:
                 return new Pentagon(h, w, this.shapeDirection, this.shapeSettings.pentagonAngle, this.roundedCornerRadius)
             case TileShape.hexagon:

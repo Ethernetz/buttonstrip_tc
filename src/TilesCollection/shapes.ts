@@ -302,6 +302,9 @@ export class Ellipse extends Shape {
     get shapePath(): string {
         return [].concat.apply([], this.shapePathRight).join(" ")
     }
+    get strokePath(): string {
+        return [].concat.apply([], this.strokePathRight).join(" ")
+    }
 
     get contentBoundingBox(): BoundingBox {
         return super.contentBoundingBoxRight
