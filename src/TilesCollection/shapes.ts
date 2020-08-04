@@ -1,749 +1,583 @@
-import {BoundingBox, Handle} from "./interfaces"
-import {roundPathCorners} from "./shape-rounding"
-import {round} from './functions'
-export class Shape{
-    xPos: number
-    yPos: number
+import { BoundingBox, Handle } from "./interfaces"
+import { ShapeDirection, TileLayoutType } from "./enums"
+import { rotatePath } from "./functions"
+export class Shape {
     width: number
     height: number
-    radius: number
-    alterVPadding: number = 0
-    // alterHPadding: number = 0
-    static handleFocused: boolean = false
-    constructor(xPos: number, yPos: number, width: number, height: number, radius?: number){
-        this.xPos = xPos
-        this.yPos = yPos
-        this.width = width
-        this.height = height
-        this.radius = radius
-    }
+    roundedCornerRadius: number
+    direction: ShapeDirection
+    static alterPadding: boolean = false
 
-    get strokePath(): string{
-        return this.shapePath
-    }
+    _shapePath: string
+    _strokePath: string
 
-    get handles(): any[]{
+
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius?: number, ...args: number[]) {
+        this.width = width || 0
+        this.height = height || 0
+        this.direction = direction || ShapeDirection.right
+        this.roundedCornerRadius = roundedCornerRadius || 0
+    }
+    get shapePath(): string {
+        this._shapePath = this._shapePath || [].concat.apply([], rotatePath(this.shapePathRight, this.direction, this.height, this.width)).join(" ")
+        return this._shapePath;
+    }
+    get shapePathRight(): [string, ...number[]][] {
         return []
     }
-}
-
-export interface Shape{
-    xPos: number,
-    yPosd: number,
-    width: number,
-    height: number,
-    shapePath: string,
-    strokePath: string,
-    contentBoundingBox: BoundingBox,
-    handles: any[]
-}
-
-
-export class Rectangle extends Shape implements Shape{
-    constructor(xPos: number, yPos: number, width: number, height: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + this.height)
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos,
-            y: this.yPos,
-            width: this.width,
-            height: this.height
-        }
-    }
-}
-
-export class Parallelogram extends Shape implements Shape{
-    static _z: number;
-    angle: number
-    constructor(xPos: number, yPos: number, width: number, height: number, angle: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-        this.angle = angle
-        if(!Shape.handleFocused)
-            Parallelogram._z = this.height/Math.tan(angle*(Math.PI/180))
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos + Parallelogram._z, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos)
-        path.DrawTo(this.xPos + this.width - Parallelogram._z, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + this.height)
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos + Parallelogram._z,
-            y: this.yPos,
-            width: this.width - 2*Parallelogram._z,
-            height: this.height
-        }
-    }
-
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.z
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos
-                },
-                axis: 'x',
-                propName: 'parallelogramAngle',
-                get z(): number {
-                    return Parallelogram._z
-                },
-                set z(x: number){
-                    Parallelogram._z = x
-                },
-                get disp(): number {
-                    return round(Math.atan(this.buttonHeight/this.z) * (180 / Math.PI))
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
-    }
-    static getAlterHPadding(height: number, angle: number): number{
-        if(this.handleFocused)
-            return -1 * Parallelogram._z
-        return -1* height / Math.tan(angle * (Math.PI / 180))
-    }
-
-    static getExtraHSpace(height: number, angle: number): number{
-        if(this.handleFocused)
-            return 2 * Parallelogram._z
-        return 2*height / Math.tan(angle * (Math.PI / 180))
-    }
-}
-
-export class ParallelogramVertical extends Shape implements Shape{
-    static _z: number;
-    angle: number;
-    constructor(xPos: number, yPos: number, width: number, height: number, angle: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-        this.angle = angle
-        if(!Shape.handleFocused)
-            ParallelogramVertical._z = this.width/Math.tan(angle*(Math.PI/180))
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + ParallelogramVertical._z )
-        path.DrawTo(this.xPos + this.width , this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + this.height -  ParallelogramVertical._z )
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos,
-            y: this.yPos + ParallelogramVertical._z,
-            width: this.width,
-            height: this.height - 2*ParallelogramVertical._z
-        }
-    }
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos + this.z
-                },
-                axis: 'y',
-                propName: 'parallelogramAngle',
-                get z(): number {
-                    return ParallelogramVertical._z
-                },
-                set z(x: number){
-                    ParallelogramVertical._z = x
-                },
-                get disp(): number {
-                    return round(Math.atan(this.buttonWidth/this.z) * (180 / Math.PI))
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
-    }
-
-    static getAlterVPadding(width: number, angle: number): number{
-        if(this.handleFocused)
-            return -1 * ParallelogramVertical._z
-        return -1* width/Math.tan(angle*(Math.PI/180))
-    }
-
-    static getExtraVSpace(width: number, angle: number): number{
-        if(this.handleFocused)
-            return 2 * ParallelogramVertical._z
-        return 2*width/Math.tan(angle*(Math.PI/180))
-    }
-}
-
-export class Chevron extends Shape implements Shape{
-    static _z: number;
-    angle: number
-    constructor(xPos: number, yPos: number, width: number, height: number, angle: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-        this.angle = angle
-        if(!Shape.handleFocused)
-            Chevron._z = (0.5*this.height)/Math.tan(angle*(Math.PI/180))
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + this.width - Chevron._z, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + 0.5*this.height)
-        path.DrawTo(this.xPos + this.width - Chevron._z , this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + this.height)
-        path.DrawTo(this.xPos + Chevron._z , this.yPos + 0.5*this.height)
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos + Chevron._z,
-            y: this.yPos,
-            width: this.width - 2*Chevron._z,
-            height: this.height
-        }
-    }
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth - this.z
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos
-                },
-                axis: 'x',
-                propName: 'chevronAngle',
-                get z(): number {
-                    return Chevron._z
-                },
-                set z(x: number){
-                    Chevron._z = this.buttonWidth - x
-                },
-                get disp(): number {
-                    return round(Math.atan(this.buttonHeight/(2*this.z)) * (180 / Math.PI))
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
-    }
-    static getAlterHPadding(height: number, angle: number): number{
-        if(this.handleFocused)
-            return -1*Chevron._z
-        return -1 *(0.5 * height) / Math.tan(angle * (Math.PI / 180))
-    }
-
-    static getExtraHSpace(height: number, angle: number): number{
-        if(this.handleFocused)
-            return 2 * Chevron._z
-        return 2*(0.5 * height) / Math.tan(angle * (Math.PI / 180))
-    }
-    
-}
-
-export class ChevronVertical extends Shape implements Shape{
-    static _z: number;
-    angle: number
-    constructor(xPos: number, yPos: number, width: number, height: number, angle: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-        this.angle = angle
-        if(!Shape.handleFocused)
-            ChevronVertical._z = (0.5*this.width)/Math.tan(angle*(Math.PI/180))
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + 0.5*this.width, this.yPos + ChevronVertical._z)
-        path.DrawTo(this.xPos + this.width, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + this.height - ChevronVertical._z)
-        path.DrawTo(this.xPos + 0.5*this.width, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + this.height - ChevronVertical._z)
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos,
-            y: this.yPos + ChevronVertical._z,
-            width: this.width,
-            height: this.height - 2*ChevronVertical._z
-        }
-    }
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos + this.buttonHeight - this.z
-                },
-                axis: 'y',
-                propName: 'chevronAngle',
-                get z(): number {
-                    return ChevronVertical._z
-                },
-                set z(x: number){
-                    ChevronVertical._z = this.buttonHeight - x
-                },
-                get disp(): number {
-                    return round(Math.atan(this.buttonWidth/(2*this.z)) * (180 / Math.PI))
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
-    }
-    static getAlterVPadding(width: number, angle: number): number{
-        if(this.handleFocused)
-            return -1 * ChevronVertical._z
-        return -1* (0.5 * width) / Math.tan(angle * (Math.PI / 180))
-    }
-    static getExtraVSpace(width: number, angle: number): number{
-        if(this.handleFocused)
-            return 2 * ChevronVertical._z
-        return 2*(0.5 * width) / Math.tan(angle * (Math.PI / 180))
-    }
-}
-
-export class Pentagon extends Shape implements Shape{
-    static _z: number;
-    constructor(xPos: number, yPos: number, width: number, height: number, angle: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-        if(!Shape.handleFocused)
-            Pentagon._z = 0.5*this.height/Math.tan(angle*(Math.PI/180))
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + this.width - Pentagon._z, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + 0.5*this.height)
-        path.DrawTo(this.xPos + this.width - Pentagon._z, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + this.height)
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos,
-            y: this.yPos,
-            width: this.width - Pentagon._z,
-            height: this.height
-        }
-    }
-
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth - this.z
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos
-                },
-                axis: 'x',
-                propName: 'pentagonAngle',
-                get z(): number {
-                    return Pentagon._z
-                },
-                set z(x: number){
-                    Pentagon._z = this.buttonWidth - x
-                },
-                get disp(): number {
-                    return round(Math.atan(this.buttonHeight/(2*this.z)) * (180 / Math.PI))
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
-    }
-    static getExtraHSpace(height: number, angle: number): number{
-        if(this.handleFocused)
-            return 2 * Pentagon._z
-        return 0.5*height/Math.tan(angle*(Math.PI/180))
-    }
-}
-
-export class Hexagon extends Shape implements Shape{
-    static _z: number;
-    constructor(xPos: number, yPos: number, width: number, height: number, angle: number, radius: number){
-        super(xPos, yPos, width, height, radius)
-        if(!Shape.handleFocused)
-            Hexagon._z = 0.5*this.height/Math.tan(angle*(Math.PI/180))
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos + Hexagon._z, this.yPos)
-        path.DrawTo(this.xPos + this.width - Hexagon._z, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + 0.5*this.height)
-        path.DrawTo(this.xPos + this.width - Hexagon._z, this.yPos + this.height)
-        path.DrawTo(this.xPos + Hexagon._z, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + 0.5*this.height)
-        path.close()
-        path.roundCorners(this.radius)
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos + Hexagon._z,
-            y: this.yPos,
-            width: this.width - 2*Hexagon._z,
-            height: this.height
-        }
-    }
-
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth - this.z
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos
-                },
-                axis: 'x',
-                propName: 'hexagonAngle',
-                get z(): number {
-                    return Hexagon._z
-                },
-                set z(x: number){
-                    Hexagon._z = this.buttonWidth - x
-                },
-                get disp(): number {
-                    return round(Math.atan(this.buttonHeight/(2*this.z)) * (180 / Math.PI))
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
-    }
-
-    static getExtraHSpace(height: number, angle: number): number{
-        if(this.handleFocused)
-            return 2 * Hexagon._z
-        return 0.5*height/Math.tan(angle*(Math.PI/180))
-    }
-}
-
-export class Ellipse extends Shape implements Shape{
-    constructor(xPos: number, yPos: number, width: number, height: number){
-        super(xPos, yPos, width, height)
-    }
-
-    get shapePath(): string{
-        let rx =  0.5*this.width
-        let ry = 0.5*this.height
-        let cx = this.xPos + rx
-        let cy = this.yPos + ry
-        let path = new Path()
-        path.MoveTo(cx-rx, cy)
-        path.arc(rx, ry, 0, 1, 0, 2*rx, 0)
-        path.arc(rx, ry, 0, 1, 0, -2*rx, 0)
-        path.close()
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos,
-            y: this.yPos,
-            width: this.width,
-            height: this.height
-        }
-    }
-}
-
-export class Tab_RoundedCorners extends Shape implements Shape{
-    constructor(xPos: number, yPos: number, width: number, height: number){
-        super(xPos, yPos, width, height)
-    }
-
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + this.height)
-        path.roundCorners(20)
-        path.close()
-        return path.toString()
-    }
-
-    get contentBoundingBox(): BoundingBox{
-        return {
-            x: this.xPos,
-            y: this.yPos,
-            width: this.width,
-            height: this.height
-        }
-    }
     get strokePath(): string {
-        let strokePath: Path = new Path(this.shapePath)
-        strokePath.removeClose()
-        return strokePath.toString()
+        this._strokePath = this._strokePath || [].concat.apply([], rotatePath(this.shapePathRight, this.direction, this.height, this.width)).join(" ");
+        return this._strokePath
     }
-}
-export class Tab_CutCorners extends Shape implements Shape{
-    static _z: number;
-    constructor(xPos: number, yPos: number, width: number, height: number, length: number){
-        super(xPos, yPos, width, height)
-        if(!Shape.handleFocused)
-            Tab_CutCorners._z = length
+    get strokePathRight(): [string, ...number[]][] {
+        return this.shapePathRight
     }
 
-    get shapePath(): string{
-        let path = new Path()
-        path.MoveTo(this.xPos, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos + Tab_CutCorners._z)
-        path.DrawTo(this.xPos + Tab_CutCorners._z, this.yPos)
-        path.DrawTo(this.xPos + this.width - Tab_CutCorners._z, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + Tab_CutCorners._z)
-        path.DrawTo(this.xPos + this.width, this.yPos + this.height)
-        path.close()
-        return path.toString()
+    get contentBoundingBox(): BoundingBox {
+        let contentBoundingBoxRight = this.contentBoundingBoxRight
+        switch (this.direction) {
+            case ShapeDirection.left:
+                return {
+                    x: this.width - (contentBoundingBoxRight.x + contentBoundingBoxRight.width),
+                    y: contentBoundingBoxRight.y,
+                    width: contentBoundingBoxRight.width,
+                    height: contentBoundingBoxRight.height
+                }
+            case ShapeDirection.up:
+                return {
+                    x: contentBoundingBoxRight.y,
+                    y: this.width - (contentBoundingBoxRight.x + contentBoundingBoxRight.width),
+                    width: contentBoundingBoxRight.height,
+                    height: contentBoundingBoxRight.width
+                }
+            case ShapeDirection.down:
+                return {
+                    x: this.height - (contentBoundingBoxRight.y + contentBoundingBoxRight.height),
+                    y: contentBoundingBoxRight.x,
+                    width: contentBoundingBoxRight.height,
+                    height: contentBoundingBoxRight.width
+                }
+            default:
+                return contentBoundingBoxRight
+        }
     }
-
-    get contentBoundingBox(): BoundingBox{
+    get contentBoundingBoxRight(): BoundingBox {
         return {
-            x: this.xPos,
-            y: this.yPos,
+            x: 0,
+            y: 0,
             width: this.width,
             height: this.height
         }
     }
-    get strokePath(): string {
-        let strokePath: Path = new Path(this.shapePath)
-        strokePath.removeClose()
-        return strokePath.toString()
-    }
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth - this.z
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos
-                },
-                axis: 'x',
-                propName: 'tab_cutCornersLength',
-                get z(): number {
-                    return Tab_CutCorners._z
-                },
-                set z(x: number){
-                    Tab_CutCorners._z = this.buttonWidth - x
-                },
-                get disp(): number {
-                    return round(this.z)
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
+
+    static getDimsWithoutContent(direction: ShapeDirection, height: number, width: number, ...args: number[]): { width: number, height: number } {
+
+        if (direction == ShapeDirection.left || direction == ShapeDirection.right)
+            return this.getDimsWithoutContentRight(height, width, ...args)
+        else {
+            let dims = this.getDimsWithoutContentRight(width, height, ...args)
+            return {
+                width: dims.height,
+                height: dims.width
             }
-        ]
-        return handles
+        }
+    }
+
+    static getDimsWithoutContentRight(...args: number[]): { width: number, height: number } {
+        return { width: 0, height: 0 }
+    }
+
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        return ShapeDirection.right
+    }
+
+}
+
+export class Rectangle extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, 0)
+        path.drawTo(this.width, 0)
+        path.drawTo(0, this.height)
+        path.drawTo(-1 * this.width, 0)
+        path.drawTo(0, -1 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
     }
 }
-export class Tab_CutCorner extends Shape implements Shape{
-    static _z: number;
-    constructor(xPos: number, yPos: number, width: number, height: number, length: number){
-        super(xPos, yPos, width, height)
-        if(!Shape.handleFocused)
-            Tab_CutCorner._z = length
+
+
+export class Parallelogram extends Shape {
+    static alterPadding: boolean = true
+    private z: number;
+    constructor(height: number, width: number, direction: ShapeDirection, angle: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.z = this.height / Math.tan(angle * (Math.PI / 180))
     }
 
-    get shapePath(): string{
+    get shapePathRight(): [string, ...number[]][] {
         let path = new Path()
-        path.MoveTo(this.xPos, this.yPos + this.height)
-        path.DrawTo(this.xPos, this.yPos)
-        path.DrawTo(this.xPos + this.width - Tab_CutCorner._z, this.yPos)
-        path.DrawTo(this.xPos + this.width, this.yPos + Tab_CutCorner._z)
-        path.DrawTo(this.xPos + this.width, this.yPos + this.height)
+        path.moveTo(this.z, 0)
+        path.drawTo(this.width - this.z, 0)
+        path.drawTo(-1 * this.z, this.height)
+        path.drawTo(-1 * this.width + this.z, 0)
+        path.drawTo(this.z, -1 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
         path.close()
-        return path.toString()
+        return path.path
     }
 
-    get contentBoundingBox(): BoundingBox{
+
+    get contentBoundingBoxRight(): BoundingBox {
         return {
-            x: this.xPos,
-            y: this.yPos,
-            width: this.width,
+            x: this.z,
+            y: 0,
+            width: this.width - 2 * this.z,
             height: this.height
         }
     }
-    get strokePath(): string {
-        let strokePath: Path = new Path(this.shapePath)
-        strokePath.removeClose()
-        return strokePath.toString()
-    }
 
-    get handles(): Handle[]{
-        let handles: Handle[] = [
-            {
-                buttonXPos: this.xPos,
-                buttonYPos: this.yPos,
-                buttonWidth: this.width,
-                buttonHeight: this.height,
-                get xPos(): number {
-                    return this.buttonXPos + this.buttonWidth - this.z
-                }, 
-                get yPos(): number {
-                    return this.buttonYPos
-                },
-                axis: 'x',
-                propName: 'tab_cutCornerLength',
-                get z(): number {
-                    return Tab_CutCorner._z
-                },
-                set z(x: number){
-                    Tab_CutCorner._z = this.buttonWidth - x
-                },
-                get disp(): number {
-                    return round(this.z)
-                },
-                get handleFocused(): boolean{
-                    return Shape.handleFocused
-                },
-                set handleFocused(b: boolean){
-                    Shape.handleFocused = b
-                }
-            }
-        ]
-        return handles
+    static getDimsWithoutContentRight(height: number, width: number, angle: number): { width: number, height: number } {
+        return {
+            width: 2 * height / Math.tan(angle * (Math.PI / 180)),
+            height: 0
+        }
+    }
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.down
+        return ShapeDirection.right
     }
 }
 
-class Path{
-    path: string;
-    constructor(path?: string){
-        this.path = path || ""
+export class Chevron extends Shape {
+    static alterPadding: boolean = true
+    private z: number;
+    constructor(height: number, width: number, direction: ShapeDirection, angle: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.z = 0.5 * this.height / Math.tan(angle * (Math.PI / 180))
     }
-    public MoveTo(x, y): void{
-        this.path+= ["M",x,y].join(" ") + " "
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, 0)
+        path.drawTo(this.width - this.z, 0)
+        path.drawTo(this.z, this.height / 2)
+        path.drawTo(-1 * this.z, this.height / 2)
+        path.drawTo(-1 * this.width + this.z, 0)
+        path.drawTo(this.z, this.height / -2)
+        path.drawTo(-1 * this.z, this.height / -2)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
     }
-    public moveTo(x, y): void{
-        this.path+= ["m",x,y].join(" ")+ " "
+
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: this.z,
+            y: 0,
+            width: this.width - 2 * this.z,
+            height: this.height
+        }
     }
-    public DrawTo(x, y): void{
-        this.path+= ["L",x,y].join(" ")+ " "
+
+    static getDimsWithoutContentRight(height: number, width: number, angle: number): { width: number, height: number } {
+        return {
+            width: height / Math.tan(angle * (Math.PI / 180)),
+            height: 0
+        }
     }
-    public drawTo(x, y): void{
-        this.path+= ["l",x,y].join(" ")+ " "
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.down
+        return ShapeDirection.right
     }
-    public arc(rx: number, ry:number, rotation: number, arc:number, sweep: number, eX: number, eY: number){
-        this.path+= ["a",rx,ry,rotation,arc,sweep,eX,eY].join(" ")+ " "
+}
+
+export class Pentagon extends Shape {
+    private z: number;
+    constructor(height: number, width: number, direction: ShapeDirection, angle: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.z = 0.5 * this.height / Math.tan(angle * (Math.PI / 180))
     }
-    
-    public roundCorners(radius): void{
-        this.path = roundPathCorners(this.path, radius, false)
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, 0)
+        path.drawTo(this.width - this.z, 0)
+        path.drawTo(this.z, 0.5 * this.height)
+        path.drawTo(-1 * this.z, 0.5 * this.height)
+        path.drawTo(-1 * this.width + this.z, 0)
+        path.drawTo(0, -1 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
     }
-    public close(): void{
-        this.path += 'Z'
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: 0,
+            y: 0,
+            width: this.width - this.z,
+            height: this.height
+        }
     }
-    public removeClose(): void{
-        if(this.path.endsWith('Z'))
-            this.path = this.path.substring(0,  this.path.length-1)
+    static getDimsWithoutContentRight(height: number, width: number, angle: number): { width: number, height: number } {
+        return {
+            width: 0.5 * height / Math.tan(angle * (Math.PI / 180)),
+            height: 0
+        }
     }
-    public toString(): string{
-        return this.path
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Hexagon extends Shape {
+    private z: number;;
+    constructor(height: number, width: number, direction: ShapeDirection, angle: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.z = 0.5 * this.height / Math.tan(angle * (Math.PI / 180))
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(this.z, 0)
+        path.drawTo(this.width - 2 * this.z, 0)
+        path.drawTo(this.z, 0.5 * this.height)
+        path.drawTo(-1 * this.z, 0.5 * this.height)
+        path.drawTo(-1 * this.width + 2 * this.z, 0)
+        path.drawTo(-1 * this.z, -0.5 * this.height)
+        path.drawTo(this.z, -0.5 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: this.z,
+            y: 0,
+            width: this.width - 2 * this.z,
+            height: this.height
+        }
+    }
+    static getDimsWithoutContentRight(height: number, width: number, angle: number): { width: number, height: number } {
+        return {
+            width: height / Math.tan(angle * (Math.PI / 180)),
+            height: 0
+        }
+    }
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Ellipse extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection) {
+        super(height, width, direction)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let rx = 0.5 * this.width
+        let ry = 0.5 * this.height
+        let path = new Path()
+        path.moveTo(0, ry)
+        path.arcTo(rx, ry, 0, 1, 0, 2 * rx, 0)
+        path.arcTo(rx, ry, 0, 1, 0, -2 * rx, 0)
+        path.close()
+        return path.path
+    }
+
+    get shapePath(): string {
+        return [].concat.apply([], this.shapePathRight).join(" ")
+    }
+
+    get contentBoundingBox(): BoundingBox {
+        return super.contentBoundingBoxRight
+    }
+
+    static getHorizontalNoContentRight(height: number, angle: number): number {
+        return height / Math.tan(angle * (Math.PI / 180))
+    }
+}
+
+export class Tab_CutCorners extends Shape {
+    private length: number;
+    constructor(height: number, width: number, direction: ShapeDirection, length: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.length = length
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, this.length)
+        path.drawTo(this.length, -1 * this.length)
+        path.drawTo(this.width - this.length, 0)
+        path.drawTo(0, this.height)
+        path.drawTo(-1 * this.width + this.length, 0)
+        path.drawTo(-1 * this.length, -1 * this.length)
+        path.drawTo(0, -1*this.height + 2*this.length)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+    // get strokePathRight(): [string, ...number[]][]{
+    //     let path = new Path()
+    //     path.moveTo(0, this.length)
+    //     path.drawTo(this.length, -1 * this.length)
+    //     path.drawTo(this.width - this.length, 0)
+    //     path.drawTo(0, this.height)
+    //     path.drawTo(-1 * this.width + this.length, 0)
+    //     path.drawTo(-1 * this.length, -1 * this.length)
+    //     path.drawTo(0, -1*this.height + 2*this.length)
+    //     path.roundCorners(this.roundedCornerRadius)
+    //     path.close()
+    //     return path.path
+    // }
+
+
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Tab_CutCorner extends Shape {
+    private length: number;
+    constructor(height: number, width: number, direction: ShapeDirection, length: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.length = length
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(this.length, 0)
+        path.drawTo(this.width - this.length, 0)
+        path.drawTo(0, this.height)
+        path.drawTo(-1 * this.width, 0)
+        path.drawTo(0, -1 * this.height + this.length)
+        path.close()
+        return path.path
+    }
+
+
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Tab_RoundedCorners extends Shape {
+    private length: number;
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.length = 20
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, this.length)
+        path.arcTo(this.length, this.length, 0, 0, 1, this.length, -1 * this.length)
+        path.drawTo(this.width - this.length, 0)
+        path.drawTo(0, this.height)
+        path.drawTo(-1 * this.width + this.length, 0)
+        path.arcTo(this.length, this.length, 0, 0, 1, -1 * this.length, -1 * this.length)
+        path.close()
+        return path.path
+    }
+
+
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Pill extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, this.width / 2)
+        path.arcTo(this.width / 2, this.width / 2, 0, 0, 1, this.width, 0)
+        path.drawTo(0, this.height - this.width)
+        path.arcTo(this.width / 2, this.width / 2, 0, 0, 1, -1 * this.width, 0)
+        path.close()
+        return path.path
+    }
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: 0,
+            y: this.width / 2,
+            width: this.width,
+            height: this.height - this.width
+        }
+    }
+
+    static getDimsWithoutContentRight(height: number, width: number,): { width: number, height: number } {
+        return {
+            width: 0,
+            height: width
+        }
+    }
+
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Triangle extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, 0)
+        path.drawTo(this.width, this.height / 2)
+        path.drawTo(-1 * this.width, this.height / 2)
+        path.drawTo(0, -1 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.up
+    }
+}
+
+export class Arrow extends Shape {
+    private z: number;
+    private arrowThickness: number;
+    constructor(height: number, width: number, direction: ShapeDirection, angle: number, arrowThicknessPercentage: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.z = 0.5 * this.height / Math.tan(angle * (Math.PI / 180))
+        this.arrowThickness = arrowThicknessPercentage / 100 * height;
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, (this.height - this.arrowThickness) / 2)
+        path.drawTo(this.width - this.z, 0)
+        path.drawTo(0, -1 * (this.height - this.arrowThickness) / 2)
+        path.drawTo(this.z, 0.5 * this.height)
+        path.drawTo(-1 * this.z, 0.5 * this.height)
+        path.drawTo(0, -1 * (this.height - this.arrowThickness) / 2)
+        path.drawTo(-1 * this.width + this.z, 0)
+        path.drawTo(0, -1 * this.arrowThickness)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: 0,
+            y: (this.height - this.arrowThickness) / 2,
+            width: this.width - this.z,
+            height: this.arrowThickness
+        }
+    }
+
+    static getDimsWithoutContentRight(height: number, width: number, angle: number, rodThickness: number): { width: number, height: number } {
+        return {
+            width: 0.5 * height / Math.tan(angle * (Math.PI / 180)),
+            height: height - rodThickness
+        }
+    }
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.down
+        return ShapeDirection.right
+    }
+}
+
+class Path {
+    public path: [string, ...number[]][] = [];
+    constructor(path?: [string, ...number[]][]) {
+        if (path)
+            this.path = path
+    }
+    public moveTo(x, y): void {
+        this.path.push(["m", x, y])
+    }
+    public drawTo(x, y): void {
+        this.path.push(["l", x, y])
+    }
+    public arcTo(rx, ry, rotation, arc, sweep, eX, eY) {
+        this.path.push(["a", rx, ry, rotation, arc, sweep, eX, eY])
+    }
+
+    public roundCorners(roundedCornerRadius): void {
+        let oldPath = this.path
+        oldPath.push(oldPath[1])
+        let newPath: [string, ...number[]][] = []
+        for (let i = 0; i < oldPath.length - 1; i++) {
+            let cubicCurve: [string, ...number[]] = null
+            if (oldPath[i][0] == 'l' && oldPath[i + 1] && oldPath[i + 1][0] == 'l') {
+                let xDir1: number = Math.sign(oldPath[i][1])
+                let yDir1: number = Math.sign(oldPath[i][2])
+                let xDir2: number = Math.sign(oldPath[i + 1][1])
+                let yDir2: number = Math.sign(oldPath[i + 1][2])
+
+                let l1xRatio = Math.abs(oldPath[i][1]) / (Math.abs(oldPath[i][1]) + Math.abs(oldPath[i][2]))
+                let l1yRatio = 1 - l1xRatio
+                let l2xRatio = Math.abs(oldPath[i + 1][1]) / (Math.abs(oldPath[i + 1][1]) + Math.abs(oldPath[i + 1][2]))
+                let l2yRatio = 1 - l2xRatio
+
+                let dx1 = roundedCornerRadius * xDir1 * l1xRatio
+                let dy1 = roundedCornerRadius * yDir1 * l1yRatio
+                let dx2 = roundedCornerRadius * xDir2 * l2xRatio
+                let dy2 = roundedCornerRadius * yDir2 * l2yRatio
+
+                let dx = dx1 + dx2
+                let dy = dy1 + dy2
+
+                oldPath[i][1] -= dx1
+                oldPath[i][2] -= dy1
+                oldPath[i + 1][1] -= dx2
+                oldPath[i + 1][2] -= dy2
+
+
+                cubicCurve = ['c', dx1 / 2, dy1 / 2, dx - dx2 / 2, dy - dy2 / 2, dx, dy]
+                if (i == oldPath.length - 2) {
+                    newPath[0][1] += dx2
+                    newPath[0][2] += dy2
+                }
+
+            }
+            cubicCurve ? newPath.push(oldPath[i], cubicCurve) : newPath.push(oldPath[i])
+        }
+
+
+        this.path = newPath
+    }
+    public close(): void {
+        this.path.push(["Z"])
+    }
+    public removeClose(): void {
+        if (this.path[-1][0] == 'Z')
+            this.path.pop()
     }
 }

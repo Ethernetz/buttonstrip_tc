@@ -689,6 +689,18 @@
                                 "value": "hexagon"
                             },
                             {
+                                "displayName": "Pill",
+                                "value": "pill"
+                            },
+                            {
+                                "displayName": "Triangle",
+                                "value": "triangle"
+                            },
+                            {
+                                "displayName": "Arrow",
+                                "value": "arrow"
+                            },
+                            {
                                 "displayName": "Tab: Rounded Corners",
                                 "value": "tab_roundedCorners"
                             },
@@ -731,6 +743,20 @@
                         "numeric": true
                     }
                 },
+                "arrowAngle": {
+                    "displayName": "Angle",
+                    "description": "The arrow's angle",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "arrowThicknessPercentage": {
+                    "displayName": "Thickness percentage",
+                    "description": "The arrow's thickness percentage",
+                    "type": {
+                        "numeric": true
+                    }
+                },
                 "tab_cutCornersLength": {
                     "displayName": "Length",
                     "description": "How much to cut out of the tab",
@@ -743,6 +769,41 @@
                     "description": "How much to cut out of the tab",
                     "type": {
                         "numeric": true
+                    }
+                },
+                "roundedCornerRadius": {
+                    "displayName": "Rounded corner radius",
+                    "description": "Radius for shape's rounded corner",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "direction": {
+                    "displayName": "Direction",
+                    "description": "The direction of the tiles",
+                    "type": {
+                        "enumeration": [
+                            {
+                                "displayName": "Auto",
+                                "value": "auto"
+                            },
+                            {
+                                "displayName": "Right",
+                                "value": "right"
+                            },
+                            {
+                                "displayName": "Left",
+                                "value": "left"
+                            },
+                            {
+                                "displayName": "Up",
+                                "value": "up"
+                            },
+                            {
+                                "displayName": "Down",
+                                "value": "down"
+                            }
+                        ]
                     }
                 }
             }
@@ -1415,13 +1476,6 @@
                     "description": "Allow seperate hover styling",
                     "type": {
                         "bool": true
-                    }
-                },
-                "shapeRoundedCornerRadius": {
-                    "displayName": "Rounded corner radius",
-                    "description": "Radius for shape's rounded corner",
-                    "type": {
-                        "numeric": true
                     }
                 },
                 "gradient": {

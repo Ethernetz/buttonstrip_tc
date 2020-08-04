@@ -34,10 +34,8 @@ export class TilesCollection {
 
         this.universalTileData = this.createUniversalTileData()
         this.tiles = this.createTiles(this.tilesData)
-        console.log("here")
         this.setWindow()
         this.setTextBounds()
-        console.log("and here")
         this.setMaxIconHeight(()=>{this.clear(); this.draw()})
     }
 
@@ -102,16 +100,14 @@ export class TilesCollection {
     }
 
     public setWindow(){
-
+        
         this.universalTileData.viewport.height = this.viewport.height - 0.1
         this.universalTileData.viewport.width = this.viewport.width - 0.1
 
         let lastTile = this.tiles[this.tiles.length - 1]
         let totalHeight = lastTile.tileYpos + lastTile.tileHeight + this.universalTileData.effectSpace / 2
-
         let rightmostTile = this.tiles[Math.min(this.tiles.length - 1, this.universalTileData.rowLength - 1)]
         let totalWidth = rightmostTile.tileWidth + rightmostTile.tileXpos + this.universalTileData.effectSpace / 2
-       
         let horScroll = totalWidth > this.viewport.width
         let vertScroll = totalHeight > this.viewport.height
         if (this.visualElement) {
@@ -138,7 +134,7 @@ export class TilesCollection {
                 this.universalTileData.scrollTop = 0
             }
         }
-
+        this.universalTileData.createUniversalShape()
         this.setNeedsToBeRendered()
 
         this.svg
@@ -150,6 +146,7 @@ export class TilesCollection {
 
     public draw() {
         console.log("drawing")
+        console.log(this.tiles[0].shapePath)
         let tileContainer = this.container.selectAll('.tileContainer')
         .data(this.tiles
             .filter((d)=>d.tileData.isRendered || d.tileData.needsToBeRendered),

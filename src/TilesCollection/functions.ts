@@ -1,4 +1,4 @@
-import {State} from './enums'
+import {State, ShapeDirection} from './enums'
 export function calculateWordDimensions(text: string, fontFamily: string, fontSize: string, widthType?: string, maxWidth?: string): { width: number, height: number } {
     var div = document.createElement('div');
     div.style.fontFamily = fontFamily
@@ -63,3 +63,93 @@ export function hexToRgb(hex: string): {r: number, g: number, b: number} {
       b: parseInt(result[3], 16)
     } : null;
   }
+
+  export function rotatePath(pathRight: [string, ...number[]][], direction: ShapeDirection, height: number, width: number):  [string, ...number[]][] {
+    for (let i = 0; i < pathRight.length - 1; i++ ) {
+        let commandGroup = pathRight[i]
+        let command = commandGroup[0]
+        switch (direction) {
+            case ShapeDirection.left:
+                if (command == 'm')
+                    commandGroup[1] = width - commandGroup[1]
+                else if (command == 'l')
+                    commandGroup[1] = -1 * commandGroup[1]
+                else if (command == 'a'){
+                    commandGroup[5] = commandGroup[5] == 1 ? 0 : 1
+                    commandGroup[6] = -1 * commandGroup[6]
+                } else if (command == 'c'){
+                    commandGroup[1] = -1 * commandGroup[1]
+                    commandGroup[3] = -1 * commandGroup[3]
+                    commandGroup[5] = -1 * commandGroup[5]
+                } 
+                break
+            case ShapeDirection.up:
+                if (command == 'm'){
+                    let x = commandGroup[1]
+                    let y = commandGroup[2]
+                    commandGroup[2] = width - x
+                    commandGroup[1] = y
+                }
+                else if (command == 'l'){
+                    let x = commandGroup[1]
+                    let y = commandGroup[2]
+                    commandGroup[2] = -1 * x
+                    commandGroup[1] = y
+                }
+                else if (command == 'a'){
+                    let ax = commandGroup[6]
+                    let ay = commandGroup[7]
+                    commandGroup[7] = -1 * ax
+                    commandGroup[6] = ay
+                } else if (command == 'c'){
+                    let dx1 = commandGroup[1]
+                    let dy1 = commandGroup[2]
+                    let dx2 = commandGroup[3]
+                    let dy2 = commandGroup[4]
+                    let dx = commandGroup[5]
+                    let dy = commandGroup[6]
+                    commandGroup[2] = -1 * dx1
+                    commandGroup[1] = dy1
+                    commandGroup[4] = -1 * dx2
+                    commandGroup[3] = dy2
+                    commandGroup[6] = -1 * dx
+                    commandGroup[5] = dy
+                }
+                break
+            case ShapeDirection.down:
+                if (command == 'm'){
+                    let x = commandGroup[1]
+                    let y = commandGroup[2]
+                    commandGroup[1] = height - y
+                    commandGroup[2] = x
+                }
+                else if (command == 'l'){
+                    let x = commandGroup[1]
+                    let y = commandGroup[2]
+                    commandGroup[1] = -1 * y
+                    commandGroup[2] = x
+                }
+                else if (command == 'a'){
+                    let ax = commandGroup[6]
+                    let ay = commandGroup[7]
+                    commandGroup[6] = -1 * ay
+                    commandGroup[7] = ax
+                } else if (command == 'c'){
+                    let dx1 = commandGroup[1]
+                    let dy1 = commandGroup[2]
+                    let dx2 = commandGroup[3]
+                    let dy2 = commandGroup[4]
+                    let dx = commandGroup[5]
+                    let dy = commandGroup[6]
+                    commandGroup[1] = -1 * dy1
+                    commandGroup[2] = dx1
+                    commandGroup[3] = -1 * dy2
+                    commandGroup[4] = dx2
+                    commandGroup[5] = -1 * dy
+                    commandGroup[6] = dx
+                }
+                break
+        }
+    }
+    return pathRight
+}

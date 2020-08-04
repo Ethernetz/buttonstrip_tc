@@ -1,5 +1,5 @@
 import {StatesUsed} from './interfaces'
-import {HorizontalAlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State, VerticalAlignmentType, GradientDirection} from './enums'
+import {HorizontalAlignmentType, TileSizingType, TileLayoutType, TileShape, Direction, IconPlacement, State, VerticalAlignmentType, GradientDirection, ShapeDirection} from './enums'
 
 export class FormatSettings{
   public tileStroke: TileStrokeSettings = new TileStrokeSettings();
@@ -127,10 +127,18 @@ export class TileFillSettings implements TileCollectionStatedFormatObject{
     
     public parallelogramAngle: number = 80
     public chevronAngle: number = 60
-    public pentagonAngle: number = 60
-    public hexagonAngle: number = 60
+    public pentagonAngle: number = 80
+    public hexagonAngle: number = 80
+
+    public arrowAngle: number = 60
+    public arrowThicknessPercentage: number = 50
+
     public tab_cutCornersLength: number = 20
     public tab_cutCornerLength: number = 20
+  
+    public direction: ShapeDirection = ShapeDirection.auto
+
+    public roundedCornerRadius: number = 0 
   }
 
   export class LayoutSettings{
@@ -221,7 +229,6 @@ export class TileFillSettings implements TileCollectionStatedFormatObject{
       hover: true,
       disabled: false
     }
-    public shapeRoundedCornerRadius: number = 0 
     public hoverStyling: boolean = false
   
 

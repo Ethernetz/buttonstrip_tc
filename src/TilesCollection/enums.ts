@@ -45,6 +45,9 @@ export enum TileShape {
     ellipse = "ellipse",
     pentagon = "pentagon",
     hexagon = "hexagon",
+    pill = "pill",
+    triangle = "triangle",
+    arrow = "arrow",
     tab_roundedCorners = "tab_roundedCorners",
     tab_cutCorners = "tab_cutCorners",
     tab_cutCorner = "tab_cutCorner"
@@ -61,6 +64,14 @@ export enum Direction {
     top_right = "top_right",
     right = "right",
     custom = "custom"
+}
+
+export enum ShapeDirection {
+    left = "left",
+    right = "right",
+    up = "up",
+    down = "down",
+    auto = "auto"
 }
 
 export enum GradientDirection {
