@@ -129,6 +129,7 @@ export class TileFillSettings implements TileCollectionStatedFormatObject{
     public chevronAngle: number = 60
     public pentagonAngle: number = 80
     public hexagonAngle: number = 80
+    public trapezoidAngle: number = 70
 
     public arrowAngle: number = 60
     public arrowThicknessPercentage: number = 50
@@ -139,6 +140,8 @@ export class TileFillSettings implements TileCollectionStatedFormatObject{
     public direction: ShapeDirection = ShapeDirection.auto
 
     public roundedCornerRadius: number = 0 
+
+    public rotation: number = 0
   }
 
   export class LayoutSettings{
@@ -149,7 +152,7 @@ export class TileFillSettings implements TileCollectionStatedFormatObject{
     public tileAlignment: HorizontalAlignmentType = HorizontalAlignmentType.left
     public tileLayout: TileLayoutType = TileLayoutType.horizontal;
     public tilesPerRow: number = 2;
-    public padding: number = 10;
+    public padding: number = 10;  
   }
 
   export class ContentAlignmentSettings implements TileCollectionStatedFormatObject{
@@ -218,6 +221,13 @@ export class TileFillSettings implements TileCollectionStatedFormatObject{
     public bottomMarginU: number = null;
     public bottomMarginH: number = null;
     public bottomMarginN: number = null;
+
+    public rotationD: number = 0;
+    public rotationA: number = null;
+    public rotationS: number = null;
+    public rotationU: number = null;
+    public rotationH: number = null;
+    public rotationN: number = null;
     
   }
 

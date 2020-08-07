@@ -677,8 +677,8 @@
                                 "value": "chevron"
                             },
                             {
-                                "displayName": "Ellipse",
-                                "value": "ellipse"
+                                "displayName": "Oval",
+                                "value": "oval"
                             },
                             {
                                 "displayName": "Pentagon",
@@ -689,16 +689,39 @@
                                 "value": "hexagon"
                             },
                             {
+                                "displayName": "Octagon",
+                                "value": "octagon"
+                            },
+                            {
+                                "displayName": "Trapezoid",
+                                "value": "trapezoid"
+                            },
+                            {
+                                "displayName": "Diamond",
+                                "value": "diamond"
+                            },
+                            {
                                 "displayName": "Pill",
                                 "value": "pill"
                             },
                             {
-                                "displayName": "Triangle",
-                                "value": "triangle"
+                                "displayName": "Isoscoles Triangle",
+                                "value": "isocTriangle"
                             },
                             {
+                                "displayName": "Right Triangle",
+                                "value": "rightTriangle"
+                            },{
                                 "displayName": "Arrow",
                                 "value": "arrow"
+                            },
+                            {
+                                "displayName": "Line",
+                                "value": "line"
+                            },
+                            {
+                                "displayName": "Speech Bubble",
+                                "value": "speechbubble_rectangle"
                             },
                             {
                                 "displayName": "Tab: Rounded Corners",
@@ -739,6 +762,13 @@
                 "hexagonAngle": {
                     "displayName": "Angle",
                     "description": "The pentagon's angle",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "trapezoidAngle": {
+                    "displayName": "Angle",
+                    "description": "The trapezoids's angle",
                     "type": {
                         "numeric": true
                     }
@@ -804,6 +834,13 @@
                                 "value": "down"
                             }
                         ]
+                    }
+                },
+                "rotation": {
+                    "displayName": "Rotation",
+                    "description": "The rotation of the tiles.",
+                    "type": {
+                        "numeric": true
                     }
                 }
             }
@@ -1437,6 +1474,34 @@
                 },
                 "bottomMarginH": {
                     "displayName": "Bottom margin",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "rotationA": {
+                    "displayName": "Rotation",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "rotationS": {
+                    "displayName": "Rotation",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "rotationU": {
+                    "displayName": "Rotation",
+                    "description": "Margin between text and tile top and bottom",
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "rotationH": {
+                    "displayName": "Rotation",
                     "description": "Margin between text and tile top and bottom",
                     "type": {
                         "numeric": true

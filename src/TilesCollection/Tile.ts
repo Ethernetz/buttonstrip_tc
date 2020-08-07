@@ -96,6 +96,9 @@ export class Tile {
     get contentMarginBottom(): number {
         return getMatchingStateProperty(this.currentState, this.contentAlignmentSettings, 'bottomMargin')
     }
+    get contentRotation(): number {
+        return getMatchingStateProperty(this.currentState, this.contentAlignmentSettings, 'rotation')
+    }
 
 
     get totalContentHorizontalMargin(): number {
@@ -279,6 +282,16 @@ export class Tile {
         return this.formatSettings.shape
     }
 
+    get shapeRotation(): number {
+        return this.shapeSettings.rotation
+    }
+    
+    get shapeRotationScale(): number {
+        let o = this.shapeRotation*Math.PI/180
+        let w = Math.abs(this.tileWidth * Math.cos(o)) + Math.abs(this.tileHeight * Math.sin(o))
+        let h = Math.abs(this.tileWidth * Math.sin(o)) + Math.abs(this.tileHeight * Math.cos(o))
+        return Math.min(this.tileHeight/h, this.tileWidth/w)
+    }
 
     get dynamicShape(): Shape {
         return this.universalTileData.createShape(this.tileWidth, this.tileHeight)
@@ -304,61 +317,6 @@ export class Tile {
     get shapeStrokePath(): string {
         let path = this.shape.strokePath
         return ["M", this.tileXpos, this.tileYpos, path].join(" ")
-    }
-
-    get alterHorizontalPadding(): number {
-        if (this.layoutSettings.tileLayout == TileLayoutType.vertical)
-            return 0
-        switch (this.universalTileData) {
-            // case TileShape.parallelogram:
-            //     return Parallelogram.getAlterHPadding(this.tileHeight, this.shapeSettings.parallelogramAngle)
-            // case TileShape.chevron:
-            //     return Chevron.getAlterHPadding(this.tileHeight, this.shapeSettings.chevronAngle)
-            default:
-                return 0
-        }
-    }
-    get alterVerticalPadding(): number {
-        if (this.layoutSettings.tileLayout != TileLayoutType.vertical)
-            return 0
-        switch (this.universalTileData) {
-            // case TileShape.parallelogram:
-            //     return ParallelogramVertical.getAlterVPadding(this.tileWidth, this.shapeSettings.parallelogramAngle)
-            // case TileShape.chevron:
-            //     return ChevronVertical.getAlterVPadding(this.tileWidth, this.shapeSettings.chevronAngle)
-            default:
-                return 0
-        }
-    }
-
-    get shapeExtraHSpace(): number {
-        if (this.layoutSettings.tileLayout == TileLayoutType.vertical)
-            return 0
-        switch (this.universalTileData) {
-            // case TileShape.parallelogram:
-            //     return Parallelogram.getExtraHSpace(this.tileHeight, this.shapeSettings.parallelogramAngle)
-            // case TileShape.chevron:
-            //     return Chevron.getExtraHSpace(this.tileHeight, this.shapeSettings.chevronAngle)
-            // case TileShape.pentagon:
-            //     return Pentagon.getExtraHSpace(this.tileHeight, this.shapeSettings.pentagonAngle)
-            // case TileShape.hexagon:
-            //     return Hexagon.getExtraHSpace(this.tileHeight, this.shapeSettings.hexagonAngle)
-            default:
-                return 0
-        }
-    }
-
-    get shapeExtraVSpace(): number {
-        if (this.layoutSettings.tileLayout != TileLayoutType.vertical)
-            return 0
-        switch (this.universalTileData) {
-            // case TileShape.parallelogram:
-            //     return ParallelogramVertical.getExtraVSpace(this.tileWidth, this.shapeSettings.parallelogramAngle)
-            // case TileShape.chevron:
-            //     return ChevronVertical.getExtraVSpace(this.tileWidth, this.shapeSettings.chevronAngle)
-            default:
-                return 0
-        }
     }
 
     get contentBoundingBoxHeight(): number {

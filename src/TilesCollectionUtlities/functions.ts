@@ -138,7 +138,7 @@ export function levelProperties(propValues: PropertyGroupValues, propKeys: Prope
     let allExists = false
     let nullValue = null
     if (typeof propValues.default == 'number' || typeof propValues.default == 'object') {
-        allExists = _all != null && _all >= 0
+        allExists = _all != null
     } else {
         _all = <string>_all
         allExists = _all != null && _all.length > 0

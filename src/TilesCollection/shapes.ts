@@ -283,7 +283,118 @@ export class Hexagon extends Shape {
     }
 }
 
-export class Ellipse extends Shape {
+export class Trapezoid extends Shape {
+    private z: number;;
+    constructor(height: number, width: number, direction: ShapeDirection, angle: number, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.z = this.width / Math.tan(angle * (Math.PI / 180))
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, this.z)
+        path.drawTo(this.width, -1*this.z)
+        path.drawTo(0, this.height)
+        path.drawTo(-1*this.width, -1*this.z)
+        path.drawTo(0, -1*this.height + 2*this.z)
+        // path.moveTo(this.z, 0)
+        // path.drawTo(this.width - 2 * this.z, 0)
+        // path.drawTo(this.z, 0.5 * this.height)
+        // path.drawTo(-1 * this.z, 0.5 * this.height)
+        // path.drawTo(-1 * this.width + 2 * this.z, 0)
+        // path.drawTo(-1 * this.z, -0.5 * this.height)
+        // path.drawTo(this.z, -0.5 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: 0,
+            y: this.z,
+            width: this.width,
+            height: this.height  - 2 * this.z
+        }
+    }
+    static getDimsWithoutContentRight(height: number, width: number, angle: number): { width: number, height: number } {
+        return {
+            width: 0,
+            height: 2 * width / Math.tan(angle * (Math.PI / 180))
+        }
+    }
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.right
+        return ShapeDirection.down
+    }
+}
+
+export class Octagon extends Shape {
+    private hypotenuse: number;
+    private side: number;  
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+        this.hypotenuse = height/(1 + Math.sqrt(2))
+        this.side = Math.sqrt(2)/2* this.hypotenuse
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(this.side, 0)
+        path.drawTo(this.width - 2*this.side, 0)
+        path.drawTo(this.side, this.side )
+        path.drawTo(0, this.hypotenuse)
+        path.drawTo(-1 * this.side , this.side )
+        path.drawTo(-1*this.width + 2*this.side, 0)
+        path.drawTo(-1 * this.side , -1*this.side )
+        path.drawTo(0 , -1*this.hypotenuse )
+        path.drawTo(this.side, -1*this.side)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: this.side,
+            y: 0,
+            width: this.width - 2*this.side,
+            height: this.height
+        }
+    }
+    static getDimsWithoutContentRight(height: number, width: number): { width: number, height: number } {
+        return {
+            width: Math.sqrt(2) * height/(1 + Math.sqrt(2)),
+            height: 0
+        }
+    }
+    static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+        if (layoutType == TileLayoutType.vertical)
+            return ShapeDirection.down
+        return ShapeDirection.right
+    }
+}
+
+export class Diamond extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(this.width/2, 0)
+        path.drawTo(this.width/2, this.height/2)
+        path.drawTo(-1*this.width/2, this.height/2)
+        path.drawTo(-1 * this.width/2, -1 * this.height/2)
+        path.drawTo(this.width/2, -1 * this.height/2)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+}
+
+export class Oval extends Shape {
     constructor(height: number, width: number, direction: ShapeDirection) {
         super(height, width, direction)
     }
@@ -448,7 +559,7 @@ export class Pill extends Shape {
     }
 }
 
-export class Triangle extends Shape {
+export class IsocTriangle extends Shape {
     constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
         super(height, width, direction, roundedCornerRadius)
     }
@@ -468,6 +579,28 @@ export class Triangle extends Shape {
             return ShapeDirection.right
         return ShapeDirection.up
     }
+}
+
+export class RightTriangle extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, 0)
+        path.drawTo(this.width, this.height)
+        path.drawTo(-1 * this.width, 0)
+        path.drawTo(0, -1 * this.height)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+    // static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
+    //     if (layoutType == TileLayoutType.vertical)
+    //         return ShapeDirection.right
+    //     return ShapeDirection.up
+    // }
 }
 
 export class Arrow extends Shape {
@@ -503,10 +636,11 @@ export class Arrow extends Shape {
         }
     }
 
-    static getDimsWithoutContentRight(height: number, width: number, angle: number, rodThickness: number): { width: number, height: number } {
+    static getDimsWithoutContentRight(height: number, width: number, angle: number, arrowThicknessPercentage: number): { width: number, height: number } {
+        let arrowThickness = arrowThicknessPercentage / 100 * height;
         return {
             width: 0.5 * height / Math.tan(angle * (Math.PI / 180)),
-            height: height - rodThickness
+            height: height - arrowThickness
         }
     }
     static getAutoPreference(layoutType: TileLayoutType): ShapeDirection {
@@ -515,6 +649,63 @@ export class Arrow extends Shape {
         return ShapeDirection.right
     }
 }
+
+export class Line extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection) {
+        super(height, width, direction)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, this.height/2 - 1)
+        path.drawTo(this.width, 0)
+        path.drawTo(0, 2)
+        path.drawTo(-1 * this.width, 0)
+        // path.drawTo(0, -1 * this.height)
+        // path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+}
+
+
+export class Speechbubble_Rectangle extends Shape {
+    constructor(height: number, width: number, direction: ShapeDirection, roundedCornerRadius: number) {
+        super(height, width, direction, roundedCornerRadius)
+    }
+
+    get shapePathRight(): [string, ...number[]][] {
+        let path = new Path()
+        path.moveTo(0, 0)
+        path.drawTo(this.width, 0)
+        path.drawTo(0, 7*this.height/8)
+        path.drawTo(-1 * 3*this.width/4, 0)
+        path.drawTo(-1 * this.width/8, this.height/8)
+        path.drawTo(0, -1 * this.height/8)
+        path.drawTo(-1*this.width/8, 0)
+        path.drawTo(0, -1*this.height + this.height/8)
+        path.roundCorners(this.roundedCornerRadius)
+        path.close()
+        return path.path
+    }
+
+    get contentBoundingBoxRight(): BoundingBox {
+        return {
+            x: 0,
+            y: 0,
+            width: this.width,
+            height: 7*this.height/8
+        }
+    }
+
+    static getDimsWithoutContentRight(height: number, width: number): { width: number, height: number } {
+        return {
+            width: 0,
+            height: height/8
+        }
+    }
+}
+
 
 class Path {
     public path: [string, ...number[]][] = [];

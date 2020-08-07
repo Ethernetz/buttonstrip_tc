@@ -4,7 +4,7 @@ import { Viewport } from './interfaces';
 import { TileLayoutType, State, TileSizingType, TileShape, ShapeDirection } from './enums';
 import { getMatchingStateProperty, calculateWordDimensions } from './functions'
 import { TilesCollection } from './TilesCollection';
-import {Shape, Rectangle, Pentagon, Hexagon, Parallelogram, Chevron, Ellipse, Tab_CutCorners, Tab_CutCorner, Tab_RoundedCorners, Pill, Triangle, Arrow} from './shapes';
+import {Shape, Rectangle, Pentagon, Hexagon, Parallelogram, Chevron, Oval, Tab_CutCorners, Tab_CutCorner, Tab_RoundedCorners, Pill, Arrow, Line, IsocTriangle, RightTriangle, Octagon, Trapezoid, Diamond, Speechbubble_Rectangle} from './shapes';
 export class UniversalTileData {
     tilesData: TileData[]
     formatSettings: FormatSettings;
@@ -198,28 +198,43 @@ export class UniversalTileData {
 
             case TileShape.rectangle:
                 return new Rectangle(h, w, this.shapeDirection, this.roundedCornerRadius)
+            case TileShape.line:
+                return new Line(h, w, this.shapeDirection)
             case TileShape.parallelogram:
                 return new Parallelogram(h, w, this.shapeDirection, this.shapeSettings.parallelogramAngle, this.roundedCornerRadius)
             case TileShape.chevron:
                 return new Chevron(h, w, this.shapeDirection, this.shapeSettings.chevronAngle, this.roundedCornerRadius)
-            case TileShape.ellipse:
-                return new Ellipse(height, width, this.shapeDirection)
+            case TileShape.oval:
+                return new Oval(height, width, this.shapeDirection)
             case TileShape.pentagon:
                 return new Pentagon(h, w, this.shapeDirection, this.shapeSettings.pentagonAngle, this.roundedCornerRadius)
             case TileShape.hexagon:
                 return new Hexagon(h, w, this.shapeDirection, this.shapeSettings.hexagonAngle, this.roundedCornerRadius)
+            case TileShape.octagon:
+                return new Octagon(h, w, this.shapeDirection, this.roundedCornerRadius)
+            case TileShape.diamond:
+                return new Diamond(h, w, this.shapeDirection, this.roundedCornerRadius)
+            case TileShape.trapezoid:
+                return new Trapezoid(h, w, this.shapeDirection, this.shapeSettings.trapezoidAngle, this.roundedCornerRadius)
             case TileShape.pill:
                 return new Pill(h, w, this.shapeDirection, this.roundedCornerRadius)
-            case TileShape.triangle:
-                return new Triangle(h, w, this.shapeDirection, this.roundedCornerRadius)
+            case TileShape.isocTriangle:
+                return new IsocTriangle(h, w, this.shapeDirection, this.roundedCornerRadius)
+            case TileShape.rightTriangle:
+                return new RightTriangle(h, w, this.shapeDirection, this.roundedCornerRadius)
             case TileShape.arrow:
                 return new Arrow(h, w, this.shapeDirection, this.shapeSettings.arrowAngle, this.shapeSettings.arrowThicknessPercentage, this.roundedCornerRadius)
+            case TileShape.speechbubble_rectangle:
+                return new Speechbubble_Rectangle(h, w, this.shapeDirection, this.roundedCornerRadius)
             case TileShape.tab_cutCorner:
                 return new Tab_CutCorner(h, w, this.shapeDirection, this.shapeSettings.tab_cutCornerLength, this.roundedCornerRadius)
             case TileShape.tab_cutCorners:
                 return new Tab_CutCorners(h, w, this.shapeDirection, this.shapeSettings.tab_cutCornersLength, this.roundedCornerRadius)
             case TileShape.tab_roundedCorners:
                 return new Tab_RoundedCorners(h, w, this.shapeDirection, this.roundedCornerRadius)
+            default:
+                return new Rectangle(h, w, this.shapeDirection, this.roundedCornerRadius)
+
         }
     }
 
@@ -245,28 +260,42 @@ export class UniversalTileData {
         switch (this.tileShape) {
             case TileShape.rectangle:
                 return Rectangle
+            case TileShape.line:
+                return Line
             case TileShape.parallelogram:
                 return Parallelogram
             case TileShape.chevron:
                 return Chevron
-            case TileShape.ellipse:
-                return Ellipse
+            case TileShape.oval:
+                return Oval
             case TileShape.pentagon:
                 return Pentagon
             case TileShape.hexagon:
                 return Hexagon
+            case TileShape.trapezoid:
+                return Trapezoid
+            case TileShape.octagon:
+                return Octagon 
+            case TileShape.diamond:
+                return Diamond    
             case TileShape.pill:
                 return Pill
-            case TileShape.triangle:
-                return Triangle
+            case TileShape.isocTriangle:
+                return IsocTriangle
+            case TileShape.rightTriangle:
+                return RightTriangle
             case TileShape.arrow:
                 return Arrow
+            case TileShape.speechbubble_rectangle:
+                return Speechbubble_Rectangle
             case TileShape.tab_cutCorner:
                 return Tab_CutCorner
             case TileShape.tab_cutCorners:
                 return Tab_CutCorners
             case TileShape.tab_roundedCorners:
                 return Tab_RoundedCorners
+            default:
+                return Rectangle
         }
     }
 
@@ -278,14 +307,18 @@ export class UniversalTileData {
                 return Chevron.getDimsWithoutContent(this.shapeDirection, height, width, this.shapeSettings.chevronAngle)
             case TileShape.hexagon:
                 return Hexagon.getDimsWithoutContent(this.shapeDirection, height, width, this.shapeSettings.hexagonAngle)
+            case TileShape.octagon:
+                return Octagon.getDimsWithoutContent(this.shapeDirection, height, width)
             case TileShape.pentagon:
                 return Pentagon.getDimsWithoutContent(this.shapeDirection, height, width, this.shapeSettings.pentagonAngle)
+            case TileShape.trapezoid:
+                return Trapezoid.getDimsWithoutContent(this.shapeDirection, height, width, this.shapeSettings.trapezoidAngle)
             case TileShape.pill:
                 return Pill.getDimsWithoutContent(this.shapeDirection, height, width)
-            case TileShape.triangle:
-                return Triangle.getDimsWithoutContent(this.shapeDirection, width, this.widthWithoutShape)
             case TileShape.arrow:
                 return Arrow.getDimsWithoutContent(this.shapeDirection, height, width, this.shapeSettings.arrowAngle, this.shapeSettings.arrowThicknessPercentage)
+            case TileShape.speechbubble_rectangle:
+                return Speechbubble_Rectangle.getDimsWithoutContent(this.shapeDirection, height, width)
             default:
                 return Shape.getDimsWithoutContent(this.shapeDirection, height, width)
         }
@@ -340,7 +373,7 @@ export class UniversalTileData {
         return Math.round(this.maxFontSize * 4 / 3)
     }
     get minTileWidth(): number {
-        return this.maxFontSize * 5
+        return  this.contentAlignmentSettings.rotationA == 0 ? this.maxFontSize * 5 : 0
     }
 
     get maxIconWidth(): number {

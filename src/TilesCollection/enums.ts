@@ -42,15 +42,21 @@ export enum TileShape {
     rectangle = "rectangle",
     parallelogram = "parallelogram",
     chevron = "chevron",
-    ellipse = "ellipse",
+    oval = "oval",
     pentagon = "pentagon",
     hexagon = "hexagon",
+    octagon = "octagon",
+    trapezoid = "trapezoid",
+    diamond = "diamond",
+    speechbubble_rectangle = "speechbubble_rectangle",
     pill = "pill",
-    triangle = "triangle",
+    isocTriangle = "isocTriangle",
+    rightTriangle = "rightTriangle",
     arrow = "arrow",
     tab_roundedCorners = "tab_roundedCorners",
     tab_cutCorners = "tab_cutCorners",
-    tab_cutCorner = "tab_cutCorner"
+    tab_cutCorner = "tab_cutCorner",
+    line = "line"
 }
 
 export enum Direction {

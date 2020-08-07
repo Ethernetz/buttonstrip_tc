@@ -137,16 +137,18 @@ export class TilesCollection {
         this.universalTileData.createUniversalShape()
         this.setNeedsToBeRendered()
 
+
         this.svg
             .style('width', totalWidth)
             .style('height', totalHeight)
+            
     }
 
     
 
     public draw() {
-        console.log("drawing")
-        console.log(this.tiles[0].shapePath)
+
+
         let tileContainer = this.container.selectAll('.tileContainer')
         .data(this.tiles
             .filter((d)=>d.tileData.isRendered || d.tileData.needsToBeRendered),
@@ -163,6 +165,11 @@ export class TilesCollection {
 
         tileContainer = tileContainer.merge(tileContainerEnter)
             
+        tileContainer
+            .style("transform", (d)=> `rotate(${d.shapeRotation}deg) scale(${d.shapeRotationScale})`)
+            .style("transform-origin", (d)=> {console.log("um", d.tileYpos, d.tileHeight);return (d.tileXpos+d.tileWidth/2) + "px " + (d.tileYpos+d.tileHeight/2) +"px"})
+
+
         let tileContainerFiltered = tileContainer
             .filter((d)=>{return d.tileData.changedState || d.tileData.needsToBeRendered})
             .each((d)=>{
@@ -219,6 +226,7 @@ export class TilesCollection {
             .style("height", "100%")
             .style("width", "100%")
             .style("display", "table")
+            .style('transform', (d)=> `rotate(${d.contentRotation}deg) scale(${1})`)
         contentFO.select(".contentTableCell")
             .style("display", "table-cell")
             .style("vertical-align", function (d) { return d.contentVerticalAlignment })
